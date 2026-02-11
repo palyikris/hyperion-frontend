@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary - The foundations of the brand */
+  --color-hyperion-deep-sea: #1A5F54;
+  --color-hyperion-forest: #2D4A3E;
+
+  /* Secondary - Refreshment and structure */
+  --color-hyperion-sage-mint: #8FCACA;
+  --color-hyperion-cool-aqua: #A8DADC;
+  --color-hyperion-soft-sky: #CDEFEF;
+
+  /* Accent - Attention and action */
+  --color-hyperion-muted-gold: #C9A66B;
+  --color-hyperion-burnt-orange: #D97B5A;
+
+  /* Neutral - Structure and text */
+  --color-hyperion-cream: #F8F9F4;
+  --color-hyperion-fog-grey: #E5E7EB;
+  --color-hyperion-slate-grey: #4B5563;
+}
