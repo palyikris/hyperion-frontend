@@ -1,4 +1,4 @@
-import { SignupForm } from "../components/features/auth/SignupForm";
+import SignupForm from "../components/features/auth/SignupForm";
 import { Title } from "../components/shared/Title";
 
 export const SignupPage = () => {

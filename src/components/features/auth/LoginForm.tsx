@@ -1,20 +1,38 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Fingerprint, Key, LogIn } from "lucide-react";
 import { InputField } from "../../shared/InputField";
 import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
+import { loginSchema } from "../../../schemas/auth/auth";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import type { UserData } from "../../../types/auth/auth";
 
 export const LoginForm = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void =>
-    e.preventDefault();
+  const { login, isLoading } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Omit<UserData, "full_name">>({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur",
+  });
+
+  const onSubmit = (data: Omit<UserData, "full_name">) => {
+    login(data);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <InputField
         label="Email address"
         id="email"
         type="email"
         placeholder="agent@hyperion.eco"
         icon={Fingerprint}
+        inputProps={register("email")}
+        error={errors.email?.message}
       />
 
       <InputField
@@ -23,6 +41,8 @@ export const LoginForm = () => {
         type="password"
         placeholder="••••••••"
         icon={Key}
+        inputProps={register("password")}
+        error={errors.password?.message}
         rightAction={
           <a
             className="text-[10px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
@@ -34,7 +54,9 @@ export const LoginForm = () => {
       />
 
       <Button
-        text="Log In"
+        type="submit"
+        disabled={isLoading}
+        text={isLoading ? "Logging in..." : "Log In"}
         icon={<LogIn className="w-5 h-5 text-white" />}
       ></Button>
 

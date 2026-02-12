@@ -19,3 +19,14 @@
   --color-hyperion-fog-grey: #E5E7EB;
   --color-hyperion-slate-grey: #4B5563;
 }
+
+/* Fix contrast for Sonner descriptions when using dark brand backgrounds */
+[data-sonner-toast].hyperion-toast-success [data-description] {
+  color: var(--color-hyperion-soft-sky) !important;
+  opacity: 0.9;
+}
+
+[data-sonner-toast] [data-close-button] {
+  background: var(--color-hyperion-cream) !important;
+  color: var(--color-hyperion-slate-grey) !important;
+}

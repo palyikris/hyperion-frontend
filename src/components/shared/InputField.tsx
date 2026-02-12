@@ -1,13 +1,16 @@
 import { useState } from "react";
+import type { ComponentType, InputHTMLAttributes, ReactNode } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 type InputFieldProps = {
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   type: string;
   id: string;
   placeholder: string;
-  rightAction?: React.ReactNode;
+  rightAction?: ReactNode;
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
+  error?: string;
 };
 
 export const InputField = ({
@@ -17,10 +20,13 @@ export const InputField = ({
   id,
   placeholder,
   rightAction,
+  inputProps,
+  error,
 }: InputFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
+  const errorId = error ? `${id}-error` : undefined;
 
   return (
     <div className="w-full">
@@ -32,6 +38,14 @@ export const InputField = ({
           {label}
         </label>
         {rightAction}
+        {error && (
+          <p
+            id={errorId}
+            className="mt-1 ml-2 text-sm font-medium text-hyperion-burnt-orange"
+          >
+            {error}
+          </p>
+        )}
       </div>
       <div className="relative">
         <input
@@ -39,6 +53,9 @@ export const InputField = ({
           id={id}
           type={inputType}
           placeholder={placeholder}
+          aria-invalid={Boolean(error) || undefined}
+          aria-describedby={errorId}
+          {...inputProps}
         />
         <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 w-5 h-5 transition-all duration-300 peer-focus:text-hyperion-deep-sea peer-focus:scale-110 peer-focus:rotate-3 peer-focus:drop-shadow-[0_0_12px_rgba(26,95,84,0.8)] pointer-events-none" />
         {isPassword && (

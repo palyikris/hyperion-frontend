@@ -1,42 +1,66 @@
-import { Fingerprint, Key, UserPlus, User } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Mail, Lock, User } from "lucide-react";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import { signupSchema } from "../../../schemas/auth/auth";
+import type { UserData } from "../../../types/auth/auth";
 import { InputField } from "../../shared/InputField";
 import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
 
-export const SignupForm = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void =>
-    e.preventDefault();
+const SignupForm = () => {
+  const { signup, isLoading } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserData>({
+    resolver: zodResolver(signupSchema),
+    mode: "onBlur", // validates when a user leaves the input field
+  });
+
+  const onSubmit = (data: UserData) => {
+    signup(data);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <InputField
-        label="Full Name"
-        id="name"
-        type="text"
-        placeholder="John Doe"
+        label="Full name"
         icon={User}
+        type="text"
+        id="signup-full-name"
+        placeholder="Full name"
+        inputProps={register("full_name")}
+        error={errors.full_name?.message}
       />
 
       <InputField
-        label="Email address"
-        id="email"
+        label="Email"
+        icon={Mail}
         type="email"
-        placeholder="agent@hyperion.eco"
-        icon={Fingerprint}
+        id="signup-email"
+        placeholder="you@example.com"
+        inputProps={register("email")}
+        error={errors.email?.message}
       />
 
       <InputField
         label="Password"
-        id="password"
+        icon={Lock}
         type="password"
-        placeholder="••••••••"
-        icon={Key}
+        id="signup-password"
+        placeholder="Create a strong password"
+        inputProps={register("password")}
+        error={errors.password?.message}
       />
 
       <Button
-        text="Sign Up"
-        icon={<UserPlus className="w-5 h-5 text-white" />}
-      ></Button>
+        type="submit"
+        disabled={isLoading}
+        text={isLoading ? "Creating Account..." : "Sign Up"}
+      />
 
       <div className="w-full flex justify-center gap-2 items-center">
         <span className="text-[10px] text-hyperion-slate-grey/50">
@@ -46,9 +70,11 @@ export const SignupForm = () => {
           className="text-[12px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
           to="/login"
         >
-          Login
+          Log In
         </Link>
       </div>
     </form>
   );
 };
+
+export default SignupForm;
