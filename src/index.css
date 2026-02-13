@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&family=Plus+Jakarta+Sans:wght@500;700&display=swap');
+
 @import "tailwindcss";
 
 @theme {
@@ -29,4 +31,32 @@
 [data-sonner-toast] [data-close-button] {
   background: var(--color-hyperion-cream) !important;
   color: var(--color-hyperion-slate-grey) !important;
+}
+
+*{
+  box-sizing: border-box;
+  font-family: "SN Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+h1{
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
+}
+
+button {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+body, html {
+  padding: 0;
+  margin: 0;
+  background-color: var(--color-hyperion-cream);
 }

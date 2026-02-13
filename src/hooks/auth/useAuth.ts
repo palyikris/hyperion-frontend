@@ -24,20 +24,43 @@ export const useAuth = () => {
   // Login Hook
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onSuccess: (data) => {
-      localStorage.setItem("access_token", data.access_token);
+    onSuccess: () => {
       toastService.success("Welcome back!", "You have successfully logged in.");
-      setTimeout(() => {navigate("/dashboard"); }, 1500);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
     },
     onError: (err) => {
       console.error("Invalid email or password", err);
-      toastService.error("Login failed", "Invalid email or password. Please try again.");
+      toastService.error(
+        "Login failed",
+        "Invalid email or password. Please try again.",
+      );
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: authService.logout,
+    onSuccess: () => {
+      toastService.success("Logged out", "You have successfully logged out.");
+      localStorage.removeItem("user");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    },
+    onError: (err) => {
+      console.error("Logout failed", err);
+      toastService.error(
+        "Logout failed",
+        "An error occurred while logging out. Please try again.",
+      );
     },
   });
 
   return {
     signup: signupMutation.mutate,
     login: loginMutation.mutate,
+    logout: logoutMutation.mutate,
     isLoading: signupMutation.isPending || loginMutation.isPending,
     error: signupMutation.error || loginMutation.error,
   };

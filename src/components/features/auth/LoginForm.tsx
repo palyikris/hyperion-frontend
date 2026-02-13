@@ -44,12 +44,14 @@ export const LoginForm = () => {
         inputProps={register("password")}
         error={errors.password?.message}
         rightAction={
-          <a
-            className="text-[10px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
-            href="#"
-          >
-            Recovery?
-          </a>
+          errors ? null : (
+            <a
+              className="text-[10px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
+              href="#"
+            >
+              Recovery?
+            </a>
+          )
         }
       />
 
