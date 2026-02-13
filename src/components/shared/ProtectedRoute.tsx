@@ -5,7 +5,7 @@ import { useMeAuth } from "../../hooks/auth/useMeAuth";
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { data: user, isLoading, isError } = useMeAuth();
 
-  if (isLoading) return <div>Loading Hyperion...</div>;
+  if (isLoading) return null;
 
   if (isError || !user) {
     return <Navigate to="/login" replace />;
