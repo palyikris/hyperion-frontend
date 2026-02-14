@@ -1,22 +1,30 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { authService } from "../../services/authService";
 import { toastService } from "../../services/toastService";
 
 export const useAuth = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Signup Hook
   const signupMutation = useMutation({
     mutationFn: authService.signup,
     onSuccess: () => {
-      toastService.success("Account created successfully!", "Please log in to continue.");
+      toastService.success(
+        t("auth.toast.signupSuccessTitle"),
+        t("auth.toast.signupSuccessMessage"),
+      );
       setTimeout(() => {
         navigate("/login");
       }, 2000);
     },
     onError: (err) => {
-      toastService.error("Signup failed", "Please check your details and try again.");
+      toastService.error(
+        t("auth.toast.signupErrorTitle"),
+        t("auth.toast.signupErrorMessage"),
+      );
       console.error("Signup failed:", err);
     },
   });
@@ -25,7 +33,10 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onSuccess: () => {
-      toastService.success("Welcome back!", "You have successfully logged in.");
+      toastService.success(
+        t("auth.toast.loginSuccessTitle"),
+        t("auth.toast.loginSuccessMessage"),
+      );
       setTimeout(() => {
         navigate("/dashboard");
       }, 1500);
@@ -33,8 +44,8 @@ export const useAuth = () => {
     onError: (err) => {
       console.error("Invalid email or password", err);
       toastService.error(
-        "Login failed",
-        "Invalid email or password. Please try again.",
+        t("auth.toast.loginErrorTitle"),
+        t("auth.toast.loginErrorMessage"),
       );
     },
   });
@@ -42,7 +53,10 @@ export const useAuth = () => {
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
     onSuccess: () => {
-      toastService.success("Logged out", "You have successfully logged out.");
+      toastService.success(
+        t("auth.toast.logoutSuccessTitle"),
+        t("auth.toast.logoutSuccessMessage"),
+      );
       localStorage.removeItem("user");
       setTimeout(() => {
         navigate("/login");
@@ -51,8 +65,8 @@ export const useAuth = () => {
     onError: (err) => {
       console.error("Logout failed", err);
       toastService.error(
-        "Logout failed",
-        "An error occurred while logging out. Please try again.",
+        t("auth.toast.logoutErrorTitle"),
+        t("auth.toast.logoutErrorMessage"),
       );
     },
   });

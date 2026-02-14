@@ -1,14 +1,17 @@
+import { useTranslation } from "react-i18next";
 import { LoginForm } from "../components/features/auth/LoginForm";
 import { Title } from "../components/shared/Title";
 
 export const LoginPage = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="h-screen flex flex-col md:flex-row relative bg-hyperion-cream overflow-hidden">
       {/* Left Column: Stylized Scene */}
       <div className="hidden md:flex md:w-4/7 xl:w-3/5 relative overflow-hidden bg-gradient-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
         <img
           src="/public/forest.png"
-          alt="Auth image showing animals looking at trash"
+          alt={t("login.page.authImageAlt")}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 "
         />
         <div
@@ -39,7 +42,7 @@ export const LoginPage = () => {
             <div className="relative flex flex-col items-center">
               <div className="absolute -top-10 left-1/2 h-20 w-56 -translate-x-1/2 rounded-full bg-hyperion-forest/60 blur-3xl" />
               <Title
-                text="HYPERION"
+                text={t("login.page.brand")}
                 colorFrom="hyperion-forest"
                 colorVia="hyperion-deep-sea"
                 colorTo="hyperion-cool-aqua"
@@ -48,7 +51,7 @@ export const LoginPage = () => {
             </div>
             <img
               src="/public/logo.png"
-              alt="Hyperion logo image"
+              alt={t("login.page.logoAlt")}
               width={50}
               className="my-5"
             />

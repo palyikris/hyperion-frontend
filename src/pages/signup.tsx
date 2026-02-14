@@ -1,14 +1,17 @@
+import { useTranslation } from "react-i18next";
 import SignupForm from "../components/features/auth/SignupForm";
 import { Title } from "../components/shared/Title";
 
 export const SignupPage = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="h-screen flex flex-col lg:flex-row relative bg-hyperion-cream overflow-hidden">
       {/* Left Column: Stylized Scene */}
       <div className="hidden lg:flex lg:w-4/7 xl:w-4/6 relative overflow-hidden bg-gradient-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
         <img
           src="/public/forest.png"
-          alt="Auth image showing animals looking at trash"
+          alt={t("signup.page.authImageAlt")}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 "
         />
         <div
@@ -39,7 +42,7 @@ export const SignupPage = () => {
             <div className="relative flex flex-col items-center">
               <div className="absolute -top-10 left-1/2 h-20 w-56 -translate-x-1/2 rounded-full bg-hyperion-forest/25 blur-3xl" />
               <Title
-                text="HYPERION"
+                text={t("signup.page.brand")}
                 colorFrom="hyperion-forest"
                 colorVia="hyperion-deep-sea"
                 colorTo="hyperion-cool-aqua"

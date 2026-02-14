@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const LoadingScreen = () => {
+  const { t } = useTranslation();
   const [statusIndex, setStatusIndex] = useState(0);
   const statusMessages = [
-    "Counting tree canopies",
-    "Looking for some trash",
-    "Watching out for nice flowers",
-    "Protecting your natural beauties",
+    t("loading.status.countingCanopies"),
+    t("loading.status.lookingForTrash"),
+    t("loading.status.watchingFlowers"),
+    t("loading.status.protectingBeauties"),
   ];
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const LoadingScreen = () => {
               {/* Drone Asset */}
               <div className="flex justify-center items-center">
                 <img
-                  alt="Hyperion logo"
+                  alt={t("loading.logoAlt")}
                   className="w-48 h-48 sm:w-60 sm:h-60 object-contain drop-shadow-xl"
                   src="/public/logo.png"
                 />
@@ -65,8 +67,10 @@ const LoadingScreen = () => {
           {/* Progress and Branding */}
           <section className="mt-12 w-full flex flex-col items-center text-center">
             <h1 className="text-xl sm:text-2xl font-light tracking-[0.4em] uppercase mb-2">
-              Hyperion{" "}
-              <span className="text-hyperion-sage-mint font-bold">Systems</span>
+              {t("loading.brand")}{" "}
+              <span className="text-hyperion-sage-mint font-bold">
+                {t("loading.brandSuffix")}
+              </span>
             </h1>
 
             <p className="text-xs sm:text-sm mb-8 tracking-[0.25em] h-5 text-hyperion-soft-sky transition-opacity duration-500">
@@ -80,7 +84,7 @@ const LoadingScreen = () => {
             </div>
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-hyperion-cream/70">
               <span className="h-[1px] w-10 bg-hyperion-cream/30" />
-              Content appearing soon
+              {t("loading.contentSoon")}
               <span className="h-[1px] w-10 bg-hyperion-cream/30" />
             </div>
           </section>

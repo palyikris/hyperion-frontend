@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, User } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { signupSchema } from "../../../schemas/auth/auth";
 import type { UserData } from "../../../types/auth/auth";
@@ -9,6 +10,7 @@ import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
 
 const SignupForm = () => {
+  const { t } = useTranslation();
   const { signup, isLoading } = useAuth();
 
   const {
@@ -27,31 +29,31 @@ const SignupForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <InputField
-        label="Full name"
+        label={t("signup.form.fullNameLabel")}
         icon={User}
         type="text"
         id="signup-full-name"
-        placeholder="Full name"
+        placeholder={t("signup.form.fullNamePlaceholder")}
         inputProps={register("full_name")}
         error={errors.full_name?.message}
       />
 
       <InputField
-        label="Email"
+        label={t("signup.form.emailLabel")}
         icon={Mail}
         type="email"
         id="signup-email"
-        placeholder="you@example.com"
+        placeholder={t("signup.form.emailPlaceholder")}
         inputProps={register("email")}
         error={errors.email?.message}
       />
 
       <InputField
-        label="Password"
+        label={t("signup.form.passwordLabel")}
         icon={Lock}
         type="password"
         id="signup-password"
-        placeholder="Create a strong password"
+        placeholder={t("signup.form.passwordPlaceholder")}
         inputProps={register("password")}
         error={errors.password?.message}
       />
@@ -59,18 +61,22 @@ const SignupForm = () => {
       <Button
         type="submit"
         disabled={isLoading}
-        text={isLoading ? "Creating Account..." : "Sign Up"}
+        text={
+          isLoading
+            ? t("signup.form.creatingAccount")
+            : t("signup.form.submit")
+        }
       />
 
       <div className="w-full flex justify-center gap-2 items-center">
         <span className="text-[10px] text-hyperion-slate-grey/50">
-          Already have an account?{" "}
+          {t("signup.form.haveAccount")}{" "}
         </span>
         <Link
           className="text-[12px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
           to="/login"
         >
-          Log In
+          {t("signup.form.login")}
         </Link>
       </div>
     </form>

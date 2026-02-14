@@ -1,28 +1,44 @@
 import React from "react";
-
-import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { mainNavLinks } from "./navLinks";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { authService } from "../../services/authService";
+import { toastService } from "../../services/toastService";
 
 const SideNav = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const clipPathId = React.useId();
   const pathData = useLocation().pathname;
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const name = user.full_name || "User";
+  const name = user.full_name || t("nav.userFallback");
 
-  const {logout} = useAuth();
-  
-  const navLinksWithActive = mainNavLinks.map(link => ({
+  const navLinksWithActive = mainNavLinks.map((link) => ({
     ...link,
-    isActive: link.href === pathData
+    isActive: link.href === pathData,
   }));
 
-  const handleLogout = () => {
-    logout();
-  }
-  
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      toastService.success(
+        t("auth.toast.logoutSuccessTitle"),
+        t("auth.toast.logoutSuccessMessage"),
+      );
+      localStorage.removeItem("user");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (err) {
+      console.error("Logout failed", err);
+      toastService.error(
+        t("auth.toast.logoutErrorTitle"),
+        t("auth.toast.logoutErrorMessage"),
+      );
+    }
+  };
 
   const wavyStyle = {
     clipPath: `url(#${clipPathId})`,
@@ -46,7 +62,7 @@ const SideNav = () => {
       <div className="mb-12 px-5 flex items-center gap-4 w-full">
         <img src="/public/logo.png" alt="" width={40} />
         <span className="text-hyperion-cream font-bold text-xl opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap tracking-tight">
-          HYPERION
+          {t("nav.brand")}
         </span>
       </div>
 
@@ -54,7 +70,7 @@ const SideNav = () => {
       <nav className="flex flex-col gap-4 w-full px-4">
         {navLinksWithActive.map((link) => (
           <a
-            key={link.label}
+            key={link.labelKey}
             href={link.href}
             className={`flex items-center gap-4 p-3 rounded-xl transition-all w-full group/item
               ${
@@ -65,7 +81,7 @@ const SideNav = () => {
           >
             <link.icon className="min-w-[24px] w-6 h-6 shrink-0" />
             <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">
-              {link.label}
+              {t(link.labelKey)}
             </span>
           </a>
         ))}
@@ -80,7 +96,7 @@ const SideNav = () => {
         >
           <LogOut className="min-w-[24px] w-6 h-6 shrink-0" />
           <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">
-            Logout
+            {t("nav.logout")}
           </span>
         </button>
 
@@ -88,7 +104,7 @@ const SideNav = () => {
         <div className="flex items-center gap-4 p-1 w-full border-t border-white/5 pt-4">
           <div className="min-w-[40px] h-10 rounded-full overflow-hidden border-2 border-hyperion-burnt-orange shadow-lg shrink-0">
             <img
-              alt="User profile"
+              alt={t("nav.userProfileAlt")}
               className="w-full h-full object-cover"
               src="/public/avatar.png"
             />
@@ -97,8 +113,11 @@ const SideNav = () => {
             <p className="text-xs font-bold text-hyperion-cream whitespace-nowrap leading-none">
               {name}
             </p>
-            <a href="/settings" className="text-[10px] text-hyperion-sage-mint/70 hover:text-hyperion-sage-mint whitespace-nowrap uppercase tracking-widest mt-1 hover:underline decoration-hyperion-sage-mint/40 hover:decoration-hyperion-sage-mint transition-colors duration-200">
-              Go to Settings
+            <a
+              href="/settings"
+              className="text-[10px] text-hyperion-sage-mint/70 hover:text-hyperion-sage-mint whitespace-nowrap uppercase tracking-widest mt-1 hover:underline decoration-hyperion-sage-mint/40 hover:decoration-hyperion-sage-mint transition-colors duration-200"
+            >
+              {t("nav.goToSettings")}
             </a>
           </div>
         </div>

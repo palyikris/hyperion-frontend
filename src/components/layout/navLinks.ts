@@ -10,27 +10,27 @@ import type { NavLink } from "../../types/nav/links";
 
 export const mainNavLinks: NavLink[] = [
   {
-    label: "Dashboard",
+    labelKey: "nav.main.dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    label: "Map",
+    labelKey: "nav.main.map",
     href: "/map",
     icon: Map,
   },
   {
-    label: "Lab",
+    labelKey: "nav.main.lab",
     href: "/lab/1",
     icon: FlaskConical,
   },
   {
-    label: "Upload",
+    labelKey: "nav.main.upload",
     href: "/upload",
     icon: Upload,
   },
   {
-    label: "Vault",
+    labelKey: "nav.main.vault",
     href: "/vault",
     icon: Vault,
   },
@@ -38,7 +38,7 @@ export const mainNavLinks: NavLink[] = [
 
 export const utilityLinks = [
   {
-    label: "Settings",
+    labelKey: "nav.utility.settings",
     href: "/settings",
     icon: Settings,
   },

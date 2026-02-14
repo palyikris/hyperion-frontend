@@ -1,0 +1,83 @@
+{
+  "login": {
+    "page": {
+      "authImageAlt": "Auth image showing animals looking at trash",
+      "brand": "HYPERION",
+      "logoAlt": "Hyperion logo image"
+    },
+    "form": {
+      "emailLabel": "Email address",
+      "emailPlaceholder": "agent@hyperion.eco",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "recovery": "Recovery?",
+      "loggingIn": "Logging in...",
+      "submit": "Log In",
+      "noAccount": "Don't have an account?",
+      "signup": "Sign Up"
+    }
+  },
+  "signup": {
+    "page": {
+      "authImageAlt": "Auth image showing animals looking at trash",
+      "brand": "HYPERION"
+    },
+    "form": {
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "Full name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a strong password",
+      "creatingAccount": "Creating Account...",
+      "submit": "Sign Up",
+      "haveAccount": "Already have an account?",
+      "login": "Log In"
+    }
+  },
+  "nav": {
+    "brand": "HYPERION",
+    "logout": "Logout",
+    "userProfileAlt": "User profile",
+    "goToSettings": "Go to Settings",
+    "userFallback": "User",
+    "main": {
+      "dashboard": "Dashboard",
+      "map": "Map",
+      "lab": "Lab",
+      "upload": "Upload",
+      "vault": "Vault"
+    },
+    "utility": {
+      "settings": "Settings"
+    }
+  },
+  "loading": {
+    "logoAlt": "Hyperion logo",
+    "brand": "Hyperion",
+    "brandSuffix": "Systems",
+    "contentSoon": "Content appearing soon",
+    "status": {
+      "countingCanopies": "Counting tree canopies",
+      "lookingForTrash": "Looking for some trash",
+      "watchingFlowers": "Watching out for nice flowers",
+      "protectingBeauties": "Protecting your natural beauties"
+    }
+  },
+  "auth": {
+    "toast": {
+      "signupSuccessTitle": "Account created successfully!",
+      "signupSuccessMessage": "Please log in to continue.",
+      "signupErrorTitle": "Signup failed",
+      "signupErrorMessage": "Please check your details and try again.",
+      "loginSuccessTitle": "Welcome back!",
+      "loginSuccessMessage": "You have successfully logged in.",
+      "loginErrorTitle": "Login failed",
+      "loginErrorMessage": "Invalid email or password. Please try again.",
+      "logoutSuccessTitle": "Logged out",
+      "logoutSuccessMessage": "You have successfully logged out.",
+      "logoutErrorTitle": "Logout failed",
+      "logoutErrorMessage": "An error occurred while logging out. Please try again."
+    }
+  }
+}

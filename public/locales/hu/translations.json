@@ -1,0 +1,83 @@
+{
+  "login": {
+    "page": {
+      "authImageAlt": "Hitelesitesi kep: allatokat neznek a szemetre",
+      "brand": "HYPERION",
+      "logoAlt": "Hyperion logo kep"
+    },
+    "form": {
+      "emailLabel": "Email cim",
+      "emailPlaceholder": "agent@hyperion.eco",
+      "passwordLabel": "Jelszó",
+      "passwordPlaceholder": "••••••••",
+      "recovery": "Visszaállítás?",
+      "loggingIn": "Bejelentkezés...",
+      "submit": "Bejelentkezés",
+      "noAccount": "Nincs fiókod?",
+      "signup": "Regisztráció"
+    }
+  },
+  "signup": {
+    "page": {
+      "authImageAlt": "Hitelesitesi kep: allatokat neznek a szemetre",
+      "brand": "HYPERION"
+    },
+    "form": {
+      "fullNameLabel": "Teljes név",
+      "fullNamePlaceholder": "Teljes név",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Jelszó",
+      "passwordPlaceholder": "Hozz létre egy erős jelszót",
+      "creatingAccount": "Fiók létrehozása...",
+      "submit": "Regisztráció",
+      "haveAccount": "Már van fiókod?",
+      "login": "Bejelentkezés"
+    }
+  },
+  "nav": {
+    "brand": "HYPERION",
+    "logout": "Kijelentkezés",
+    "userProfileAlt": "Felhasznalo profil",
+    "goToSettings": "Beállítások",
+    "userFallback": "Felhasználó",
+    "main": {
+      "dashboard": "Vezetői felület",
+      "map": "Térkép",
+      "lab": "Labor",
+      "upload": "Feltöltés",
+      "vault": "Tároló"
+    },
+    "utility": {
+      "settings": "Beállítások"
+    }
+  },
+  "loading": {
+    "logoAlt": "Hyperion logo",
+    "brand": "Hyperion",
+    "brandSuffix": "Systems",
+    "contentSoon": "Tartalom hamarosan",
+    "status": {
+      "countingCanopies": "Lombkoronákat megszámolása",
+      "lookingForTrash": "Szemétkupacok keresése",
+      "watchingFlowers": "Szép virágok felkutatása",
+      "protectingBeauties": "Természeti szépségek védelme"
+    }
+  },
+  "auth": {
+    "toast": {
+      "signupSuccessTitle": "Fiók létrehozva",
+      "signupSuccessMessage": "Kérlek, jelentkezz be a folytatáshoz.",
+      "signupErrorTitle": "Sikertelen regisztráció",
+      "signupErrorMessage": "Ellenőrizd az adataidat és próbáld újra.",
+      "loginSuccessTitle": "Üdv újra!",
+      "loginSuccessMessage": "Sikeresen bejelentkeztél.",
+      "loginErrorTitle": "Sikertelen bejelentkezés",
+      "loginErrorMessage": "Hibás email vagy jelszó. Próbáld újra.",
+      "logoutSuccessTitle": "Kijelentkezve",
+      "logoutSuccessMessage": "Sikeresen kijelentkeztél.",
+      "logoutErrorTitle": "Sikertelen kijelentkezés",
+      "logoutErrorMessage": "Hiba történt kijelentkezés közben. Próbáld újra."
+    }
+  }
+}

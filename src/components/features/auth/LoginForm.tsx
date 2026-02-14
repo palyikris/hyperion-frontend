@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Fingerprint, Key, LogIn } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { InputField } from "../../shared/InputField";
 import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
@@ -9,6 +10,7 @@ import { useAuth } from "../../../hooks/auth/useAuth";
 import type { UserData } from "../../../types/auth/auth";
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const { login, isLoading } = useAuth();
   const {
     register,
@@ -26,20 +28,20 @@ export const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <InputField
-        label="Email address"
+        label={t("login.form.emailLabel")}
         id="email"
         type="email"
-        placeholder="agent@hyperion.eco"
+        placeholder={t("login.form.emailPlaceholder")}
         icon={Fingerprint}
         inputProps={register("email")}
         error={errors.email?.message}
       />
 
       <InputField
-        label="Password"
+        label={t("login.form.passwordLabel")}
         id="password"
         type="password"
-        placeholder="••••••••"
+        placeholder={t("login.form.passwordPlaceholder")}
         icon={Key}
         inputProps={register("password")}
         error={errors.password?.message}
@@ -49,7 +51,7 @@ export const LoginForm = () => {
               className="text-[10px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
               href="#"
             >
-              Recovery?
+              {t("login.form.recovery")}
             </a>
           )
         }
@@ -58,19 +60,21 @@ export const LoginForm = () => {
       <Button
         type="submit"
         disabled={isLoading}
-        text={isLoading ? "Logging in..." : "Log In"}
+        text={
+          isLoading ? t("login.form.loggingIn") : t("login.form.submit")
+        }
         icon={<LogIn className="w-5 h-5 text-white" />}
       ></Button>
 
       <div className="w-full flex justify-center gap-2 items-center">
         <span className="text-[10px] text-hyperion-slate-grey/50">
-          Don't have an account?{" "}
+          {t("login.form.noAccount")}{" "}
         </span>
         <Link
           className="text-[12px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
           to="/signup"
         >
-          Sign Up
+          {t("login.form.signup")}
         </Link>
       </div>
     </form>
