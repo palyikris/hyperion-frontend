@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const LoadingScreen = () => {
@@ -50,7 +50,10 @@ const LoadingScreen = () => {
               style={{ borderRadius: "42% 58% 70% 30% / 45% 45% 55% 55%" }}
             />
             <div className="absolute inset-2 rounded-full border border-hyperion-soft-sky/30 animate-slow-spin" />
-            <div className="absolute inset-8 rounded-full border border-hyperion-sage-mint/20 animate-slow-spin" style={{ animationDirection: "reverse" }} />
+            <div
+              className="absolute inset-8 rounded-full border border-hyperion-sage-mint/20 animate-slow-spin"
+              style={{ animationDirection: "reverse" }}
+            />
 
             <div className="relative z-10 flex flex-col items-center animate-floaty">
               {/* Drone Asset */}
@@ -78,9 +81,18 @@ const LoadingScreen = () => {
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-8">
-              <div className="w-2 h-8 bg-hyperion-sage-mint rounded-full animate-bounce" style={{ animationDelay: "0s" }} />
-              <div className="w-2 h-8 bg-hyperion-soft-sky rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
-              <div className="w-2 h-8 bg-hyperion-cream rounded-full animate-bounce" style={{ animationDelay: "0.4s" }} />
+              <div
+                className="w-2 h-8 bg-hyperion-sage-mint rounded-full animate-bounce"
+                style={{ animationDelay: "0s" }}
+              />
+              <div
+                className="w-2 h-8 bg-hyperion-soft-sky rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              />
+              <div
+                className="w-2 h-8 bg-hyperion-cream rounded-full animate-bounce"
+                style={{ animationDelay: "0.4s" }}
+              />
             </div>
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-hyperion-cream/70">
               <span className="h-[1px] w-10 bg-hyperion-cream/30" />
