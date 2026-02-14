@@ -1,16 +1,21 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Fingerprint, Key, LogIn } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { InputField } from "../../shared/InputField";
 import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
-import { loginSchema } from "../../../schemas/auth/auth";
+import { createLoginSchema } from "../../../schemas/auth/auth";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import type { UserData } from "../../../types/auth/auth";
 
 export const LoginForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const loginSchema = useMemo(
+    () => createLoginSchema(t),
+    [t, i18n.resolvedLanguage],
+  );
   const { login, isLoading } = useAuth();
   const {
     register,
@@ -60,9 +65,7 @@ export const LoginForm = () => {
       <Button
         type="submit"
         disabled={isLoading}
-        text={
-          isLoading ? t("login.form.loggingIn") : t("login.form.submit")
-        }
+        text={isLoading ? t("login.form.loggingIn") : t("login.form.submit")}
         icon={<LogIn className="w-5 h-5 text-white" />}
       ></Button>
 

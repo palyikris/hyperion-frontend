@@ -4,6 +4,7 @@ import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import { Toaster } from "sonner";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
+import SettingsPage from "./pages/settings";
 
 const AppRouter = () => {
   return (
@@ -27,7 +28,7 @@ const AppRouter = () => {
             <Route path="/lab/:id" element={<>lab</>} />
             <Route path="/upload" element={<>upload</>} />
             <Route path="/vault" element={<>media</>} />
-            <Route path="/settings" element={<>settings</>} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           <Route path="*" element={<>404</>} />

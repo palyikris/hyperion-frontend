@@ -78,6 +78,36 @@
       "logoutSuccessMessage": "Sikeresen kijelentkeztél.",
       "logoutErrorTitle": "Sikertelen kijelentkezés",
       "logoutErrorMessage": "Hiba történt kijelentkezés közben. Próbáld újra."
+    },
+    "validation": {
+      "invalidEmail": "Érvénytelen email cím",
+      "emailRequired": "Email cím megadása kötelező",
+      "passwordMinLength": "A jelszó legalább 8 karakter legyen",
+      "fullNameRequired": "A teljes név megadása kötelező"
+    }
+  },
+  "settings": {
+    "page": {
+      "currentOperator": "Jelenlegi kezelő",
+      "authorizationVerified": "Hozzáférés ellenőrizve"
+    },
+    "toast": {
+      "updateSuccessTitle": "Profil frissítve",
+      "updateSuccessMessage": "A profil adataid sikeresen frissítve.",
+      "updateErrorTitle": "Frissítés sikertelen",
+      "updateErrorMessage": "Hiba történt a profil frissítésekor. Kérlek, próbáld újra."
+    },
+    "form": {
+      "fullNameLabel": "Teljes név",
+      "fullNamePlaceholder": "Teljes név",
+      "languageLabel": "Alkalmazás nyelve",
+      "languageOptionEnglish": "Angol",
+      "languageOptionHungarian": "Magyar",
+      "submit": "Változások mentése"
+    },
+    "validation": {
+      "fullNameRequired": "A teljes név megadása kötelező",
+      "languageRequired": "Nyelv megadása kötelező"
     }
   }
 }

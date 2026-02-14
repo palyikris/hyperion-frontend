@@ -16,4 +16,9 @@ export const authService = {
     await api.post("/auth/logout");
     return;
   },
+
+  updateMe: async (userData: Partial<UserData>) => {
+    const { data } = await api.put("/auth/me", userData);
+    return data;
+  },
 };

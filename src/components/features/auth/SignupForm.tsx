@@ -1,16 +1,21 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, User } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import { signupSchema } from "../../../schemas/auth/auth";
+import { createSignupSchema } from "../../../schemas/auth/auth";
 import type { UserData } from "../../../types/auth/auth";
 import { InputField } from "../../shared/InputField";
 import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
 
 const SignupForm = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const signupSchema = useMemo(
+    () => createSignupSchema(t),
+    [t, i18n.resolvedLanguage],
+  );
   const { signup, isLoading } = useAuth();
 
   const {
@@ -62,9 +67,7 @@ const SignupForm = () => {
         type="submit"
         disabled={isLoading}
         text={
-          isLoading
-            ? t("signup.form.creatingAccount")
-            : t("signup.form.submit")
+          isLoading ? t("signup.form.creatingAccount") : t("signup.form.submit")
         }
       />
 
