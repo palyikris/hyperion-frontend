@@ -1,73 +1,85 @@
-# React + TypeScript + Vite
+# Hyperion Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hyperion is a brand-forward React app for an environmental monitoring platform, providing operator login, onboarding, and a protected shell for core tools (dashboard, map, lab, upload, and vault) as they come online.
 
-Currently, two official plugins are available:
+## What is here now
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Authentication UX: login and signup forms with validation and toasts
+- Protected app shell with a collapsible side nav
+- Settings page for profile name + language
+- Internationalization (English and Hungarian)
 
-## React Compiler
+## Planned app areas (placeholders wired)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Dashboard
+- Map
+- Lab
+- Upload
+- Vault
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19 + TypeScript
+- Vite
+- React Router
+- TanStack Query
+- React Hook Form + Zod
+- i18next
+- Tailwind CSS
+- Axios
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Prerequisites: Node.js 18+ and npm
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the app at the URL printed in the terminal (usually http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Environment variables
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create a `.env` file in the project root:
+
+```bash
+VITE_API_BASE_URL=http://localhost:8000/api
 ```
+
+The frontend expects the backend to expose the following endpoints:
+
+- `POST /auth/signup`
+- `POST /auth/login`
+- `POST /auth/logout`
+- `GET /auth/me`
+- `PUT /auth/me`
+
+Requests are sent with `withCredentials: true`, so configure CORS on the backend accordingly.
+
+## App routes
+
+- `/login`
+- `/signup`
+- `/dashboard` (protected)
+- `/map` (protected)
+- `/lab/:id` (protected)
+- `/upload` (protected)
+- `/vault` (protected)
+- `/settings` (protected)
+
+## Scripts
+
+- `npm run dev` - start the dev server
+- `npm run build` - typecheck and build
+- `npm run preview` - preview the production build
+- `npm run lint` - run ESLint
+
+## Localization
+
+Translations live under `public/locales` and are loaded at runtime. Supported languages:
+
+- English (`en`)
+- Hungarian (`hu`)
+
+The app also stores the user language in `localStorage` and applies it on login or profile update.
