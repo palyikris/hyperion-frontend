@@ -10,7 +10,7 @@ export const SignupPage = () => {
       {/* Left Column: Stylized Scene */}
       <div className="hidden lg:flex lg:w-4/7 xl:w-4/6 relative overflow-hidden bg-gradient-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
         <img
-          src="/public/forest.png"
+          src="/forest.png"
           alt={t("signup.page.authImageAlt")}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 "
         />

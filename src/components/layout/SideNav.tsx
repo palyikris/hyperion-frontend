@@ -60,7 +60,7 @@ const SideNav = () => {
       </svg>
       {/* Logo Section */}
       <div className="mb-12 px-5 flex items-center gap-4 w-full">
-        <img src="/public/logo.png" alt="" width={40} />
+        <img src="/logo.png" alt="" width={40} />
         <span className="text-hyperion-cream font-bold text-xl opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap tracking-tight">
           {t("nav.brand")}
         </span>
@@ -106,7 +106,7 @@ const SideNav = () => {
             <img
               alt={t("nav.userProfileAlt")}
               className="w-full h-full object-cover"
-              src="/public/avatar.png"
+              src="/avatar.png"
             />
           </div>
           <div className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 overflow-hidden">

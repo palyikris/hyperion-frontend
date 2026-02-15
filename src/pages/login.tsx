@@ -10,7 +10,7 @@ export const LoginPage = () => {
       {/* Left Column: Stylized Scene */}
       <div className="hidden md:flex md:w-4/7 xl:w-3/5 relative overflow-hidden bg-gradient-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
         <img
-          src="/public/forest.png"
+          src="/forest.png"
           alt={t("login.page.authImageAlt")}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 "
         />
@@ -50,7 +50,7 @@ export const LoginPage = () => {
               ></Title>
             </div>
             <img
-              src="/public/logo.png"
+              src="/logo.png"
               alt={t("login.page.logoAlt")}
               width={50}
               className="my-5"

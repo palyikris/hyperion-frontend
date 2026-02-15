@@ -29,7 +29,7 @@ const SettingsPage = () => {
                 <div className="w-16 h-24 bg-hyperion-muted-gold/20 rounded-xl"></div>
               </div>
               <div className="absolute bottom-2 right-2 bg-hyperion-deep-sea text-white p-2 rounded-full border-4 border-white">
-                <img src="/public/avatar.png" alt="" />
+                <img src="/avatar.png" alt="" />
               </div>
             </div>
 
