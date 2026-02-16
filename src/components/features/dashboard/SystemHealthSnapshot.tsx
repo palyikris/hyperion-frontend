@@ -106,22 +106,50 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             Server Load (CPU/RAM)
           </p>
-          <div className="mt-4 flex h-12 items-end gap-2">
+          <div className="mt-4 flex h-16 items-end gap-2">
             {loadValues.map((height, index) => (
               <div
                 key={`spark-${index}`}
-                className={`flex-1 rounded-md ${
-                  index % 2 === 0
-                    ? "bg-hyperion-deep-sea/75"
-                    : "bg-hyperion-burnt-orange/55"
-                }`}
-                style={{ height: `${Math.min(100, Math.max(5, height))}%` }}
-              />
+                className="flex-1 flex h-full flex-col items-center justify-end gap-1"
+              >
+                <div
+                  className={`w-full rounded-md transition-all ${
+                    index % 2 === 0
+                      ? "bg-hyperion-deep-sea/75"
+                      : "bg-hyperion-burnt-orange/55"
+                  }`}
+                  style={{ height: `${Math.min(100, Math.max(5, height))}%` }}
+                  title={`${Math.round(height)}%`}
+                />
+                <span className="text-[9px] font-bold text-hyperion-slate-grey/80">
+                  {Math.round(height)}%
+                </span>
+              </div>
             ))}
           </div>
-          <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-            Pulse line
-          </p>
+          <div className="mt-4 flex justify-between text-[10px] font-bold text-hyperion-slate-grey/70">
+            <div className="flex flex-col">
+              <span>Min:</span>
+              <span className="text-hyperion-deep-sea">
+                {Math.round(Math.min(...loadValues))}%
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span>Avg:</span>
+              <span className="text-hyperion-burnt-orange">
+                {Math.round(
+                  loadValues.reduce((a, b) => a + b, 0) / loadValues.length,
+                )}
+                %
+              </span>
+            </div>
+            <div className="flex flex-col items-end">
+              <span>Max:</span>
+              <span className="text-hyperion-forest">
+                {Math.round(Math.max(...loadValues))}%
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col items-start gap-3 lg:items-center">
