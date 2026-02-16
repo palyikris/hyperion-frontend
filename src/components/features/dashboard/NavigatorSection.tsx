@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { mainNavLinks, utilityLinks } from "../../layout/navLinks";
 
 const tileStyles =
-  "group relative flex flex-col items-center justify-center gap-3 overflow-hidden border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[rgba(26,95,84,0.24)_0px_22px_48px]";
+  "group relative flex flex-col items-center justify-center gap-3 overflow-hidden border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px]";
 
 const iconWrapStyles =
-  "flex h-12 w-12 items-center justify-center rounded-2xl bg-hyperion-deep-sea/15 text-hyperion-deep-sea transition-colors duration-300 group-hover:bg-hyperion-forest/30";
+  "flex h-12 w-12 items-center justify-center rounded-2xl bg-hyperion-deep-sea/15 text-hyperion-deep-sea transition-all duration-500 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:bg-hyperion-forest/30";
 
 const tilePalette = [
   {
@@ -71,18 +71,17 @@ const NavigatorSection = () => {
               style={{ borderRadius: palette.radius }}
             >
               <div
-                className={`absolute -right-6 top-3 h-14 w-24 opacity-80 ${palette.accent}`}
+                className={`absolute -right-8 top-1 h-16 w-28 opacity-70 blur-[1px] transition-all duration-500 ease-out group-hover:-right-4 group-hover:top-2 group-hover:rotate-6 group-hover:scale-110 ${palette.accent}`}
                 style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
               />
-              
-              
+
               <span className={iconWrapStyles}>
                 <link.icon className="h-6 w-6" />
               </span>
-              <span className="text-sm font-bold text-hyperion-forest">
+              <span className="text-sm font-bold text-hyperion-forest transition-transform duration-500 ease-out group-hover:translate-y-0.5">
                 {t(link.labelKey)}
               </span>
-              <span className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/70">
+              <span className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/70 transition-opacity duration-500 ease-out group-hover:opacity-90">
                 Action Tile
               </span>
             </Link>
