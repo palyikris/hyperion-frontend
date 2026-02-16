@@ -61,7 +61,7 @@ const LoadingScreen = () => {
                 <img
                   alt={t("loading.logoAlt")}
                   className="w-48 h-48 sm:w-60 sm:h-60 object-contain drop-shadow-xl"
-                  src="/public/logo.png"
+                  src="/logo.png"
                 />
               </div>
             </div>
