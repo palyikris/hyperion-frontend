@@ -1,11 +1,38 @@
 type TitleProps = {
   text: string;
-  colorFrom: string;
-  colorVia: string;
-  colorTo: string;
-  size: string;
+  colorFrom?: ColorOption;
+  colorVia?: ColorOption;
+  colorTo?: ColorOption;
+  size: SizeOption;
   className?: string;
 };
+
+type SizeOption =
+  | "xs"
+  | "sm"
+  | "base"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl"
+  | "6xl"
+  | "7xl"
+  | "8xl"
+  | "9xl";
+
+type ColorOption =
+  | "hyperion-forest"
+  | "hyperion-deep-sea"
+  | "hyperion-sage-mint"
+  | "hyperion-cool-aqua"
+  | "hyperion-soft-sky"
+  | "hyperion-muted-gold"
+  | "hyperion-burnt-orange"
+  | "hyperion-cream"
+  | "hyperion-fog-grey"
+  | "hyperion-slate-grey";
 
 const sizeClasses: Record<string, string> = {
   xs: "text-xs",
@@ -71,9 +98,12 @@ export const Title = ({
   className,
 }: TitleProps) => {
   const sizeClass = sizeClasses[size] ?? "text-5xl";
-  const fromClass = gradientColorClasses[colorFrom] ?? "from-hyperion-forest";
-  const viaClass = gradientViaColorClasses[colorVia] ?? "via-hyperion-deep-sea";
-  const toClass = gradientToColorClasses[colorTo] ?? "to-hyperion-cool-aqua";
+  const fromClass =
+    gradientColorClasses[colorFrom || ""] ?? "from-hyperion-forest";
+  const viaClass =
+    gradientViaColorClasses[colorVia || ""] ?? "via-hyperion-deep-sea";
+  const toClass =
+    gradientToColorClasses[colorTo || ""] ?? "to-hyperion-cool-aqua";
 
   return (
     <h1

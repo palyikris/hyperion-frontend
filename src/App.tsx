@@ -5,6 +5,7 @@ import SignupPage from "./pages/signup";
 import { Toaster } from "sonner";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import SettingsPage from "./pages/settings";
+import DashboardPage from "./pages/dashboard";
 
 const AppRouter = () => {
   return (
@@ -23,7 +24,7 @@ const AppRouter = () => {
             }
           >
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<>dashboard</>} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/map" element={<>map</>} />
             <Route path="/lab/:id" element={<>lab</>} />
             <Route path="/upload" element={<>upload</>} />
