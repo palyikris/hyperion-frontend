@@ -16,7 +16,10 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 404 && window.location.pathname !== "/login") {
+    if (
+      error?.response?.status === 401 &&
+      window.location.pathname !== "/login"
+    ) {
       window.location.assign("/login");
     }
 
