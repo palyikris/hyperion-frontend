@@ -5,6 +5,7 @@ import {
   Upload,
   Vault,
   Settings,
+  BarChart3,
 } from "lucide-react";
 import type { NavLink } from "../../types/nav/links";
 
@@ -13,6 +14,11 @@ export const mainNavLinks: NavLink[] = [
     labelKey: "nav.main.dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    labelKey: "nav.main.stats",
+    href: "/stats",
+    icon: BarChart3,
   },
   {
     labelKey: "nav.main.map",

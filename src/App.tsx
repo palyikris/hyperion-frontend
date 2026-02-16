@@ -25,6 +25,7 @@ const AppRouter = () => {
           >
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/stats" element={<>stats</>}></Route>
             <Route path="/map" element={<>map</>} />
             <Route path="/lab/:id" element={<>lab</>} />
             <Route path="/upload" element={<>upload</>} />

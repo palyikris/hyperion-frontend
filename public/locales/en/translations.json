@@ -46,7 +46,8 @@
       "map": "Map",
       "lab": "Lab",
       "upload": "Upload",
-      "vault": "Vault"
+      "vault": "Vault",
+      "stats": "Statistics"
     },
     "utility": {
       "settings": "Settings"

@@ -46,7 +46,8 @@
       "map": "Térkép",
       "lab": "Labor",
       "upload": "Feltöltés",
-      "vault": "Tároló"
+      "vault": "Tároló",
+      "stats": "Statisztikák"
     },
     "utility": {
       "settings": "Beállítások"
