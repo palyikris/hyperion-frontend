@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { authService } from "../../services/authService";
@@ -7,6 +7,7 @@ import { toastService } from "../../services/toastService";
 export const useAuth = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   // Signup Hook
   const signupMutation = useMutation({
@@ -58,6 +59,7 @@ export const useAuth = () => {
         t("auth.toast.logoutSuccessMessage"),
       );
       localStorage.removeItem("user");
+      queryClient.removeQueries({ queryKey: ["authUser"] });
       setTimeout(() => {
         navigate("/login");
       }, 1500);
