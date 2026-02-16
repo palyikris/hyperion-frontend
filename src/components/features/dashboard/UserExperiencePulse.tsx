@@ -33,6 +33,13 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
   const avgResponseTime = Number.isFinite(data.avg_response_time)
     ? Math.round(data.avg_response_time)
     : 0;
+  const responseTimeClass = avgResponseTime
+    ? avgResponseTime <= 200
+      ? "text-hyperion-forest"
+      : avgResponseTime <= 500
+        ? "text-hyperion-burnt-orange"
+        : "text-red-600"
+    : "text-hyperion-slate-grey/70";
 
   return (
     <section className="space-y-4">
@@ -71,7 +78,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             {t("dashboard.userExperience.avgResponseTime")}
           </p>
 
-          <div className="mt-4 text-6xl font-black text-hyperion-forest">
+          <div className={`mt-4 text-6xl font-black ${responseTimeClass}`}>
             {avgResponseTime
               ? `${avgResponseTime}${t("dashboard.userExperience.ms")}`
               : "—"}
@@ -83,7 +90,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
         >
           <div
-            className="pointer-events-none absolute -top-6 right-10 h-16 w-20 bg-hyperion-sage-mint/55"
+            className="pointer-events-none absolute -top-10 right-10 h-16 w-20 bg-hyperion-sage-mint/55"
             style={{ borderRadius: "64% 36% 54% 46% / 54% 46% 54% 46%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
