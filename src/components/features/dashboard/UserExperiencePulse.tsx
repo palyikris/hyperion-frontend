@@ -1,4 +1,5 @@
 import type { UXResponse } from "../../../types/dashboard/dashboard";
+import { useTranslation } from "react-i18next";
 
 type UserExperiencePulseProps = {
   data: UXResponse;
@@ -22,6 +23,7 @@ const normalizeActivity = (values: number[]) => {
 };
 
 const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
+  const { t } = useTranslation();
   const activity = normalizeActivity(
     data.daily_activity && data.daily_activity.length > 0
       ? data.daily_activity
@@ -36,7 +38,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
     <section className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          User Experience Pulse
+          {t("dashboard.userExperience.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
@@ -50,7 +52,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Active Now
+            {t("dashboard.userExperience.activeNow")}
           </p>
           <p className="mt-4 text-6xl font-black text-hyperion-forest">
             {activeNow.toLocaleString()}
@@ -66,11 +68,13 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Avg. Response Time
+            {t("dashboard.userExperience.avgResponseTime")}
           </p>
 
           <div className="mt-4 text-6xl font-black text-hyperion-forest">
-            {avgResponseTime ? `${avgResponseTime}ms` : "—"}
+            {avgResponseTime
+              ? `${avgResponseTime}${t("dashboard.userExperience.ms")}`
+              : "—"}
           </div>
         </div>
 
@@ -83,7 +87,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             style={{ borderRadius: "64% 36% 54% 46% / 54% 46% 54% 46%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Daily Activity (7 Days)
+            {t("dashboard.userExperience.dailyActivity")}
           </p>
           <div className="mt-6 flex flex-1 items-end gap-2">
             {activity.map((height, index) => (
@@ -97,7 +101,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             ))}
           </div>
           <p className="mt-4 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-            Rolling 7-day usage
+            {t("dashboard.userExperience.rollingUsage")}
           </p>
         </div>
       </div>

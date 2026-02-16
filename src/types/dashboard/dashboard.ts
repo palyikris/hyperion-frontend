@@ -3,6 +3,7 @@ export interface SystemHealthResponse {
   environment: string;
   uptime?: number | null;
   server_load?: number[] | null;
+  last_updated?: string | null;
 }
 
 export interface UXResponse {

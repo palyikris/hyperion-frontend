@@ -55,7 +55,7 @@ const NavigatorSection = () => {
     <section className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          The Navigator
+          {t("dashboard.navigator.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
@@ -82,7 +82,7 @@ const NavigatorSection = () => {
                 {t(link.labelKey)}
               </span>
               <span className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/70 transition-opacity duration-500 ease-out group-hover:opacity-90">
-                Action Tile
+                {t("dashboard.navigator.actionTile")}
               </span>
             </Link>
           );

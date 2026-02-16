@@ -110,5 +110,42 @@
       "fullNameRequired": "A teljes név megadása kötelező",
       "languageRequired": "Nyelv megadása kötelező"
     }
+  },
+  "dashboard": {
+    "page": {
+      "title": "Vezetői felület",
+      "subtitle": "Rendszeráttekintés és kulcsmetrikák"
+    },
+    "navigator": {
+      "title": "A Navigátor",
+      "actionTile": "Akció csempe"
+    },
+    "systemHealth": {
+      "title": "Rendszerállapot pillanatkép",
+      "uptimeGauge": "Üzemidő mérő",
+      "systemStability": "Rendszerstabilitás",
+      "serverLoad": "Szerverterhelés (CPU/RAM)",
+      "environmentStatus": "Környezeti állapot",
+      "lastUpdated": "Utoljára frissítve",
+      "min": "Min",
+      "avg": "Átlag",
+      "max": "Max"
+    },
+    "userExperience": {
+      "title": "Felhasználói élmény pulzusa",
+      "activeNow": "Aktív most",
+      "avgResponseTime": "Átlagos válaszidő",
+      "dailyActivity": "Napi aktivitás (7 nap)",
+      "rollingUsage": "Gördülő 7 napos használat",
+      "ms": "ms"
+    },
+    "aiWorkers": {
+      "title": "AI dolgozók állapota",
+      "activeFleet": "Aktív flotta",
+      "totalWorkersOnline": "Összes online dolgozó",
+      "workerNodes": "Dolgozó csomópontok",
+      "live": "Élő",
+      "nodeStatus": "Csomópont állapot"
+    }
   }
 }

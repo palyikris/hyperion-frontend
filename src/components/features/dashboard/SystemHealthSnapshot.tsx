@@ -1,4 +1,5 @@
 import type { SystemHealthResponse } from "../../../types/dashboard/dashboard";
+import { useTranslation } from "react-i18next";
 
 type SystemHealthSnapshotProps = {
   data: SystemHealthResponse;
@@ -24,6 +25,7 @@ const normalizeLoadValues = (values: number[]) => {
 };
 
 const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
+  const { t } = useTranslation();
   const uptimeValue = typeof data.uptime === "number" ? data.uptime : null;
   const uptimePercent = uptimeValue !== null ? clampPercent(uptimeValue) : 0;
   const radius = 40;
@@ -38,12 +40,15 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
     ? data.environment.toUpperCase()
     : "UNKNOWN";
   const statusLabel = data.status ? data.status.toUpperCase() : "UNKNOWN";
+  const lastUpdatedLabel = data.last_updated
+    ? new Date(data.last_updated).toLocaleString()
+    : "--";
 
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          System Health Snapshot
+          {t("dashboard.systemHealth.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
@@ -52,7 +57,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
         style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
       >
         <div
-          className="pointer-events-none absolute -top-10 right-10 h-24 w-40 bg-hyperion-soft-sky/70"
+          className="pointer-events-none absolute -top-16 right-10 h-24 w-40 bg-hyperion-soft-sky/70"
           style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
         />
         <div
@@ -91,10 +96,10 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           </div>
           <div>
             <p className="text-lg font-bold text-hyperion-forest">
-              Uptime Gauge
+              {t("dashboard.systemHealth.uptimeGauge")}
             </p>
             <p className="text-xs uppercase tracking-[0.3em] text-hyperion-slate-grey/70">
-              System Stability
+              {t("dashboard.systemHealth.systemStability")}
             </p>
             <span className="mt-2 inline-flex items-center rounded-full bg-hyperion-deep-sea/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-deep-sea">
               {statusLabel}
@@ -104,7 +109,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
 
         <div className="flex-1">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Server Load (CPU/RAM)
+            {t("dashboard.systemHealth.serverLoad")}
           </p>
           <div className="mt-4 flex h-16 items-end gap-2">
             {loadValues.map((height, index) => (
@@ -129,13 +134,13 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           </div>
           <div className="mt-4 flex justify-between text-[10px] font-bold text-hyperion-slate-grey/70">
             <div className="flex flex-col">
-              <span>Min:</span>
+              <span>{t("dashboard.systemHealth.min")}:</span>
               <span className="text-hyperion-deep-sea">
                 {Math.round(Math.min(...loadValues))}%
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span>Avg:</span>
+              <span>{t("dashboard.systemHealth.avg")}:</span>
               <span className="text-hyperion-burnt-orange">
                 {Math.round(
                   loadValues.reduce((a, b) => a + b, 0) / loadValues.length,
@@ -144,7 +149,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
               </span>
             </div>
             <div className="flex flex-col items-end">
-              <span>Max:</span>
+              <span>{t("dashboard.systemHealth.max")}:</span>
               <span className="text-hyperion-forest">
                 {Math.round(Math.max(...loadValues))}%
               </span>
@@ -152,12 +157,16 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           </div>
         </div>
 
-        <div className="flex flex-col items-start gap-3 lg:items-center">
+        <div className="flex flex-col items-start gap-2 lg:items-center">
           <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Environment Status
+            {t("dashboard.systemHealth.environmentStatus")}
           </span>
           <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-600 shadow-[0_0_18px_rgba(16,185,129,0.35)]">
             {environmentLabel}: {statusLabel}
+          </span>
+          <span className="flex justify-center items-center flex-col text-[10px] font-bold uppercase tracking-[0.25em] text-hyperion-slate-grey/70 min-w-60 mt-4">
+            <span>{t("dashboard.systemHealth.lastUpdated")}:</span>{" "}
+            <span>{lastUpdatedLabel}</span>
           </span>
         </div>
       </div>

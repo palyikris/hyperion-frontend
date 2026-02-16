@@ -7,8 +7,10 @@ import { Title } from "../components/shared/Title";
 import { useAIWorkers } from "../hooks/dashboard/useAIWorkers";
 import { useSystemHealth } from "../hooks/dashboard/useSystemHealth";
 import { useUserExperience } from "../hooks/dashboard/useUserExperience";
+import { useTranslation } from "react-i18next";
 
 const DashboardPage = () => {
+  const { t } = useTranslation();
   const systemHealthQuery = useSystemHealth();
   const userExperienceQuery = useUserExperience();
   const aiWorkersQuery = useAIWorkers();
@@ -65,9 +67,9 @@ const DashboardPage = () => {
       </div>
       <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10 lg:pl-32 xl:pl-40">
         <header className="flex flex-col items-start gap-4">
-          <Title text="Dashboard" size="4xl" />
+          <Title text={t("dashboard.page.title")} size="4xl" />
           <p className="text-sm uppercase tracking-[0.4em] text-hyperion-slate-grey/70">
-            System overview and key metrics
+            {t("dashboard.page.subtitle")}
           </p>
         </header>
 

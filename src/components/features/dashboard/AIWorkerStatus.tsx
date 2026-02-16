@@ -1,4 +1,5 @@
 import type { AIWorkersResponse } from "../../../types/dashboard/dashboard";
+import { useTranslation } from "react-i18next";
 
 type AIWorkerStatusProps = {
   data: AIWorkersResponse;
@@ -24,6 +25,7 @@ const getStatusTone = (status: string) => {
 };
 
 const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
+  const { t } = useTranslation();
   const nodes = data.nodes ?? [];
   const clusterStatus = data.cluster_status
     ? data.cluster_status.toUpperCase()
@@ -32,7 +34,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
     <section className="space-y-4">
       <div className="flex items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          AI Worker Status
+          {t("dashboard.aiWorkers.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
@@ -50,14 +52,14 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
             style={{ borderRadius: "60% 40% 52% 48% / 46% 54% 46% 54%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            Active Fleet
+            {t("dashboard.aiWorkers.activeFleet")}
           </p>
           <div className="mt-6">
             <p className="text-5xl font-black text-hyperion-forest">
               {data.total_active_fleet}
             </p>
             <p className="mt-2 text-xs uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-              Total workers online
+              {t("dashboard.aiWorkers.totalWorkersOnline")}
             </p>
           </div>
           <div className="mt-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
@@ -72,10 +74,10 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
         >
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-              Worker Nodes
+              {t("dashboard.aiWorkers.workerNodes")}
             </p>
             <span className="rounded-full bg-hyperion-deep-sea/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-deep-sea">
-              Live
+              {t("dashboard.aiWorkers.live")}
             </span>
           </div>
           <div className="mt-6 space-y-3">
@@ -89,7 +91,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                     {worker.name}
                   </p>
                   <p className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-                    Node status
+                    {t("dashboard.aiWorkers.nodeStatus")}
                   </p>
                 </div>
                 <span
