@@ -1,5 +1,36 @@
-const UserExperiencePulse = () => {
-  const activity = [40, 65, 55, 80, 95, 70, 85];
+import type { UXResponse } from "../../../types/dashboard";
+
+type UserExperiencePulseProps = {
+  data: UXResponse;
+};
+
+const normalizeActivity = (values: number[]) => {
+  if (values.length === 0) {
+    return values;
+  }
+
+  const max = Math.max(...values);
+  if (max <= 1) {
+    return values.map((value) => value * 100);
+  }
+
+  if (max <= 100) {
+    return values;
+  }
+
+  return values.map((value) => (value / max) * 100);
+};
+
+const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
+  const activity = normalizeActivity(
+    data.daily_activity && data.daily_activity.length > 0
+      ? data.daily_activity
+      : [40, 65, 55, 80, 95, 70, 85],
+  );
+  const activeNow = data.active_now ?? 0;
+  const avgResponseTime = Number.isFinite(data.avg_response_time)
+    ? Math.round(data.avg_response_time)
+    : 0;
 
   return (
     <section className="space-y-4">
@@ -21,9 +52,8 @@ const UserExperiencePulse = () => {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             Active Now
           </p>
-          <p className="mt-4 text-6xl font-black text-hyperion-forest">1,284</p>
-          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">
-            +12% vs last hour
+          <p className="mt-4 text-6xl font-black text-hyperion-forest">
+            {activeNow.toLocaleString()}
           </p>
         </div>
 
@@ -32,25 +62,16 @@ const UserExperiencePulse = () => {
           style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
         >
           <div
-            className="pointer-events-none absolute -bottom-8 right-4 h-24 w-28 bg-hyperion-burnt-orange/35"
+            className="pointer-events-none absolute -bottom-16 right-4 h-24 w-28 bg-hyperion-burnt-orange/35"
             style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             Avg. Response Time
           </p>
-          <div className="relative mt-6 h-16 w-32">
-            <div className="absolute inset-0 rounded-full border-[10px] border-hyperion-fog-grey" />
-            <div
-              className="absolute inset-0 rounded-full border-[10px] border-hyperion-burnt-orange"
-              style={{ clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)" }}
-            />
-            <div className="absolute inset-0 flex items-end justify-center pb-1 text-2xl font-bold text-hyperion-forest">
-              120ms
-            </div>
+
+          <div className="mt-4 text-6xl font-black text-hyperion-forest">
+            {avgResponseTime ? `${avgResponseTime}ms` : "—"}
           </div>
-          <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.35em] text-hyperion-burnt-orange">
-            Optimized
-          </p>
         </div>
 
         <div
@@ -71,7 +92,7 @@ const UserExperiencePulse = () => {
                 className={`flex-1 rounded-t-lg ${
                   index === 4 ? "bg-hyperion-deep-sea" : "bg-hyperion-sage-mint"
                 }`}
-                style={{ height: `${height}%` }}
+                style={{ height: `${Math.min(100, Math.max(5, height))}%` }}
               />
             ))}
           </div>

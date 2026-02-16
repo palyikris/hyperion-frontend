@@ -1,8 +1,43 @@
-const SystemHealthSnapshot = () => {
-  const uptime = 99.9;
+import type { SystemHealthResponse } from "../../../types/dashboard";
+
+type SystemHealthSnapshotProps = {
+  data: SystemHealthResponse;
+};
+
+const clampPercent = (value: number) => Math.min(100, Math.max(0, value));
+
+const normalizeLoadValues = (values: number[]) => {
+  if (values.length === 0) {
+    return values;
+  }
+
+  const max = Math.max(...values);
+  if (max <= 1) {
+    return values.map((value) => value * 100);
+  }
+
+  if (max <= 100) {
+    return values;
+  }
+
+  return values.map((value) => (value / max) * 100);
+};
+
+const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
+  const uptimeValue = typeof data.uptime === "number" ? data.uptime : null;
+  const uptimePercent = uptimeValue !== null ? clampPercent(uptimeValue) : 0;
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (uptime / 100) * circumference;
+  const offset = circumference - (uptimePercent / 100) * circumference;
+  const loadValues = normalizeLoadValues(
+    data.server_load && data.server_load.length > 0
+      ? data.server_load
+      : [20, 45, 70, 90, 60, 35, 50],
+  );
+  const environmentLabel = data.environment
+    ? data.environment.toUpperCase()
+    : "UNKNOWN";
+  const statusLabel = data.status ? data.status.toUpperCase() : "UNKNOWN";
 
   return (
     <section className="space-y-4">
@@ -24,7 +59,7 @@ const SystemHealthSnapshot = () => {
           className="pointer-events-none absolute -bottom-12 left-6 h-32 w-32 bg-hyperion-sage-mint/60"
           style={{ borderRadius: "50% 50% 62% 38% / 46% 54% 46% 54%" }}
         />
-        
+
         <div className="flex items-center gap-6">
           <div className="relative h-24 w-24">
             <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
@@ -51,16 +86,18 @@ const SystemHealthSnapshot = () => {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center text-sm font-bold text-hyperion-deep-sea">
-              {uptime}%
+              {uptimeValue !== null ? `${Math.round(uptimePercent)}%` : "--"}
             </div>
           </div>
           <div>
-            <p className="text-lg font-bold text-hyperion-forest">Uptime Gauge</p>
+            <p className="text-lg font-bold text-hyperion-forest">
+              Uptime Gauge
+            </p>
             <p className="text-xs uppercase tracking-[0.3em] text-hyperion-slate-grey/70">
               System Stability
             </p>
             <span className="mt-2 inline-flex items-center rounded-full bg-hyperion-deep-sea/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-deep-sea">
-              Greenline
+              {statusLabel}
             </span>
           </div>
         </div>
@@ -70,7 +107,7 @@ const SystemHealthSnapshot = () => {
             Server Load (CPU/RAM)
           </p>
           <div className="mt-4 flex h-12 items-end gap-2">
-            {[20, 45, 70, 90, 60, 35, 50].map((height, index) => (
+            {loadValues.map((height, index) => (
               <div
                 key={`spark-${index}`}
                 className={`flex-1 rounded-md ${
@@ -78,7 +115,7 @@ const SystemHealthSnapshot = () => {
                     ? "bg-hyperion-deep-sea/75"
                     : "bg-hyperion-burnt-orange/55"
                 }`}
-                style={{ height: `${height}%` }}
+                style={{ height: `${Math.min(100, Math.max(5, height))}%` }}
               />
             ))}
           </div>
@@ -92,7 +129,7 @@ const SystemHealthSnapshot = () => {
             Environment Status
           </span>
           <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-600 shadow-[0_0_18px_rgba(16,185,129,0.35)]">
-            PROD: ACTIVE
+            {environmentLabel}: {statusLabel}
           </span>
         </div>
       </div>
