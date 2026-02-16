@@ -12,7 +12,10 @@ const SystemHealthSnapshot = () => {
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
-      <div className="relative flex flex-col gap-8 overflow-hidden rounded-[36px] border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px] lg:flex-row lg:items-center">
+      <div
+        className="relative flex flex-col gap-8 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px] lg:flex-row lg:items-center"
+        style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
+      >
         <div
           className="pointer-events-none absolute -top-10 right-10 h-24 w-40 bg-hyperion-soft-sky/70"
           style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}

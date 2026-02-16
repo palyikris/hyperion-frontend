@@ -10,7 +10,10 @@ const UserExperiencePulse = () => {
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[34px] border border-hyperion-forest/35 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]">
+        <div
+          className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-forest/35 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
+        >
           <div
             className="pointer-events-none absolute -top-8 left-6 h-20 w-24 bg-hyperion-soft-sky/70"
             style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
@@ -24,7 +27,10 @@ const UserExperiencePulse = () => {
           </p>
         </div>
 
-        <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[34px] border border-hyperion-burnt-orange/40 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]">
+        <div
+          className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-burnt-orange/40 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
+        >
           <div
             className="pointer-events-none absolute -bottom-8 right-4 h-24 w-28 bg-hyperion-burnt-orange/35"
             style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
@@ -47,7 +53,10 @@ const UserExperiencePulse = () => {
           </p>
         </div>
 
-        <div className="relative flex h-full flex-col overflow-hidden rounded-[34px] border border-hyperion-sage-mint/45 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]">
+        <div
+          className="relative flex h-full flex-col overflow-hidden border border-hyperion-sage-mint/45 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
+        >
           <div
             className="pointer-events-none absolute -top-6 right-10 h-16 w-20 bg-hyperion-sage-mint/55"
             style={{ borderRadius: "64% 36% 54% 46% / 54% 46% 54% 46%" }}

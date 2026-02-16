@@ -15,7 +15,10 @@ const AIWorkerStatus = () => {
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr]">
-        <div className="relative flex flex-col justify-between overflow-hidden rounded-[34px] border border-hyperion-forest/40 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]">
+        <div
+          className="relative flex flex-col justify-between overflow-hidden border border-hyperion-forest/40 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
+        >
          
           <div
             className="pointer-events-none absolute -bottom-10 right-6 h-24 w-28 bg-hyperion-soft-sky/70"
@@ -40,7 +43,10 @@ const AIWorkerStatus = () => {
           </div>
         </div>
 
-        <div className="relative rounded-[34px] border border-hyperion-deep-sea/30 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]">
+        <div
+          className="relative border border-hyperion-deep-sea/30 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
+        >
           
           
           
