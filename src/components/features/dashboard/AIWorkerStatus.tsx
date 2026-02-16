@@ -1,4 +1,4 @@
-import type { AIWorkersResponse } from "../../../types/dashboard";
+import type { AIWorkersResponse } from "../../../types/dashboard/dashboard";
 
 type AIWorkerStatusProps = {
   data: AIWorkersResponse;

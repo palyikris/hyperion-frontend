@@ -1,4 +1,4 @@
-import type { UXResponse } from "../../../types/dashboard";
+import type { UXResponse } from "../../../types/dashboard/dashboard";
 
 type UserExperiencePulseProps = {
   data: UXResponse;

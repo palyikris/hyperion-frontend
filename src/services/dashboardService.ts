@@ -3,7 +3,7 @@ import type {
   AIWorkersResponse,
   SystemHealthResponse,
   UXResponse,
-} from "../types/dashboard";
+} from "../types/dashboard/dashboard";
 
 export const dashboardService = {
   getSystemHealth: async () => {

@@ -1,4 +1,4 @@
-import type { SystemHealthResponse } from "../../../types/dashboard";
+import type { SystemHealthResponse } from "../../../types/dashboard/dashboard";
 
 type SystemHealthSnapshotProps = {
   data: SystemHealthResponse;
