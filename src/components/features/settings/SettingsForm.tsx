@@ -23,6 +23,7 @@ export const SettingsForm = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const update = useUpdateMe();
+  const isSubmitting = update.isPending;
 
   const {
     register,
@@ -42,7 +43,11 @@ export const SettingsForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex-1 space-y-8">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex-1 space-y-8"
+      aria-busy={isSubmitting}
+    >
       <InputField
         label={t("settings.form.fullNameLabel")}
         icon={User}
@@ -69,8 +74,9 @@ export const SettingsForm = () => {
       <div className="pt-4 space-y-4">
         <Button
           type="submit"
-          text={t("settings.form.submit")}
+          text={isSubmitting ? `${t("settings.form.submit")}...` : t("settings.form.submit")}
           icon={<Download size={15} />}
+          disabled={isSubmitting}
         />
       </div>
     </form>
