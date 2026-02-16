@@ -37,7 +37,7 @@ export const SignupPage = () => {
 
       {/* Right Column: Login Card */}
       <div className="flex-1 flex flex-col justify-center items-center relative">
-        <div className="w-full z-10 pr-4">
+        <div className="w-full z-10 pr-4 flex justify-center items-center flex-col">
           <div className="w-full flex justify-center items-center flex-col">
             <div className="relative flex flex-col items-center">
               <div className="absolute -top-10 left-1/2 h-20 w-56 -translate-x-1/2 rounded-full bg-hyperion-forest/25 blur-3xl" />
@@ -52,7 +52,7 @@ export const SignupPage = () => {
             </div>
           </div>
           <div
-            className="p-16 border border-hyperion-muted-gold/60 bg-white/50 backdrop-blur-sm relative"
+            className="p-16 border border-hyperion-muted-gold/60 bg-white/50 backdrop-blur-sm relative xl:min-w-xl"
             style={{
               borderRadius: "31% 69% 47% 53% / 61% 30% 70% 39% ",
               boxShadow: "rgba(26,95,84, 0.3) 0px 1px 4px",

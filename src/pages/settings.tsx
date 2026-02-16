@@ -21,7 +21,7 @@ const SettingsPage = () => {
       />
       <div className="pointer-events-none absolute right-12 top-16 h-2 w-16 rounded-full bg-hyperion-muted-gold/40" />
 
-      <div className="relative w-full max-max-w-3xl bg-white/90 backdrop-blur-sm rounded-[40px] shadow-[rgba(26,95,84,0.16)_0px_24px_90px] overflow-hidden border border-hyperion-fog-grey">
+      <div className="relative w-full max-w-7xl bg-white/90 backdrop-blur-sm rounded-[40px] shadow-[rgba(26,95,84,0.16)_0px_24px_90px] overflow-hidden border border-hyperion-fog-grey">
         <div className="p-12 flex flex-col md:flex-row gap-16">
           <div className="flex flex-col items-center text-center space-y-6 md:w-1/3">
             <div className="relative">
@@ -29,7 +29,7 @@ const SettingsPage = () => {
                 <div className="w-16 h-24 bg-hyperion-muted-gold/20 rounded-xl"></div>
               </div>
               <div className="absolute bottom-2 right-2 bg-hyperion-deep-sea text-white p-2 rounded-full border-4 border-white">
-                <img src="/avatar.png" alt="" />
+                <img src="/avatar.png" alt="Hyperion avatar image" />
               </div>
             </div>
 
