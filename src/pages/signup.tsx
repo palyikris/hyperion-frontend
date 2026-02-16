@@ -29,7 +29,7 @@ export const SignupPage = () => {
           >
             <path
               className="fill-hyperion-cream"
-              d="M100 0 Q 50 80, 65 190 Q 75 320, 45 430 Q 30 560, 72 680 Q 105 790, 40 900 Q 20 950, 100 1000 L 100 0 Z"
+              d="M100 0 C 55 80, 80 190, 55 290 S 30 500, 60 600 S 100 780, 55 880 S 30 950, 100 1000 L 100 0 Z"
             ></path>
           </svg>
         </div>

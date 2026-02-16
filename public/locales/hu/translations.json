@@ -42,7 +42,7 @@
     "goToSettings": "Beállítások",
     "userFallback": "Felhasználó",
     "main": {
-      "dashboard": "Vezetői felület",
+      "dashboard": "Vezérlő felület",
       "map": "Térkép",
       "lab": "Labor",
       "upload": "Feltöltés",
@@ -59,10 +59,10 @@
     "brandSuffix": "Systems",
     "contentSoon": "Tartalom hamarosan",
     "status": {
-      "countingCanopies": "Lombkoronákat megszámolása",
+      "countingCanopies": "Lombkoronák megszámolása",
       "lookingForTrash": "Szemétkupacok keresése",
       "watchingFlowers": "Szép virágok felkutatása",
-      "protectingBeauties": "Természeti szépségek védelme"
+      "protectingBeauties": "Természeti szépségek megvédése"
     }
   },
   "auth": {
@@ -113,7 +113,7 @@
   },
   "dashboard": {
     "page": {
-      "title": "Vezetői felület",
+      "title": "Vezérlő felület",
       "subtitle": "Rendszeráttekintés és kulcsmetrikák"
     },
     "navigator": {
@@ -137,7 +137,9 @@
       "avgResponseTime": "Átlagos válaszidő",
       "dailyActivity": "Napi aktivitás (7 nap)",
       "rollingUsage": "Gördülő 7 napos használat",
-      "ms": "ms"
+      "lastUpdated": "Utoljára frissítve",
+      "ms": "ms",
+      "dailyActivityAvg": "Átlag"
     },
     "aiWorkers": {
       "title": "AI dolgozók állapota",

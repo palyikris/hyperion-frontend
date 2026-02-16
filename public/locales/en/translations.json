@@ -137,7 +137,9 @@
       "avgResponseTime": "Avg. Response Time",
       "dailyActivity": "Daily Activity (7 Days)",
       "rollingUsage": "Rolling 7-day usage",
-      "ms": "ms"
+      "lastUpdated": "Last updated",
+      "ms": "ms",
+      "dailyActivityAvg": "Avg"
     },
     "aiWorkers": {
       "title": "AI Worker Status",

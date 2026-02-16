@@ -18,6 +18,13 @@ const LoadingScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    document.body.dataset.loadingScreen = "true";
+    return () => {
+      delete document.body.dataset.loadingScreen;
+    };
+  }, []);
+
   return (
     <>
       <style>{`

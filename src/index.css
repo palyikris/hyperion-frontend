@@ -61,3 +61,11 @@ body, html {
   margin: 0;
   background-color: var(--color-hyperion-cream);
 }
+
+body[data-loading-screen="true"] .group\/sidebar {
+  display: none;
+}
+
+body[data-loading-screen="true"] .layout-content {
+  padding-left: 0 !important;
+}

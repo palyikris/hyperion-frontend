@@ -6,7 +6,9 @@ export const MainLayout = () => {
     <div className="flex h-screen">
       <main className="flex-1 overflow-auto">
         <SideNav></SideNav>
-        <Outlet />
+        <div className="layout-content pl-0 md:pl-20">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

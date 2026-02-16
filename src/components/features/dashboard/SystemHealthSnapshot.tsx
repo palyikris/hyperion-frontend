@@ -42,15 +42,18 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
   const statusLabel = data.status ? data.status.toUpperCase() : "UNKNOWN";
   const lastUpdatedLabel = data.last_updated
     ? new Date(data.last_updated).toLocaleString()
-    : "--";
+    : "—";
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
           {t("dashboard.systemHealth.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
+        <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
+          {t("dashboard.systemHealth.lastUpdated")}: {lastUpdatedLabel}
+        </span>
       </div>
       <div
         className="relative flex flex-col gap-8 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px] lg:flex-row lg:items-center"
@@ -163,10 +166,6 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           </span>
           <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-600 shadow-[0_0_18px_rgba(16,185,129,0.35)]">
             {environmentLabel}: {statusLabel}
-          </span>
-          <span className="flex justify-center items-center flex-col text-[10px] font-bold uppercase tracking-[0.25em] text-hyperion-slate-grey/70 min-w-60 mt-4">
-            <span>{t("dashboard.systemHealth.lastUpdated")}:</span>{" "}
-            <span>{lastUpdatedLabel}</span>
           </span>
         </div>
       </div>

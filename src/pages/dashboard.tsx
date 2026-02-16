@@ -65,7 +65,7 @@ const DashboardPage = () => {
           style={{ borderRadius: "58% 42% 36% 64% / 48% 62% 38% 52%" }}
         />
       </div>
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10 lg:pl-32 xl:pl-40">
+      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
         <header className="flex flex-col items-start gap-4">
           <Title text={t("dashboard.page.title")} size="4xl" />
           <p className="text-sm uppercase tracking-[0.4em] text-hyperion-slate-grey/70">

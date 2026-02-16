@@ -11,6 +11,7 @@ export interface UXResponse {
   active_trend: number[];
   avg_response_time: number;
   daily_activity: number[];
+  last_updated?: string;
 }
 
 export interface NodeInfo {

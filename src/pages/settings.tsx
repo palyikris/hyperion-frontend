@@ -6,7 +6,7 @@ const SettingsPage = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-hyperion-cream flex items-center justify-center p-6 pl-26">
+    <div className="min-h-screen relative overflow-hidden bg-hyperion-cream flex items-center justify-center p-6">
       <div
         className="pointer-events-none absolute -top-20 left-8 h-[22rem] w-[22rem] bg-hyperion-forest/8"
         style={{ borderRadius: "34% 66% 58% 42% / 44% 34% 66% 56%" }}
