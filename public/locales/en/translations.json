@@ -135,10 +135,13 @@
       "title": "User Experience Pulse",
       "activeNow": "Active Now",
       "avgResponseTime": "Avg. Response Time",
+      "activeTrend": "Active User Trend",
       "dailyActivity": "Daily Activity (7 Days)",
       "rollingUsage": "Rolling 7-day usage",
       "lastUpdated": "Last updated",
       "ms": "ms",
+      "min": "Min",
+      "max": "Max",
       "dailyActivityAvg": "Avg"
     },
     "aiWorkers": {

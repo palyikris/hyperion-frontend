@@ -135,10 +135,13 @@
       "title": "Felhasználói élmény pulzusa",
       "activeNow": "Aktív most",
       "avgResponseTime": "Átlagos válaszidő",
+      "activeTrend": "Aktív felhasználók trendje",
       "dailyActivity": "Napi aktivitás (7 nap)",
       "rollingUsage": "Gördülő 7 napos használat",
       "lastUpdated": "Utoljára frissítve",
       "ms": "ms",
+      "min": "Min",
+      "max": "Max",
       "dailyActivityAvg": "Átlag"
     },
     "aiWorkers": {
