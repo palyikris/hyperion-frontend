@@ -5,7 +5,9 @@ export const useAIWorkers = () => {
   return useQuery({
     queryKey: ["dashboard", "ai-workers"],
     queryFn: dashboardService.getAIWorkers,
-    staleTime: 60 * 1000,
+    staleTime: 20 * 1000,
+    refetchInterval: 20 * 1000,
+    refetchIntervalInBackground: true,
     refetchOnWindowFocus: false,
   });
 };

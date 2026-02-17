@@ -17,10 +17,14 @@ export interface UXResponse {
 export interface NodeInfo {
   status: string;
   name: string;
+  tasks_processed_today: number;
+  current_task_id?: string | null;
 }
 
 export interface AIWorkersResponse {
   total_active_fleet: number;
   cluster_status: string;
   nodes: NodeInfo[];
+  queue_depth: number;
+  last_updated?: string;
 }

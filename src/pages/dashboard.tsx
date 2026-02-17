@@ -39,6 +39,7 @@ const DashboardPage = () => {
     total_active_fleet: 0,
     cluster_status: "unknown",
     nodes: [],
+    queue_depth: 0,
   };
 
   return (

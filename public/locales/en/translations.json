@@ -143,11 +143,15 @@
     },
     "aiWorkers": {
       "title": "AI Worker Status",
+      "lastUpdated": "Last updated",
       "activeFleet": "Active Fleet",
       "totalWorkersOnline": "Total workers online",
+      "queueDepth": "Tasks remaining",
       "workerNodes": "Worker Nodes",
       "live": "Live",
-      "nodeStatus": "Node status"
+      "nodeStatus": "Node status",
+      "tasksToday": "Today",
+      "currentTask": "Task"
     }
   }
 }

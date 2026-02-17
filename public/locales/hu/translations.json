@@ -143,11 +143,15 @@
     },
     "aiWorkers": {
       "title": "AI dolgozók állapota",
+      "lastUpdated": "Utoljára frissítve",
       "activeFleet": "Aktív flotta",
       "totalWorkersOnline": "Összes online dolgozó",
-      "workerNodes": "Dolgozó csomópontok",
+      "queueDepth": "Hátralévő feladatok száma",
+      "workerNodes": "Dolgozók állapotai",
       "live": "Élő",
-      "nodeStatus": "Csomópont állapot"
+      "nodeStatus": "Dolgozó állapot",
+      "tasksToday": "Ma",
+      "currentTask": "Feladat"
     }
   }
 }

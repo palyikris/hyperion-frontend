@@ -30,13 +30,19 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
   const clusterStatus = data.cluster_status
     ? data.cluster_status.toUpperCase()
     : "UNKNOWN";
+  const lastUpdated = data.last_updated
+    ? new Date(data.last_updated).toLocaleString()
+    : "—";
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <span className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
           {t("dashboard.aiWorkers.title")}
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
+        <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
+          {t("dashboard.aiWorkers.lastUpdated")}: {lastUpdated}
+        </span>
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr]">
         <div
@@ -62,9 +68,19 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
               {t("dashboard.aiWorkers.totalWorkersOnline")}
             </p>
           </div>
-          <div className="mt-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            {clusterStatus}
+          <div className="mt-6 space-y-2">
+            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              {clusterStatus}
+            </div>
+            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
+              <span className="font-semibold">
+                {t("dashboard.aiWorkers.queueDepth")}:
+              </span>
+              <span className="font-bold text-hyperion-forest">
+                {data.queue_depth}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -80,25 +96,50 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
               {t("dashboard.aiWorkers.live")}
             </span>
           </div>
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 max-h-100 space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-hyperion-fog-grey/20 scrollbar-thumb-hyperion-deep-sea/30 hover:scrollbar-thumb-hyperion-deep-sea/50">
             {nodes.map((worker) => (
               <div
                 key={worker.name}
-                className="flex items-center justify-between rounded-2xl border border-hyperion-fog-grey/70 bg-white/80 px-4 py-3 shadow-[0_8px_20px_rgba(26,95,84,0.08)]"
+                className="flex flex-col rounded-2xl border border-hyperion-fog-grey/70 bg-white/80 px-4 py-3 shadow-[0_8px_20px_rgba(26,95,84,0.08)]"
               >
-                <div>
-                  <p className="text-sm font-bold text-hyperion-forest">
-                    {worker.name}
-                  </p>
-                  <p className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-                    {t("dashboard.aiWorkers.nodeStatus")}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-hyperion-forest">
+                      {worker.name}
+                    </p>
+                    <p className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
+                      {t("dashboard.aiWorkers.nodeStatus")}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.25em] ${getStatusTone(worker.status)}`}
+                  >
+                    {worker.status}
+                  </span>
                 </div>
-                <span
-                  className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.25em] ${getStatusTone(worker.status)}`}
-                >
-                  {worker.status}
-                </span>
+                <div className="mt-3 flex items-center gap-4 border-t border-hyperion-fog-grey/50 pt-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
+                      {t("dashboard.aiWorkers.tasksToday")}:
+                    </span>
+                    <span className="text-xs font-bold text-hyperion-deep-sea">
+                      {worker.tasks_processed_today}
+                    </span>
+                  </div>
+                  {worker.current_task_id && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
+                        {t("dashboard.aiWorkers.currentTask")}:
+                      </span>
+                      <span
+                        className="truncate text-xs font-mono text-hyperion-forest"
+                        title={worker.current_task_id}
+                      >
+                        {worker.current_task_id.slice(0, 8)}...
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

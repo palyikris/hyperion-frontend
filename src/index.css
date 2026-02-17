@@ -69,3 +69,34 @@ body[data-loading-screen="true"] .group\/sidebar {
 body[data-loading-screen="true"] .layout-content {
   padding-left: 0 !important;
 }
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-hyperion-fog-grey);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-hyperion-deep-sea);
+  border-radius: 6px;
+  border: 2px solid var(--color-hyperion-fog-grey);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-hyperion-deep-sea);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--color-hyperion-forest);
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-hyperion-deep-sea) var(--color-hyperion-fog-grey);
+}
