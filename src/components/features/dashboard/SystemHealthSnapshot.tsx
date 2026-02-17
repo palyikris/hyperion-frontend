@@ -13,14 +13,13 @@ const normalizeLoadValues = (values: number[]) => {
   }
 
   const max = Math.max(...values);
-  if (max <= 1) {
-    return values.map((value) => value * 100);
-  }
 
+  // If all values are already in percentage range (0-100), return as-is
   if (max <= 100) {
     return values;
   }
 
+  // If values exceed 100, normalize to 0-100 range
   return values.map((value) => (value / max) * 100);
 };
 
@@ -127,10 +126,10 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
                       : "bg-hyperion-burnt-orange/55"
                   }`}
                   style={{ height: `${Math.min(100, Math.max(5, height))}%` }}
-                  title={`${Math.round(height)}%`}
+                  title={`${height}%`}
                 />
                 <span className="text-[9px] font-bold text-hyperion-slate-grey/80">
-                  {Math.round(height)}%
+                  {height}%
                 </span>
               </div>
             ))}
@@ -139,22 +138,22 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
             <div className="flex flex-col">
               <span>{t("dashboard.systemHealth.min")}:</span>
               <span className="text-hyperion-deep-sea">
-                {Math.round(Math.min(...loadValues))}%
+                {Math.min(...loadValues)}%
               </span>
             </div>
             <div className="flex flex-col items-center">
               <span>{t("dashboard.systemHealth.avg")}:</span>
               <span className="text-hyperion-burnt-orange">
-                {Math.round(
-                  loadValues.reduce((a, b) => a + b, 0) / loadValues.length,
-                )}
+                {(
+                  loadValues.reduce((a, b) => a + b, 0) / loadValues.length
+                ).toFixed(2)}
                 %
               </span>
             </div>
             <div className="flex flex-col items-end">
               <span>{t("dashboard.systemHealth.max")}:</span>
               <span className="text-hyperion-forest">
-                {Math.round(Math.max(...loadValues))}%
+                {Math.max(...loadValues)}%
               </span>
             </div>
           </div>

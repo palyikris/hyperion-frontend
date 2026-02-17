@@ -28,8 +28,8 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
     ? new Date(data.last_updated).toLocaleString()
     : "—";
   const rawActivity =
-    data.daily_activity && data.daily_activity.length > 0
-      ? data.daily_activity
+    data.active_trend && data.active_trend.length > 0
+      ? data.active_trend
       : [40, 65, 55, 80, 95, 70, 85];
   const activity = normalizeActivity(rawActivity);
   const activityStats = rawActivity.reduce(
@@ -71,10 +71,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
         <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
-          {t("dashboard.userExperience.lastUpdated", {
-            defaultValue: "Last updated",
-          })}
-          : {lastUpdated}
+          {t("dashboard.userExperience.lastUpdated")}: {lastUpdated}
         </span>
       </div>
       <div className="grid gap-6 lg:grid-cols-4">
