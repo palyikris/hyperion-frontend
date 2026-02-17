@@ -16,24 +16,24 @@ export const mainNavLinks: NavLink[] = [
     icon: LayoutDashboard,
   },
   {
-    labelKey: "nav.main.stats",
-    href: "/stats",
-    icon: BarChart3,
-  },
-  {
     labelKey: "nav.main.map",
     href: "/map",
     icon: Map,
   },
   {
-    labelKey: "nav.main.lab",
-    href: "/lab/1",
-    icon: FlaskConical,
-  },
-  {
     labelKey: "nav.main.upload",
     href: "/upload",
     icon: Upload,
+  },
+  {
+    labelKey: "nav.main.stats",
+    href: "/stats",
+    icon: BarChart3,
+  },
+  {
+    labelKey: "nav.main.lab",
+    href: "/lab/1",
+    icon: FlaskConical,
   },
   {
     labelKey: "nav.main.vault",

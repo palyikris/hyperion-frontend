@@ -156,5 +156,29 @@
       "tasksToday": "Ma",
       "currentTask": "Feladat"
     }
+  },
+  "upload": {
+    "page": {
+      "title": "Feltöltés és legutóbbiak",
+      "subtitle": "Képfeltöltések és legutóbbi aktivitás"
+    },
+    "divider": {
+      "label": "Legutóbbi feltöltések"
+    },
+    "dropzone": {
+      "heading": "Csoportos feltöltés",
+      "dragDescription": "Húzd ide a légifigyelő fényképeket vagy",
+      "browseFiles": "tallózz fájlokat",
+      "fileSupport": "Támogatott: JPG, PNG, TIFF max 50MB"
+    },
+    "card": {
+      "status": {
+        "trashDetected": "Szemét észlelve",
+        "processing": "Feldolgozás...",
+        "clear": "Tiszta terület"
+      },
+      "gpsLabel": "GPS:",
+      "metadataLabel": "Metaadat:"
+    }
   }
 }

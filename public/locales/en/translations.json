@@ -156,5 +156,29 @@
       "tasksToday": "Today",
       "currentTask": "Task"
     }
+  },
+  "upload": {
+    "page": {
+      "title": "Upload & Recents",
+      "subtitle": "Image uploads and recent activity"
+    },
+    "divider": {
+      "label": "Recent Uploads"
+    },
+    "dropzone": {
+      "heading": "Batch Upload",
+      "dragDescription": "Drag and drop your aerial surveillance photos here or",
+      "browseFiles": "browse files",
+      "fileSupport": "Supports JPG, PNG, TIFF up to 50MB"
+    },
+    "card": {
+      "status": {
+        "trashDetected": "Trash Detected",
+        "processing": "Processing...",
+        "clear": "Clear Area"
+      },
+      "gpsLabel": "GPS:",
+      "metadataLabel": "Metadata:"
+    }
   }
 }

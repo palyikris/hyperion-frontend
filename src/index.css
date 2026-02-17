@@ -100,3 +100,35 @@ body[data-loading-screen="true"] .layout-content {
   scrollbar-width: thin;
   scrollbar-color: var(--color-hyperion-deep-sea) var(--color-hyperion-fog-grey);
 }
+
+/* Amorphous border styling */
+.amorphous-border {
+  border: 2px dashed var(--color-hyperion-cool-aqua);
+  transition: all 0.5s ease;
+}
+
+.amorphous-border:hover {
+  border-color: var(--color-hyperion-forest);
+  background-color: rgba(143, 184, 176, 0.05);
+}
+
+.amorphous-card {
+  border-radius: 46% 54% 62% 38% / 46% 38% 62% 54%;
+  transition: all 0.3s ease;
+}
+
+.amorphous-card:nth-child(2) {
+  border-radius: 58% 42% 38% 62% / 48% 62% 38% 52%;
+}
+
+.amorphous-card:nth-child(3) {
+  border-radius: 64% 36% 46% 54% / 62% 38% 62% 38%;
+}
+
+.amorphous-card:nth-child(4) {
+  border-radius: 70% 30% 60% 40% / 40% 60% 40% 60%;
+}
+
+.amorphous-card:nth-child(5) {
+  border-radius: 38% 62% 58% 42% / 71% 39% 61% 29%;
+}
