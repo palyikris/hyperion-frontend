@@ -157,6 +157,9 @@
       "currentTask": "Task"
     }
   },
+  "common": {
+    "remove": "Remove"
+  },
   "upload": {
     "page": {
       "title": "Upload & Recents",
@@ -164,6 +167,9 @@
     },
     "divider": {
       "label": "Recent Uploads"
+    },
+    "selectedFiles": {
+      "heading": "Selected Files ({{count}})"
     },
     "dropzone": {
       "heading": "Batch Upload",

@@ -23,10 +23,10 @@ export const MagneticWrapper = ({ children }: MagneticWrapperProps) => {
     const centerX = left + width / 2;
     const centerY = top + height / 2;
 
-    // strength of the pull (0.1 = 10% of distance)
-    x.set((clientX - centerX) * 0.1);
-    y.set((clientY - centerY) * 0.1);
-  };
+    // strength of the pull (0.02 = 2% of distance)
+    x.set((clientX - centerX) * 0.02);
+    y.set((clientY - centerY) * 0.02);
+  };;
 
   const reset = () => {
     x.set(0);

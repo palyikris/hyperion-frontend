@@ -157,6 +157,9 @@
       "currentTask": "Feladat"
     }
   },
+  "common": {
+    "remove": "Eltávolítás"
+  },
   "upload": {
     "page": {
       "title": "Feltöltés és legutóbbiak",
@@ -164,6 +167,9 @@
     },
     "divider": {
       "label": "Legutóbbi feltöltések"
+    },
+    "selectedFiles": {
+      "heading": "Kiválasztott fájlok ({{count}})"
     },
     "dropzone": {
       "heading": "Csoportos feltöltés",

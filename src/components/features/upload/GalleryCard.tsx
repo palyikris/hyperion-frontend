@@ -92,6 +92,16 @@ const GalleryCard = ({
         boxShadow: "0 10px 24px rgba(8, 36, 33, 0.08)",
         transition: "all 0.3s ease, border-radius 0.3s ease",
       }}
+      whileHover={
+        isProcessing
+          ? undefined
+          : {
+              y: -6,
+              rotate: -0.6,
+              scale: 1.01,
+              boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
+            }
+      }
       onMouseEnter={(e) => {
         e.currentTarget.style.borderRadius =
           "86px 42px 76px 36px / 46px 78px 38px 68px";
@@ -101,7 +111,7 @@ const GalleryCard = ({
           "36px 76px 42px 86px / 68px 38px 78px 46px";
       }}
       onClick={handleClick}
-      delay={index * 0.01}
+      delay={index * 0.15}
     >
       <div className="aspect-[4/3] relative overflow-hidden bg-hyperion-fog-grey">
         <img
@@ -111,6 +121,12 @@ const GalleryCard = ({
             isProcessing ? "opacity-60" : ""
           }`}
         />
+
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-5 rounded-[28px] border border-white/35 opacity-0 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500" />
+          <div className="absolute -inset-6 rounded-[44px] border border-hyperion-cool-aqua/70 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500" />
+          <div className="absolute -inset-10 rounded-[52px] border border-hyperion-cool-aqua/40 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity duration-700" />
+        </div>
 
         {status !== "default" && (
           <div className="absolute top-6 left-6">
