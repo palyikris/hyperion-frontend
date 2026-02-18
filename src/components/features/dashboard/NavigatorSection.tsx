@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { mainNavLinks, utilityLinks } from "../../layout/navLinks";
 import { MorphBox } from "../../shared/animation/MorphBox";
+import { useNavigate } from "react-router-dom";
 
 const tileStyles =
-  "group relative flex flex-col items-center justify-center gap-3 overflow-hidden border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px]";
+  "group relative flex flex-col items-center justify-center gap-3 border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px] cursor-pointer";
 
 const iconWrapStyles =
   "flex h-12 w-12 items-center justify-center rounded-2xl bg-hyperion-deep-sea/15 text-hyperion-deep-sea transition-all duration-500 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:bg-hyperion-forest/30";
@@ -24,11 +25,11 @@ const tilePalette = [
   {
     bg: "bg-hyperion-cool-aqua/45",
     border: "border-hyperion-cool-aqua/60",
-    accent: "bg-hyperion-soft-sky/55",
+    accent: "bg-hyperion-soft-sky",
     radius: "48% 52% 62% 38% / 52% 38% 62% 48%",
   },
   {
-    bg: "bg-hyperion-sage-mint/40",
+    bg: "bg-hyperion-burnt-orange/30",
     border: "border-hyperion-muted-gold/55",
     accent: "bg-hyperion-muted-gold/40",
     radius: "64% 36% 54% 46% / 54% 46% 54% 46%",
@@ -50,6 +51,11 @@ const tilePalette = [
 const NavigatorSection = () => {
   const { t } = useTranslation();
   const tiles = [...mainNavLinks, ...utilityLinks].slice(0, 6);
+  const navigate = useNavigate();
+
+  const handleClick = (href: string) => {
+    navigate(href);
+  };
 
   return (
     <section className="space-y-4">
@@ -66,14 +72,11 @@ const NavigatorSection = () => {
           return (
             <MorphBox
               key={link.href}
-              className={`${tileStyles} ${palette.bg} ${palette.border}`}
+              className={`${tileStyles} relative ${palette.bg} ${palette.border} z-10`}
               blobShape={palette.radius}
+              hoverShape="12px"
+              onClick={() => handleClick(link.href)}
             >
-              <div
-                className={`absolute -right-8 top-1 h-16 w-28 opacity-70 blur-[1px] transition-all duration-500 ease-out group-hover:-right-4 group-hover:top-2 group-hover:rotate-6 group-hover:scale-110 ${palette.accent}`}
-                style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
-              />
-
               <span className={iconWrapStyles}>
                 <link.icon className="h-6 w-6" />
               </span>

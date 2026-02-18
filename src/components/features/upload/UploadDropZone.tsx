@@ -70,6 +70,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               : "hover:border-hyperion-forest hover:bg-hyperion-cool-aqua/5"
           }`}
           blobShape="73% 27% 70% 30% / 67% 47% 53% 33%"
+          hoverShape="24px"
         >
           <label className="w-full flex flex-col items-center justify-center cursor-pointer relative">
             <div className="bg-hyperion-cool-aqua/10 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
@@ -137,7 +138,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
                   </div>
                   <button
                     onClick={() => removeFile(index)}
-                    className="ml-3 flex-shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"
+                    className="ml-3 shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"
                     title={t("common.remove", "Remove")}
                   >
                     <svg
