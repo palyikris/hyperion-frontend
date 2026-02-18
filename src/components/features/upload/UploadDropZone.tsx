@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../../shared/animation/ScrollReveal";
+import { MorphBox } from "../../shared/animation/MorphBox";
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
@@ -32,15 +34,24 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
 
   return (
     <section className="relative">
-      <div className="flex flex-col items-center justify-center py-16 px-8 bg-white border border-hyperion-fog-grey shadow-sm relative overflow-hidden" style={{
-        borderRadius: "68px 44px 30px 48px / 40px 28px 46px 32px"
-      }}>
+      <ScrollReveal
+        className="flex flex-col items-center justify-center py-16 px-8 bg-white border border-hyperion-fog-grey shadow-sm relative overflow-hidden"
+        style={{
+          borderRadius: "68px 44px 30px 48px / 40px 28px 46px 32px",
+        }}
+      >
         {/* Decorative amorph blobs */}
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-hyperion-burnt-orange/30 rounded-full"></div>
-        <div className="absolute top-1/4 -right-32 w-72 h-72 bg-hyperion-forest/30" style={{ borderRadius: "45% 55% 65% 35% / 35% 65% 45% 55%" }}></div>
-        <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-hyperion-cool-aqua/30 blur-3xl" style={{ borderRadius: "20% 80% 60% 40% / 70% 50% 30% 50%" }}></div>
-
         <div
+          className="absolute top-1/4 -right-32 w-72 h-72 bg-hyperion-forest/30"
+          style={{ borderRadius: "45% 55% 65% 35% / 35% 65% 45% 55%" }}
+        ></div>
+        <div
+          className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-hyperion-cool-aqua/30 blur-3xl"
+          style={{ borderRadius: "20% 80% 60% 40% / 70% 50% 30% 50%" }}
+        ></div>
+
+        <MorphBox
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -49,9 +60,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               ? "border-hyperion-forest bg-hyperion-cool-aqua/10"
               : "hover:border-hyperion-forest hover:bg-hyperion-cool-aqua/5"
           }`}
-          style={{
-            borderRadius: "73% 27% 70% 30% / 67% 47% 53% 33% ",
-          }}
+          blobShape="73% 27% 70% 30% / 67% 47% 53% 33%"
         >
           <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
             <div className="bg-hyperion-cool-aqua/10 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
@@ -90,8 +99,8 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               className="hidden"
             />
           </label>
-        </div>
-      </div>
+        </MorphBox>
+      </ScrollReveal>
     </section>
   );
 };

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { mainNavLinks, utilityLinks } from "../../layout/navLinks";
+import { MorphBox } from "../../shared/animation/MorphBox";
 
 const tileStyles =
   "group relative flex flex-col items-center justify-center gap-3 overflow-hidden border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px]";
@@ -64,11 +64,10 @@ const NavigatorSection = () => {
           const palette = tilePalette[index % tilePalette.length];
 
           return (
-            <Link
+            <MorphBox
               key={link.href}
-              to={link.href}
               className={`${tileStyles} ${palette.bg} ${palette.border}`}
-              style={{ borderRadius: palette.radius }}
+              blobShape={palette.radius}
             >
               <div
                 className={`absolute -right-8 top-1 h-16 w-28 opacity-70 blur-[1px] transition-all duration-500 ease-out group-hover:-right-4 group-hover:top-2 group-hover:rotate-6 group-hover:scale-110 ${palette.accent}`}
@@ -84,7 +83,7 @@ const NavigatorSection = () => {
               <span className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/70 transition-opacity duration-500 ease-out group-hover:opacity-90">
                 {t("dashboard.navigator.actionTile")}
               </span>
-            </Link>
+            </MorphBox>
           );
         })}
       </div>

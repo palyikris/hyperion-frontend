@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import type { CardStatus } from "../../../types/upload";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 
 type GalleryCardProps = {
   id: string;
@@ -11,6 +12,7 @@ type GalleryCardProps = {
   timestamp: string;
   metadataInfo: string;
   onZoom?: () => void;
+  index: number;
 };
 
 const statusConfig: Record<
@@ -53,6 +55,7 @@ const GalleryCard = ({
   gpsCoordinates,
   timestamp,
   metadataInfo,
+  index,
   onZoom,
 }: GalleryCardProps) => {
   const { t } = useTranslation();
@@ -79,10 +82,10 @@ const GalleryCard = ({
     }
 
     navigate(`/lab/${id}`);
-  }
+  };
 
   return (
-    <div
+    <ScrollReveal
       className={`group bg-white overflow-hidden border ${config.borderColor} hover:shadow-2xl transition-all duration-300 ${isProcessing ? "cursor-not-allowed" : "cursor-pointer"}`}
       style={{
         borderRadius: "36px 76px 42px 86px / 68px 38px 78px 46px",
@@ -90,12 +93,15 @@ const GalleryCard = ({
         transition: "all 0.3s ease, border-radius 0.3s ease",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderRadius = "86px 42px 76px 36px / 46px 78px 38px 68px";
+        e.currentTarget.style.borderRadius =
+          "86px 42px 76px 36px / 46px 78px 38px 68px";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderRadius = "36px 76px 42px 86px / 68px 38px 78px 46px";
+        e.currentTarget.style.borderRadius =
+          "36px 76px 42px 86px / 68px 38px 78px 46px";
       }}
       onClick={handleClick}
+      delay={index * 0.01}
     >
       <div className="aspect-[4/3] relative overflow-hidden bg-hyperion-fog-grey">
         <img
@@ -188,7 +194,7 @@ const GalleryCard = ({
           </div>
         </div>
       </div>
-    </div>
+    </ScrollReveal>
   );
 };
 

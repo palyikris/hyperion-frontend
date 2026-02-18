@@ -1,5 +1,7 @@
 import type { UXResponse } from "../../../types/dashboard/dashboard";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../../shared/animation/ScrollReveal";
+import { RollingNumber } from "../../shared/animation/RollingNumber";
 
 type UserExperiencePulseProps = {
   data: UXResponse;
@@ -108,7 +110,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
         </span>
       </div>
       <div className="grid gap-6 lg:grid-cols-4">
-        <div
+        <ScrollReveal
           className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-forest/35 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
         >
@@ -122,9 +124,9 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           <p className="mt-4 text-6xl font-black text-hyperion-forest">
             {activeNow.toLocaleString()}
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div
+        <ScrollReveal
           className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-burnt-orange/40 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
         >
@@ -135,15 +137,18 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.userExperience.avgResponseTime")}
           </p>
+          {avgResponseTime ? (
+            <RollingNumber
+              value={avgResponseTime}
+              postfix={t("dashboard.userExperience.ms")}
+              className={`mt-4 text-6xl font-black ${responseTimeClass}`}
+            ></RollingNumber>
+          ) : (
+            "-"
+          )}
+        </ScrollReveal>
 
-          <div className={`mt-4 text-6xl font-black ${responseTimeClass}`}>
-            {avgResponseTime
-              ? `${avgResponseTime}${t("dashboard.userExperience.ms")}`
-              : "—"}
-          </div>
-        </div>
-
-        <div
+        <ScrollReveal
           className="relative flex h-full flex-col overflow-hidden border border-hyperion-deep-sea/30 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px] lg:col-span-2"
           style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
         >
@@ -187,10 +192,10 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
               <span className="text-hyperion-forest">{trendStats.max}</span>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-1">
+      <ScrollReveal className="grid gap-6 lg:grid-cols-1">
         <div
           className="relative flex h-full flex-col overflow-hidden border border-hyperion-sage-mint/45 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
@@ -245,7 +250,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 };

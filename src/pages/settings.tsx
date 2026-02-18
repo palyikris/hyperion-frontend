@@ -1,5 +1,7 @@
 import { SettingsForm } from "../components/features/settings/SettingsForm";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
+import { DecryptText } from "../components/shared/animation/DecryptText";
 
 const SettingsPage = () => {
   const { t } = useTranslation();
@@ -19,9 +21,8 @@ const SettingsPage = () => {
         className="pointer-events-none absolute bottom-12 left-1/2 h-36 w-[26rem] -translate-x-1/2 bg-hyperion-sage-mint/18"
         style={{ borderRadius: "78% 22% 70% 30% / 54% 46% 54% 46%" }}
       />
-      <div className="pointer-events-none absolute right-12 top-16 h-2 w-16 rounded-full bg-hyperion-muted-gold/40" />
 
-      <div className="relative w-full max-w-7xl bg-white/90 backdrop-blur-sm rounded-[40px] shadow-[rgba(26,95,84,0.16)_0px_24px_90px] overflow-hidden border border-hyperion-fog-grey">
+      <ScrollReveal className="relative w-full max-w-7xl bg-white/90 backdrop-blur-sm rounded-[40px] shadow-[rgba(26,95,84,0.16)_0px_24px_90px] overflow-hidden border border-hyperion-muted-gold/60">
         <div className="p-12 flex flex-col md:flex-row gap-16">
           <div className="flex flex-col items-center text-center space-y-6 md:w-1/3">
             <div className="relative">
@@ -42,15 +43,16 @@ const SettingsPage = () => {
               </p>
             </div>
 
-            <span className="px-4 py-1 bg-hyperion-soft-sky text-hyperion-deep-sea text-[10px] font-bold tracking-widest uppercase rounded-full">
-              {t("settings.page.authorizationVerified")}
-            </span>
+            <DecryptText
+              className="px-4 py-1 bg-hyperion-soft-sky text-hyperion-deep-sea text-[10px] font-bold tracking-widest uppercase rounded-full"
+              text={t("settings.page.authorizationVerified")}
+            ></DecryptText>
           </div>
           <SettingsForm />
         </div>
-      </div>
+      </ScrollReveal>
     </div>
   );
-}
+};
 
 export default SettingsPage;

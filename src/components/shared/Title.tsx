@@ -1,3 +1,5 @@
+import { DecryptText } from "./animation/DecryptText";
+
 type TitleProps = {
   text: string;
   colorFrom?: ColorOption;
@@ -106,10 +108,9 @@ export const Title = ({
     gradientToColorClasses[colorTo || ""] ?? "to-hyperion-cool-aqua";
 
   return (
-    <h1
+    <DecryptText
       className={`relative ${sizeClass} font-extrabold uppercase tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-br ${fromClass} ${viaClass} ${toClass} drop-shadow-[0_6px_14px_rgba(18,70,62,0.25)] ${className ?? ""}`}
-    >
-      {text}
-    </h1>
+      text={text}
+    ></DecryptText>
   );
 };

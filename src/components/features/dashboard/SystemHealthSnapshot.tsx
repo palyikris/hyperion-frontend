@@ -1,5 +1,8 @@
 import type { SystemHealthResponse } from "../../../types/dashboard/dashboard";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../../shared/animation/ScrollReveal";
+import { DecryptText } from "../../shared/animation/DecryptText";
+import { RollingNumber } from "../../shared/animation/RollingNumber";
 
 type SystemHealthSnapshotProps = {
   data: SystemHealthResponse;
@@ -54,7 +57,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           {t("dashboard.systemHealth.lastUpdated")}: {lastUpdatedLabel}
         </span>
       </div>
-      <div
+      <ScrollReveal
         className="relative flex flex-col gap-8 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px] lg:flex-row lg:items-center"
         style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
       >
@@ -92,9 +95,17 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
                 strokeLinecap="round"
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-sm font-bold text-hyperion-deep-sea">
-              {uptimeValue !== null ? `${Math.round(uptimePercent)}%` : "--"}
-            </div>
+            {uptimeValue !== null ? (
+              <RollingNumber
+                value={Math.round(uptimePercent)}
+                postfix="%"
+                className="absolute inset-0 flex items-center justify-center text-sm font-bold text-hyperion-deep-sea"
+              ></RollingNumber>
+            ) : (
+              <span className="text-sm font-bold text-hyperion-deep-sea">
+                --
+              </span>
+            )}
           </div>
           <div>
             <p className="text-lg font-bold text-hyperion-forest">
@@ -103,9 +114,10 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
             <p className="text-xs uppercase tracking-[0.3em] text-hyperion-slate-grey/70">
               {t("dashboard.systemHealth.systemStability")}
             </p>
-            <span className="mt-2 inline-flex items-center rounded-full bg-hyperion-deep-sea/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-deep-sea">
-              {statusLabel}
-            </span>
+            <DecryptText
+              className="mt-2 inline-flex items-center rounded-full bg-hyperion-deep-sea/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-deep-sea"
+              text={statusLabel}
+            ></DecryptText>
           </div>
         </div>
 
@@ -163,11 +175,12 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
           <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.systemHealth.environmentStatus")}
           </span>
-          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-600 shadow-[0_0_18px_rgba(16,185,129,0.35)]">
-            {environmentLabel}: {statusLabel}
-          </span>
+          <DecryptText
+            className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-600 shadow-[0_0_18px_rgba(16,185,129,0.35)]"
+            text={`${environmentLabel}: ${statusLabel}`}
+          ></DecryptText>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 };

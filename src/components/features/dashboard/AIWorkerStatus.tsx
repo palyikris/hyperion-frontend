@@ -1,5 +1,8 @@
 import type { AIWorkersResponse } from "../../../types/dashboard/dashboard";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "../../shared/animation/ScrollReveal";
+import { RollingNumber } from "../../shared/animation/RollingNumber";
+import { DecryptText } from "../../shared/animation/DecryptText";
 
 type AIWorkerStatusProps = {
   data: AIWorkersResponse;
@@ -45,7 +48,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
         </span>
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr]">
-        <div
+        <ScrollReveal
           className="relative flex flex-col justify-between overflow-hidden border border-hyperion-forest/40 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
         >
@@ -71,20 +74,21 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
           <div className="mt-6 space-y-2">
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              {clusterStatus}
+              <DecryptText text={clusterStatus}></DecryptText>
             </div>
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
               <span className="font-semibold">
                 {t("dashboard.aiWorkers.queueDepth")}:
               </span>
-              <span className="font-bold text-hyperion-forest">
-                {data.queue_depth}
-              </span>
+              <RollingNumber
+                className="font-bold text-hyperion-forest"
+                value={data.queue_depth}
+              ></RollingNumber>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        <div
+        <ScrollReveal
           className="relative border border-hyperion-deep-sea/30 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
         >
@@ -97,10 +101,11 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
             </span>
           </div>
           <div className="mt-6 max-h-100 space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-hyperion-fog-grey/20 scrollbar-thumb-hyperion-deep-sea/30 hover:scrollbar-thumb-hyperion-deep-sea/50">
-            {nodes.map((worker) => (
-              <div
+            {nodes.map((worker, i) => (
+              <ScrollReveal
                 key={worker.name}
                 className="flex flex-col rounded-2xl border border-hyperion-fog-grey/70 bg-white/80 px-4 py-3 shadow-[0_8px_20px_rgba(26,95,84,0.08)]"
+                delay={i * 0.01}
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -140,10 +145,10 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                     </div>
                   )}
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import SignupForm from "../components/features/auth/SignupForm";
 import { Title } from "../components/shared/Title";
+import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
 
 export const SignupPage = () => {
   const { t } = useTranslation();
@@ -51,7 +52,7 @@ export const SignupPage = () => {
               ></Title>
             </div>
           </div>
-          <div
+          <ScrollReveal
             className="p-16 border border-hyperion-muted-gold/60 bg-white/50 backdrop-blur-sm relative xl:min-w-xl"
             style={{
               borderRadius: "31% 69% 47% 53% / 61% 30% 70% 39% ",
@@ -65,7 +66,7 @@ export const SignupPage = () => {
               }}
             ></div>
             <SignupForm></SignupForm>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </div>
