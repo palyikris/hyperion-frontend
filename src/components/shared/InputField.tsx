@@ -30,7 +30,7 @@ export const InputField = ({
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-2 ml-2">
+      <div className="mb-2 ml-2 flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
         <label
           className="block text-xs font-bold text-hyperion-slate-grey/60 uppercase tracking-widest"
           htmlFor={id}
@@ -41,7 +41,7 @@ export const InputField = ({
         {error && (
           <p
             id={errorId}
-            className="mt-1 ml-2 text-sm font-medium text-hyperion-burnt-orange"
+            className="text-xs sm:text-sm font-medium text-hyperion-burnt-orange sm:ml-2"
           >
             {error}
           </p>

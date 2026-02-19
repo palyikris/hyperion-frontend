@@ -69,12 +69,12 @@ export const LoginForm = () => {
         icon={<LogIn className="w-5 h-5 text-white" />}
       ></Button>
 
-      <div className="w-full flex justify-center gap-2 items-center">
-        <span className="text-[10px] text-hyperion-slate-grey/50">
+      <div className="w-full flex flex-wrap justify-center gap-x-2 gap-y-1 items-center text-center">
+        <span className="text-[10px] sm:text-xs text-hyperion-slate-grey/50">
           {t("login.form.noAccount")}{" "}
         </span>
         <Link
-          className="text-[12px] font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
+          className="text-[11px] sm:text-xs font-bold text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors uppercase tracking-tight"
           to="/signup"
         >
           {t("login.form.signup")}

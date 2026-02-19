@@ -32,26 +32,16 @@ export const MorphBox = ({
       animate={{
         borderRadius: isHovering && hoverShape ? hoverShape : blobShape,
       }}
-      whileHover={
-        hoverShape
-          ? {
-              borderRadius: hoverShape,
-            }
-          : undefined
-      }
-      transition={
-        isHovering && hoverShape
-          ? {
-              duration: 0.15,
-              ease: "easeOut",
-            }
+      transition={{
+        duration: isHovering && hoverShape ? 0.15 : 1.5,
+        ease: isHovering && hoverShape ? "easeOut" : "easeInOut",
+        ...(isHovering && hoverShape
+          ? {}
           : {
-              duration: 1.5,
-              ease: "easeInOut",
               repeat: Infinity,
               repeatType: "reverse",
-            }
-      }
+            }),
+      }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={onClick}
