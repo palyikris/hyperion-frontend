@@ -38,6 +38,14 @@ export const SignupPage = () => {
 
       {/* Right Column: Login Card */}
       <div className="flex-1 flex flex-col justify-center items-center relative px-4 py-8 sm:px-6 md:px-8">
+        <div className="pointer-events-none absolute inset-0 lg:hidden">
+          <img
+            src="/forest.png"
+            alt={t("signup.page.authImageAlt")}
+            className="h-full w-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-hyperion-deep-sea/35 via-hyperion-forest/10 to-hyperion-cream/90" />
+        </div>
         <div className="w-full max-w-md md:max-w-lg z-10 lg:pr-4 flex justify-center items-center flex-col">
           <div className="w-full flex justify-center items-center flex-col text-center">
             <div className="relative flex flex-col items-center">
@@ -48,7 +56,7 @@ export const SignupPage = () => {
                 colorVia="hyperion-deep-sea"
                 colorTo="hyperion-cool-aqua"
                 size="5xl"
-                className="mb-4 text-3xl sm:text-4xl md:text-5xl tracking-[0.2em] sm:tracking-[0.28em]"
+                className="mb-4 text-2xl sm:text-4xl md:text-5xl tracking-[0.14em] sm:tracking-[0.24em]"
               ></Title>
             </div>
           </div>
