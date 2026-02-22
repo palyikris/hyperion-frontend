@@ -6,12 +6,14 @@ import { Title } from "../components/shared/Title";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { useRecentGallery } from "../hooks/upload/useRecentGallery";
 import { useUploadFiles } from "../hooks/upload/useUploadFiles";
-
+import { useUploadSocket } from "../hooks/upload/useUploadSocket";
 
 const UploadPage = () => {
   const { t } = useTranslation();
   const recentGalleryQuery = useRecentGallery();
   const uploadFilesMutation = useUploadFiles();
+
+  useUploadSocket();
 
   const handleUpload = (files: File[]) => {
     if (!files.length) {

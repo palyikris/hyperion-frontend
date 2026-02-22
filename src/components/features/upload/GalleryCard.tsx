@@ -25,23 +25,33 @@ const statusConfig: Record<
     processing?: boolean;
   }
 > = {
-  "trash-detected": {
-    bgColor: "bg-hyperion-burnt-orange",
-    textColor: "text-white",
-    borderColor: "border-hyperion-burnt-orange",
+  PENDING: {
+    bgColor: "bg-hyperion-yellow",
+    textColor: "text-hyperion-dark-yellow",
+    borderColor: "border-hyperion-yellow",
   },
-  processing: {
+  UPLOADING: {
+    bgColor: "bg-hyperion-blue",
+    textColor: "text-white",
+    borderColor: "border-hyperion-blue",
+  },
+  FAILED: {
+    bgColor: "bg-hyperion-red",
+    textColor: "text-white",
+    borderColor: "border-hyperion-red",
+  },
+  PROCESSING: {
     bgColor: "bg-hyperion-cool-aqua",
     textColor: "text-hyperion-forest",
     borderColor: "border-hyperion-cool-aqua",
     processing: true,
   },
-  clear: {
+  EXTRACTING: {
     bgColor: "bg-hyperion-forest",
     textColor: "text-white",
     borderColor: "border-hyperion-forest",
   },
-  default: {
+  READY: {
     bgColor: "",
     textColor: "",
     borderColor: "border-hyperion-fog-grey",
