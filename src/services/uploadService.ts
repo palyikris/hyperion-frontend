@@ -16,7 +16,10 @@ export const uploadService = {
 
     return data;
   },
-  getRecentGallery: async (): Promise<GalleryItem[]> => {
+  getRecentGallery: async (): Promise<{
+    items: GalleryItem[];
+    total: number;
+  }> => {
     const { data } = await api.get("/upload/recents");
     return data;
   },

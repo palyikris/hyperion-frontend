@@ -32,7 +32,8 @@ const UploadPage = () => {
     return <LoadingScreen />;
   }
 
-  const galleryItems = recentGalleryQuery.data ?? [];
+  const galleryItems = recentGalleryQuery.data;
+  const items = galleryItems?.items || [];
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
@@ -76,7 +77,7 @@ const UploadPage = () => {
           textClassName="text-hyperion-forest/70"
         />
 
-        <Gallery items={galleryItems} onCardZoom={handleCardZoom} />
+        <Gallery items={items} onCardZoom={handleCardZoom} />
       </div>
     </div>
   );
