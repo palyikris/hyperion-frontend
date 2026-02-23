@@ -69,7 +69,6 @@ const GalleryCard = ({
   index,
   onZoom,
 }: GalleryCardProps) => {
-  console.log(`Rendering GalleryCard - ID: ${id}, Status: ${status}`);
   const config = statusConfig[status];
   const isProcessing = status === "PROCESSING";
   const navigate = useNavigate();
