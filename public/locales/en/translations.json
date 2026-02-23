@@ -160,6 +160,32 @@
   "common": {
     "remove": "Remove"
   },
+  "vault": {
+    "toast": {
+      "deleteSuccessTitle": "Vault item deleted",
+      "deleteSuccessMessage": "The item has been removed from the vault.",
+      "deleteErrorTitle": "Delete failed",
+      "deleteErrorMessage": "Unable to delete the vault item. Please try again."
+    },
+    "filters": {
+      "searchLabel": "Search",
+      "searchPlaceholder": "Search files...",
+      "statusLabel": "Status",
+      "statusAll": "All statuses",
+      "statusReady": "Ready",
+      "statusProcessing": "Processing",
+      "statusFailed": "Failed",
+      "apply": "Apply filters",
+      "toggleSort": "Toggle sort direction"
+    },
+    "validation": {
+      "searchTooLong": "Search must be 120 characters or fewer",
+      "statusInvalid": "Status selection is invalid"
+    },
+    "divider": {
+      "label": "Your Media Vault"
+    }
+  },
   "upload": {
     "page": {
       "title": "Upload & Recents",
@@ -184,7 +210,8 @@
         "clear": "Clear Area"
       },
       "gpsLabel": "GPS:",
-      "metadataLabel": "Metadata:"
+      "metadataLabel": "Metadata:",
+      "deleting": "Deleting..."
     },
     "status": {
       "pending": "Pending",

@@ -160,6 +160,32 @@
   "common": {
     "remove": "Eltávolítás"
   },
+  "vault": {
+    "toast": {
+      "deleteSuccessTitle": "Elem törölve",
+      "deleteSuccessMessage": "Az elem el lett távolítva a tárolóból.",
+      "deleteErrorTitle": "Törlés sikertelen",
+      "deleteErrorMessage": "Nem sikerült törölni az elemet. Kérlek, próbáld újra."
+    },
+    "filters": {
+      "searchLabel": "Keresés",
+      "searchPlaceholder": "Fájlok keresése...",
+      "statusLabel": "Állapot",
+      "statusAll": "Összes állapot",
+      "statusReady": "Kész",
+      "statusProcessing": "Feldolgozás",
+      "statusFailed": "Sikertelen",
+      "apply": "Szűrők alkalmazása",
+      "toggleSort": "Rendezési irány váltása"
+    },
+    "validation": {
+      "searchTooLong": "A keresés legfeljebb 120 karakter lehet",
+      "statusInvalid": "Érvénytelen állapot választás"
+    },
+    "divider": {
+      "label": "A te média tárolód"
+    }
+  },
   "upload": {
     "page": {
       "title": "Feltöltés és legutóbbiak",
@@ -184,7 +210,8 @@
         "clear": "Tiszta terület"
       },
       "gpsLabel": "GPS:",
-      "metadataLabel": "Metaadat:"
+      "metadataLabel": "Metaadat:",
+      "deleting": "Törlés..."
     },
     "status": {
       "pending": "Függőben",

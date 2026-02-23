@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/shared/ProtectedRoute";
 import SettingsPage from "./pages/settings";
 import DashboardPage from "./pages/dashboard";
 import UploadPage from "./pages/upload";
+import VaultPage from "./pages/vault";
 
 const AppRouter = () => {
   return (
@@ -30,7 +31,7 @@ const AppRouter = () => {
             <Route path="/map" element={<>map</>} />
             <Route path="/lab/:id" element={<>lab</>} />
             <Route path="/upload" element={<UploadPage />} />
-            <Route path="/vault" element={<>media</>} />
+            <Route path="/vault" element={<VaultPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 

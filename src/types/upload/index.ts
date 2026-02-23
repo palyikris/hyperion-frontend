@@ -14,6 +14,8 @@ export type GalleryItem = {
   gpsCoordinates?: string;
   timestamp: string;
   metadata: GalleryItemMetadata;
+  assignedWorker?: string;
+  technical_metadata?: Record<string, string | number | boolean>;
 };
 
 export interface GalleryItemMetadata {

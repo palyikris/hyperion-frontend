@@ -7,6 +7,7 @@ type CardMetadataProps = {
   timestamp: string;
   metadataInfo: string;
   status: CardStatus;
+  isDeleting?: boolean;
 };
 
 const CardMetadata = ({
@@ -15,13 +16,16 @@ const CardMetadata = ({
   timestamp,
   metadataInfo,
   status,
+  isDeleting,
 }: CardMetadataProps) => {
   const { t } = useTranslation();
 
   return (
     <div className="px-4 py-10 pt-4 space-y-3">
       <div className="flex justify-between items-start gap-2">
-        <h4 className="font-bold text-hyperion-forest truncate">{title}</h4>
+        <h4 className="font-bold text-hyperion-forest truncate">
+          {isDeleting ? t("upload.card.deleting") : title}
+        </h4>
         <span className="text-[10px] font-bold text-hyperion-slate-grey/60 bg-hyperion-fog-grey px-1.5 py-0.5 rounded whitespace-nowrap">
           {t("upload.card.gpsLabel")} {gpsCoordinates}
         </span>
@@ -42,7 +46,7 @@ const CardMetadata = ({
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          {timestamp}
+          {new Date(timestamp).toISOString().split("T")[0]}
         </div>
 
         <div

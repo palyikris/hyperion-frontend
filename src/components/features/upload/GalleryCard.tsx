@@ -3,6 +3,7 @@ import type { CardStatus } from "../../../types/upload";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import ImageSection from "./ImageSection";
 import CardMetadata from "./CardMetadata";
+import { useDeleteVaultItem } from "../../../hooks/vault/useDeleteVaultItem";
 
 type GalleryCardProps = {
   id: string;
@@ -72,9 +73,11 @@ const GalleryCard = ({
   const config = statusConfig[status];
   const isProcessing = status === "PROCESSING";
   const navigate = useNavigate();
+  const deleteMutation = useDeleteVaultItem();
+  const isDeleting = deleteMutation.isPending;
 
   const handleClick = () => {
-    if (isProcessing) {
+    if (isProcessing || isDeleting) {
       return;
     }
 
@@ -83,14 +86,15 @@ const GalleryCard = ({
 
   return (
     <ScrollReveal
-      className={`${isProcessing ? "" : "group"} bg-white overflow-hidden border ${config.borderColor} transition-all duration-300 ${isProcessing ? "cursor-not-allowed" : "cursor-pointer hover:shadow-2xl"}`}
+      className={`${isProcessing || isDeleting ? "" : "group"} bg-white overflow-hidden border ${config.borderColor} transition-all duration-300 ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-pointer hover:shadow-2xl"}`}
       style={{
         borderRadius: "36px 76px 42px 86px / 68px 38px 78px 46px",
         boxShadow: "0 10px 24px rgba(8, 36, 33, 0.08)",
         transition: "all 0.3s ease, border-radius 0.3s ease",
+        opacity: isDeleting ? 0.6 : 1,
       }}
       whileHover={
-        isProcessing
+        isProcessing || isDeleting
           ? undefined
           : {
               y: -6,
@@ -100,7 +104,7 @@ const GalleryCard = ({
             }
       }
       onMouseEnter={
-        isProcessing
+        isProcessing || isDeleting
           ? undefined
           : (e) => {
               e.currentTarget.style.borderRadius =
@@ -108,7 +112,7 @@ const GalleryCard = ({
             }
       }
       onMouseLeave={
-        isProcessing
+        isProcessing || isDeleting
           ? undefined
           : (e) => {
               e.currentTarget.style.borderRadius =
@@ -122,9 +126,12 @@ const GalleryCard = ({
         imageUrl={imageUrl}
         title={title}
         status={status}
-        isProcessing={isProcessing}
+        isProcessing={isProcessing || isDeleting}
         config={config}
         onZoom={onZoom}
+        onDelete={() => {
+          deleteMutation.mutate(id);
+        }}
       />
 
       <CardMetadata
@@ -133,6 +140,7 @@ const GalleryCard = ({
         timestamp={timestamp}
         metadataInfo={metadataInfo}
         status={status}
+        isDeleting={isDeleting}
       />
     </ScrollReveal>
   );

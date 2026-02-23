@@ -1,5 +1,6 @@
 import type { CardStatus } from "../../../types/upload";
 import StatusBadge from "./StatusBadge";
+import DeleteButton from "./DeleteButton";
 import ZoomButton from "./ZoomButton";
 
 type ImageSectionProps = {
@@ -12,6 +13,7 @@ type ImageSectionProps = {
     textColor: string;
   };
   onZoom?: () => void;
+  onDelete?: () => void;
 };
 
 const ImageSection = ({
@@ -21,6 +23,7 @@ const ImageSection = ({
   isProcessing,
   config,
   onZoom,
+  onDelete,
 }: ImageSectionProps) => {
   const hasImage = Boolean(imageUrl);
 
@@ -57,7 +60,12 @@ const ImageSection = ({
 
       <StatusBadge status={status} config={config} />
 
-      {!isProcessing && hasImage && <ZoomButton onZoom={onZoom} />}
+      {!isProcessing && hasImage && (
+        <>
+          <DeleteButton onDelete={onDelete} />
+          <ZoomButton onZoom={onZoom} />
+        </>
+      )}
     </div>
   );
 };

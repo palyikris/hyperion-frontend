@@ -22,7 +22,7 @@ const Gallery = ({ items, onCardZoom }: GalleryProps) => {
           timestamp={item.timestamp}
           metadataInfo={
             item.metadata
-              ? `Size: ${(item.metadata.size / 1048576).toFixed(2)} Megabytes, Dimensions: ${item.metadata.width}x${item.metadata.height}`
+              ? `${(item.metadata.size / 1048576).toFixed(2)} MB, ${item.metadata.width}x${item.metadata.height}`
               : "No metadata"
           }
           onZoom={() => onCardZoom?.(item.id)}
