@@ -19,6 +19,7 @@ export interface NodeInfo {
   name: string;
   tasks_processed_today: number;
   current_task_id?: string | null;
+  current_task_status?: string | null;
 }
 
 export interface AIWorkersResponse {

@@ -8,6 +8,8 @@ type GalleryProps = {
 
 const Gallery = ({ items, onCardZoom }: GalleryProps) => {
 
+  console.log("Gallery items:", items); // Debug log to check the items being passed
+
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {items.map((item, i) => (
@@ -26,6 +28,7 @@ const Gallery = ({ items, onCardZoom }: GalleryProps) => {
               : "No metadata"
           }
           onZoom={() => onCardZoom?.(item.id)}
+          worker_name={item.assigned_worker}
         />
       ))}
     </section>

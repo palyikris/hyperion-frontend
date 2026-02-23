@@ -15,6 +15,7 @@ type GalleryCardProps = {
   metadataInfo: string;
   onZoom?: () => void;
   index: number;
+  worker_name?: string;
 };
 
 const statusConfig: Record<
@@ -69,12 +70,15 @@ const GalleryCard = ({
   metadataInfo,
   index,
   onZoom,
+  worker_name,
 }: GalleryCardProps) => {
   const config = statusConfig[status];
   const isProcessing = status === "PROCESSING";
   const navigate = useNavigate();
   const deleteMutation = useDeleteVaultItem();
   const isDeleting = deleteMutation.isPending;
+
+  console.log("worker_name:", worker_name);
 
   const handleClick = () => {
     if (isProcessing || isDeleting) {
@@ -141,6 +145,7 @@ const GalleryCard = ({
         metadataInfo={metadataInfo}
         status={status}
         isDeleting={isDeleting}
+        worker_name={worker_name}
       />
     </ScrollReveal>
   );

@@ -137,10 +137,10 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                         {t("dashboard.aiWorkers.currentTask")}:
                       </span>
                       <span
-                        className="truncate text-xs font-mono text-hyperion-forest"
+                        className="truncate text-xs font-mono text-hyperion-deep-sea"
                         title={worker.current_task_id}
                       >
-                        {worker.current_task_id.slice(0, 8)}...
+                        {worker.current_task_status}
                       </span>
                     </div>
                   )}

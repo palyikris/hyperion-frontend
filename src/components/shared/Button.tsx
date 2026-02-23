@@ -8,6 +8,7 @@ type ButtonProps = {
   icon?: ReactNode;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  animateIcon?: boolean;
 };
 
 export const Button = ({
@@ -17,6 +18,7 @@ export const Button = ({
   icon,
   type = "button",
   disabled = false,
+  animateIcon = true,
 }: ButtonProps) => {
   return (
     <MagneticWrapper>
@@ -38,11 +40,15 @@ export const Button = ({
         disabled={disabled}
         onClick={onClick}
       >
-        <span className="tracking-wide group-hover:tracking-wider transition-all duration-500">
-          {text}
-        </span>
+        {text !== "" && <span>{text}</span>}
         {icon && (
-          <span className="transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110 group-hover:rotate-12">
+          <span
+            className={
+              animateIcon
+                ? "transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110 group-hover:rotate-12"
+                : ""
+            }
+          >
             {icon}
           </span>
         )}
