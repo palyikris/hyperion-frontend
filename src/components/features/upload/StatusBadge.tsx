@@ -12,20 +12,24 @@ type StatusBadgeProps = {
 const StatusBadge = ({ status, config }: StatusBadgeProps) => {
   const { t } = useTranslation();
 
-  const getStatusLabel = (cardStatus: CardStatus): string => {
-    switch (cardStatus) {
-      case "trash-detected":
-        return t("upload.card.status.trashDetected");
-      case "processing":
-        return t("upload.card.status.processing");
-      case "clear":
-        return t("upload.card.status.clear");
+  const getStatusLabel = (status: CardStatus) => {
+    switch (status) {
+      case "PENDING":
+        return t("upload.status.pending");
+      case "UPLOADED":
+        return t("upload.status.uploaded");
+      case "EXTRACTING":
+        return t("upload.status.extracting");
+      case "PROCESSING":
+        return t("upload.status.processing");
+      case "READY":
+        return t("upload.status.ready");
+      case "FAILED":
+        return t("upload.status.failed");
       default:
-        return "";
+        return t("upload.status.unknown");
     }
   };
-
-  if (status === "default") return null;
 
   return (
     <div className="absolute top-6 left-6">

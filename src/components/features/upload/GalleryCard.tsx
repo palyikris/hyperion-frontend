@@ -26,19 +26,19 @@ const statusConfig: Record<
   }
 > = {
   PENDING: {
-    bgColor: "bg-hyperion-yellow",
-    textColor: "text-hyperion-dark-yellow",
-    borderColor: "border-hyperion-yellow",
+    bgColor: "bg-hyperion-muted-gold",
+    textColor: "text-hyperion-hyperion-cream",
+    borderColor: "border-hyperion-muted-gold",
   },
-  UPLOADING: {
-    bgColor: "bg-hyperion-blue",
-    textColor: "text-white",
-    borderColor: "border-hyperion-blue",
+  UPLOADED: {
+    bgColor: "bg-hyperion-sage-mint",
+    textColor: "text-hyperion-fog-grey",
+    borderColor: "border-hyperion-sage-mint",
   },
   FAILED: {
-    bgColor: "bg-hyperion-red",
-    textColor: "text-white",
-    borderColor: "border-hyperion-red",
+    bgColor: "bg-hyperion-burnt-orange",
+    textColor: "text-hyperion-cream",
+    borderColor: "border-hyperion-burnt-orange",
   },
   PROCESSING: {
     bgColor: "bg-hyperion-cool-aqua",
@@ -48,12 +48,12 @@ const statusConfig: Record<
   },
   EXTRACTING: {
     bgColor: "bg-hyperion-forest",
-    textColor: "text-white",
+    textColor: "text-hyperion-cool-aqua",
     borderColor: "border-hyperion-forest",
   },
   READY: {
-    bgColor: "",
-    textColor: "",
+    bgColor: "bg-hyperion-deep-sea",
+    textColor: "text-hyperion-cream",
     borderColor: "border-hyperion-fog-grey",
   },
 };
@@ -69,8 +69,9 @@ const GalleryCard = ({
   index,
   onZoom,
 }: GalleryCardProps) => {
+  console.log(`Rendering GalleryCard - ID: ${id}, Status: ${status}`);
   const config = statusConfig[status];
-  const isProcessing = config.processing ?? false;
+  const isProcessing = status === "PROCESSING";
   const navigate = useNavigate();
 
   const handleClick = () => {

@@ -185,6 +185,15 @@
       },
       "gpsLabel": "GPS:",
       "metadataLabel": "Metadata:"
+    },
+    "status": {
+      "pending": "Pending",
+      "uploaded": "Uploaded",
+      "extracting": "Extracting",
+      "processing": "Processing",
+      "ready": "Ready",
+      "failed": "Failed",
+      "unknown": "Unknown"
     }
   }
 }

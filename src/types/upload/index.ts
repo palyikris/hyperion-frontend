@@ -1,6 +1,6 @@
 export type CardStatus =
   | "PENDING"
-  | "UPLOADING"
+  | "UPLOADED"
   | "EXTRACTING"
   | "PROCESSING"
   | "READY"
@@ -13,9 +13,15 @@ export type GalleryItem = {
   status: CardStatus;
   gpsCoordinates?: string;
   timestamp: string;
-  metadataInfo: string;
+  metadata: GalleryItemMetadata;
 };
 
+export interface GalleryItemMetadata {
+  filename: string;
+  size: number;
+  width: number;
+  height: number;
+}
 export interface WSStatusUpdate {
   type: "MEDIA_STATUS_UPDATE";
   media_id: string;

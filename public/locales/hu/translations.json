@@ -185,6 +185,15 @@
       },
       "gpsLabel": "GPS:",
       "metadataLabel": "Metaadat:"
+    },
+    "status": {
+      "pending": "Függőben",
+      "uploaded": "Feltöltve",
+      "extracting": "Kinyerés",
+      "processing": "Feldolgozás",
+      "ready": "Kész",
+      "failed": "Sikertelen",
+      "unknown": "Ismeretlen"
     }
   }
 }
