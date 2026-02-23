@@ -8,7 +8,6 @@ export const useUploadSocket = () => {
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
-      console.log("Handling WS update:", update);
       queryClient.setQueryData(
         ["upload", "recent-gallery"],
         (oldData: GalleryItem[]) => {
@@ -18,11 +17,18 @@ export const useUploadSocket = () => {
               ? {
                   ...item,
                   status: update.status,
+                  image_url: update.image_url ?? item.image_url,
                 }
               : item,
           );
         },
       );
+
+      if (update.status === "UPLOADED" || update.status === "READY") {
+        queryClient.invalidateQueries({
+          queryKey: ["upload", "recent-gallery"],
+        });
+      }
     },
     [queryClient],
   );
@@ -33,7 +39,6 @@ export const useUploadSocket = () => {
     const wsUrl = new URL(apiBaseUrl);
     wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
     wsUrl.pathname = `${wsUrl.pathname.replace(/\/$/, "")}/upload/ws/updates`;
-    console.log("Connecting to WS at:", wsUrl.toString());
     wsUrl.search = "";
 
     const socket = new WebSocket(wsUrl.toString());
@@ -41,7 +46,6 @@ export const useUploadSocket = () => {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data) as WSStatusUpdate;
-        console.log("Received WS message:", data);
         if (data.type === "MEDIA_STATUS_UPDATE") {
           handleUpdate(data);
         }

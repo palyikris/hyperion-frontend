@@ -26,6 +26,7 @@ export interface WSStatusUpdate {
   type: "MEDIA_STATUS_UPDATE";
   media_id: string;
   status: CardStatus;
+  image_url?: string;
   worker?: string;
   timestamp: string;
 }
