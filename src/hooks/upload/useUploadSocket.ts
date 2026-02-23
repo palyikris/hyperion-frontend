@@ -8,26 +8,32 @@ export const useUploadSocket = () => {
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
-      queryClient.setQueryData(["upload", "recent-gallery"], (oldData: GalleryItem[]) => {
-        if (!oldData) return oldData;
-        return oldData.map((item) =>
-          item.id === update.media_id
-            ? {
-                ...item,
-                status: update.status,
-              }
-            : item,
-        );
-      });
+      console.log("Handling WS update:", update);
+      queryClient.setQueryData(
+        ["upload", "recent-gallery"],
+        (oldData: GalleryItem[]) => {
+          if (!oldData) return oldData;
+          return oldData.map((item) =>
+            item.id === update.media_id
+              ? {
+                  ...item,
+                  status: update.status,
+                }
+              : item,
+          );
+        },
+      );
     },
     [queryClient],
   );
 
   useEffect(() => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
+    const apiBaseUrl =
+      import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
     const wsUrl = new URL(apiBaseUrl);
     wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
     wsUrl.pathname = `${wsUrl.pathname.replace(/\/$/, "")}/upload/ws/updates`;
+    console.log("Connecting to WS at:", wsUrl.toString());
     wsUrl.search = "";
 
     const socket = new WebSocket(wsUrl.toString());
@@ -35,6 +41,7 @@ export const useUploadSocket = () => {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data) as WSStatusUpdate;
+        console.log("Received WS message:", data);
         if (data.type === "MEDIA_STATUS_UPDATE") {
           handleUpdate(data);
         }
