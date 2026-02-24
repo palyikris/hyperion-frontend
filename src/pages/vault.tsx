@@ -12,6 +12,7 @@ import { useDeleteAllVault } from "../hooks/vault/useDeleteAllVault";
 import type { CardStatus } from "../types/upload";
 import Divider from "../components/shared/Divider";
 import { useTranslation } from "react-i18next";
+import { useUploadSocket } from "../hooks/upload/useUploadSocket";
 
 const VaultPage = () => {
   // Filter State
@@ -22,6 +23,8 @@ const VaultPage = () => {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+
+  useUploadSocket();
 
   // Wrapper functions to reset page when filters change
   const handleSearchChange = (val: string) => {
@@ -74,7 +77,6 @@ const VaultPage = () => {
   };
 
   const items = data.items || [];
-
 
   if ((isLoading && !items.length) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
