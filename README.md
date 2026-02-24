@@ -10,6 +10,22 @@ Hyperion is a brand-forward React app for an environmental monitoring platform, 
   - User Experience Pulse: active users, response times, 7-day activity trends
   - AI Worker Status: fleet metrics, cluster status, individual node monitoring
   - Navigator: quick-access tiles to all app sections
+- **Upload page** (fully implemented):
+  - Drag-and-drop file upload with multi-file support
+  - Real-time upload status updates via WebSocket
+  - Recent gallery view with processing status badges
+  - Card metadata display (filename, size, dimensions, GPS coordinates)
+  - Image zoom functionality
+  - Delete uploaded files
+- **Vault page** (fully implemented):
+  - Complete media file management system
+  - Search functionality across filenames
+  - Status filtering (PENDING, UPLOADED, EXTRACTING, PROCESSING, READY, FAILED)
+  - Sorting by various fields (created_at, size, etc.) with ascending/descending order
+  - Pagination controls with adjustable page size
+  - Gallery view with detailed card metadata
+  - Delete functionality for vault items
+  - Empty state handling
 - **Settings page**: update profile name and application language
 - **Protected routing**: authentication-guarded routes with automatic redirect
 - **Internationalization**: full i18n support (English and Hungarian)
@@ -20,8 +36,6 @@ Hyperion is a brand-forward React app for an environmental monitoring platform, 
 - Statistics
 - Map
 - Lab
-- Upload
-- Vault
 
 ## Tech stack
 
@@ -90,7 +104,19 @@ The frontend expects the backend to expose the following endpoints:
 - `GET /dashboard/ai-workers`
   - Returns: `{ total_active_fleet, cluster_status, nodes[], queue_depth, last_updated }`
 
-Requests are sent with `withCredentials: true`, so configure CORS on the backend accordingly.
+**Upload:**
+- `POST /upload/files` - Upload one or multiple files (multipart/form-data)
+- `GET /upload/recents` - Fetch recently uploaded items
+  - Returns: `{ items[], total }`
+- WebSocket connection at `ws://[backend]/ws/upload` for real-time status updates
+
+**Vault:**
+- `GET /vault` - Fetch vault items with filtering, sorting, and pagination
+  - Query params: `search`, `status`, `order_by`, `direction`, `limit`, `offset`
+  - Returns: `{ items[], total }`
+- `DELETE /vault/:id` - Delete a specific vault item
+) - fully implemented with file upload and gallery
+- `/vault` (protected) - fully implemented with file management and filteringials: true`, so configure CORS on the backend accordingly.
 
 ## App routes
 

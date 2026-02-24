@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-const statusOptions = ["READY", "PROCESSING", "FAILED"] as const;
+const statusOptions = [
+  "READY",
+  "PROCESSING",
+  "FAILED",
+  "UPLOADED",
+  "PENDING",
+  "EXTRACTING",
+] as const;
 const sortOptions = ["created_at", "filename", "status"] as const;
 
 export const createVaultFiltersSchema = (t: (key: string) => string) =>
