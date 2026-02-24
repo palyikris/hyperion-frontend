@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { mainNavLinks } from "./navLinks";
@@ -19,15 +19,28 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-
-  // Determine number of links to display based on screen size
-  const visibleLinksCount = useMemo(() => {
+  const [visibleLinksCount, setVisibleLinksCount] = useState(() => {
     if (typeof window === "undefined") return 4;
-
     const width = window.innerWidth;
     if (width >= 1280) return mainNavLinks.length;
     if (width >= 1024) return 5;
     return 4;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1280) {
+        setVisibleLinksCount(mainNavLinks.length);
+      } else if (width >= 1024) {
+        setVisibleLinksCount(5);
+      } else {
+        setVisibleLinksCount(4);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const navLinksWithActive = mainNavLinks.map((link) => ({
