@@ -8,9 +8,6 @@ export const useUploadSocket = () => {
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
-
-      console.log("Received WS update:", update);
-
       queryClient.setQueryData(
         ["upload", "recent-gallery"],
         (oldData: GalleryItem[]) => {
@@ -27,26 +24,31 @@ export const useUploadSocket = () => {
         },
       );
 
-      // also update vault data if it exists
-      queryClient.setQueryData(
-        ["vault"],
-        (oldData: { items: GalleryItem[] } | undefined) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            items: oldData.items.map((item) =>
-              item.id === update.media_id
-                ? {
-                    ...item,
-                    status: update.status,
-                    image_url: update.image_url ?? item.image_url,
-                    assigned_worker: update.worker ?? item.assigned_worker,
-                  }
-                : item,
-            ),
-          };
-        },
-      );
+      // Update all vault queries
+      queryClient
+        .getQueryCache()
+        .findAll({ queryKey: ["vault"] })
+        .forEach((query) => {
+          queryClient.setQueryData(
+            query.queryKey,
+            (oldData: { items: GalleryItem[] }) => {
+              if (!oldData || !oldData.items) return oldData;
+              return {
+                ...oldData,
+                items: oldData.items.map((item: GalleryItem) =>
+                  item.id === update.media_id
+                    ? {
+                        ...item,
+                        status: update.status,
+                        image_url: update.image_url ?? item.image_url,
+                        assigned_worker: update.worker ?? item.assigned_worker,
+                      }
+                    : item,
+                ),
+              };
+            },
+          );
+        });
 
       if (update.status === "UPLOADED" || update.status === "READY") {
         queryClient.invalidateQueries({
