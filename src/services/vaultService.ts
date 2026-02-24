@@ -6,13 +6,18 @@ export interface VaultParams {
   status?: CardStatus;
   order_by?: string;
   direction?: "asc" | "desc";
-  limit?: number;
-  offset?: number;
+  page?: number;
+  page_size?: number;
 }
 
 export const vaultService = {
-  getVaultItems: async (params: VaultParams): Promise<{
+  getVaultItems: async (
+    params: VaultParams,
+  ): Promise<{
     total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
     items: GalleryItem[];
   }> => {
     const { data } = await api.get("/vault", { params });
@@ -20,5 +25,9 @@ export const vaultService = {
   },
   deleteVaultItem: async (id: string): Promise<void> => {
     await api.delete(`/vault/${id}`);
-  }
+  },
+  deleteAllMedia: async (): Promise<{ deleted_count: number }> => {
+    const { data } = await api.delete("/vault/all");
+    return data;
+  },
 };

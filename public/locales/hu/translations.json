@@ -158,14 +158,20 @@
     }
   },
   "common": {
-    "remove": "Eltávolítás"
+    "remove": "Eltávolítás",
+    "delete": "Törlés",
+    "cancel": "Mégse"
   },
   "vault": {
     "toast": {
       "deleteSuccessTitle": "Elem törölve",
       "deleteSuccessMessage": "Az elem el lett távolítva a tárolóból.",
       "deleteErrorTitle": "Törlés sikertelen",
-      "deleteErrorMessage": "Nem sikerült törölni az elemet. Kérlek, próbáld újra."
+      "deleteErrorMessage": "Nem sikerült törölni az elemet. Kérlek, próbáld újra.",
+      "deleteAllSuccessTitle": "Tároló kiürítve",
+      "deleteAllSuccessMessage": "Minden elem el lett távolítva a tárolóból.",
+      "deleteAllErrorTitle": "Teljes törlés sikertelen",
+      "deleteAllErrorMessage": "Nem sikerült az összes elemet törölni. Kérlek, próbáld újra."
     },
     "filters": {
       "searchLabel": "Keresés",
@@ -182,16 +188,38 @@
       "sortByCreated": "Létrehozás dátuma",
       "sortByFilename": "Fájlnév",
       "sortByStatus": "Állapot",
-      "limitLabel": "Limit",
       "apply": "Szűrők alkalmazása",
-      "toggleSort": "Rendezési irány váltása"
+      "toggleSort": "Rendezési irány váltása",
+      "reset": "Szűrők visszaállítása",
+      "pageSizeLabel": "Elemek/oldal"
     },
     "validation": {
       "searchTooLong": "A keresés legfeljebb 120 karakter lehet",
-      "statusInvalid": "Érvénytelen állapot választás"
+      "statusInvalid": "Érvénytelen állapot választás",
+      "orderByInvalid": "Érvénytelen rendezési mező választás",
+      "pageSizeMin": "Legalább 1 elem szükséges",
+      "pageSizeMax": "Az elemek száma nem haladhat meg 100-at"
     },
     "divider": {
       "label": "A te média tárolód"
+    },
+    "pagination": {
+      "previous": "Előző oldal",
+      "next": "Következő oldal",
+      "pageInfo": "{{current}}. oldal / {{total}} oldal"
+    },
+    "button": {
+      "deleteAll": "Az összes törlése",
+      "deleteAllTooltip": "Összes média törlése a tárolóból"
+    },
+    "modal": {
+      "deleteTitle": "Elem törlése?",
+      "deleteDescription": "Ez véglegesen törli az elemet a tárolóból. Ez a művelet nem vonható vissza.",
+      "deleteAllTitle": "Az összes média törlése?",
+      "deleteAllDescription": "Ez véglegesen törli a tárolóban lévő összes elemet. Ez a művelet nem vonható vissza."
+    },
+    "page": {
+      "subtitle": "Archívum és információkezelés"
     }
   },
   "upload": {
@@ -221,6 +249,10 @@
       "metadataLabel": "Metaadat:",
       "deleting": "Törlés..."
     },
+    "deleteSingleTitle": "Médiaelem törlése?",
+    "deleteSingleDescription": "Biztosan törölni akarod ezt a médiaelemet? Ez a művelet nem vonható vissza.",
+    "deleteConfirm": "Törlés",
+    "cancel": "Mégse",
     "status": {
       "pending": "Függőben",
       "uploaded": "Feltöltve",

@@ -158,14 +158,20 @@
     }
   },
   "common": {
-    "remove": "Remove"
+    "remove": "Remove",
+    "delete": "Delete",
+    "cancel": "Cancel"
   },
   "vault": {
     "toast": {
       "deleteSuccessTitle": "Vault item deleted",
       "deleteSuccessMessage": "The item has been removed from the vault.",
       "deleteErrorTitle": "Delete failed",
-      "deleteErrorMessage": "Unable to delete the vault item. Please try again."
+      "deleteErrorMessage": "Unable to delete the vault item. Please try again.",
+      "deleteAllSuccessTitle": "Vault cleared",
+      "deleteAllSuccessMessage": "All items have been removed from the vault.",
+      "deleteAllErrorTitle": "Delete all failed",
+      "deleteAllErrorMessage": "Unable to delete all items. Please try again."
     },
     "filters": {
       "searchLabel": "Search",
@@ -182,16 +188,38 @@
       "sortByCreated": "Created Date",
       "sortByFilename": "Filename",
       "sortByStatus": "Status",
-      "limitLabel": "Items Per Page",
+      "pageSizeLabel": "Items Per Page",
       "apply": "Apply filters",
-      "toggleSort": "Toggle sort direction"
+      "toggleSort": "Toggle sort direction",
+      "reset": "Reset filters"
     },
     "validation": {
       "searchTooLong": "Search must be 120 characters or fewer",
-      "statusInvalid": "Status selection is invalid"
+      "statusInvalid": "Status selection is invalid",
+      "orderByInvalid": "Sort field selection is invalid",
+      "pageSizeMin": "Items per page must be at least 1",
+      "pageSizeMax": "Items per page cannot exceed 100"
     },
     "divider": {
       "label": "Your Media Vault"
+    },
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page",
+      "pageInfo": "Page {{current}} of {{total}}"
+    },
+    "button": {
+      "deleteAll": "Delete All",
+      "deleteAllTooltip": "Delete all media from vault"
+    },
+    "modal": {
+      "deleteTitle": "Delete Item?",
+      "deleteDescription": "This will permanently delete this item from your vault. This action cannot be undone.",
+      "deleteAllTitle": "Delete All Media?",
+      "deleteAllDescription": "This will permanently delete all items from your vault. This action cannot be undone."
+    },
+    "page": {
+      "subtitle": "Archive & Intel management"
     }
   },
   "upload": {
@@ -221,6 +249,10 @@
       "metadataLabel": "Metadata:",
       "deleting": "Deleting..."
     },
+    "deleteSingleTitle": "Delete Media Item?",
+    "deleteSingleDescription": "Are you sure you want to delete this media item? This action cannot be undone.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
     "status": {
       "pending": "Pending",
       "uploaded": "Uploaded",

@@ -3,6 +3,7 @@ import type {
   ReactNode,
   SelectHTMLAttributes,
 } from "react";
+import { X } from "lucide-react";
 
 export type SelectOption = {
   label: string;
@@ -17,6 +18,8 @@ type SelectFieldProps = {
   rightIcon?: ReactNode;
   selectProps?: SelectHTMLAttributes<HTMLSelectElement>;
   error?: string;
+  isCancellable?: boolean;
+  onClear?: () => void;
 };
 
 export const SelectField = ({
@@ -27,6 +30,8 @@ export const SelectField = ({
   rightIcon,
   selectProps,
   error,
+  isCancellable,
+  onClear,
 }: SelectFieldProps) => {
   const errorId = error ? `${id}-error` : undefined;
 
@@ -50,7 +55,7 @@ export const SelectField = ({
       </div>
       <div className="relative">
         <select
-          className="peer w-full pl-12 pr-12 py-4 bg-white border-2 border-hyperion-fog-grey rounded-2xl text-hyperion-slate-grey focus:border-hyperion-deep-sea focus:bg-gradient-to-br focus:from-white focus:to-hyperion-cool-aqua/5 focus:ring-0 focus:shadow-[0_8px_24px_rgba(26,95,84,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] focus:scale-[1.01] transition-all duration-300 outline-none appearance-none"
+          className={`peer w-full pl-12 ${isCancellable ? "pr-24" : rightIcon ? "pr-12" : "pr-12"} py-4 bg-white border-2 border-hyperion-fog-grey rounded-2xl text-hyperion-slate-grey focus:border-hyperion-deep-sea focus:bg-gradient-to-br focus:from-white focus:to-hyperion-cool-aqua/5 focus:ring-0 focus:shadow-[0_8px_24px_rgba(26,95,84,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] focus:scale-[1.01] transition-all duration-300 outline-none appearance-none`}
           id={id}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={errorId}
@@ -63,7 +68,16 @@ export const SelectField = ({
           ))}
         </select>
         <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 w-5 h-5 transition-all duration-300 peer-focus:text-hyperion-deep-sea peer-focus:scale-110 peer-focus:rotate-3 peer-focus:drop-shadow-[0_0_12px_rgba(26,95,84,0.8)] pointer-events-none" />
-        {rightIcon && (
+        {isCancellable && (
+          <button
+            type="button"
+            onClick={onClear}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 hover:text-hyperion-deep-sea transition-all duration-300 hover:scale-110 focus:outline-none"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+        {rightIcon && !isCancellable && (
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 pointer-events-none">
             {rightIcon}
           </span>

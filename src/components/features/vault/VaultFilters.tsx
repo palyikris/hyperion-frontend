@@ -1,12 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowUpDown, Filter, Search } from "lucide-react";
+import { ArrowUpDown, Filter, Search, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../shared/Button";
 import { InputField } from "../../shared/InputField";
 import { SelectField } from "../../shared/SelectField";
-import { createVaultFiltersSchema, type VaultFiltersFormData } from "../../../schemas/vault/filters";
+import {
+  createVaultFiltersSchema,
+  type VaultFiltersFormData,
+} from "../../../schemas/vault/filters";
 import type { CardStatus } from "../../../types/upload";
 
 interface VaultFiltersProps {
@@ -18,8 +21,8 @@ interface VaultFiltersProps {
   onOrderByChange: (field: string) => void;
   direction: "asc" | "desc";
   onToggleDirection: () => void;
-  limit: number;
-  onLimitChange: (limit: number) => void;
+  pageSize: number;
+  onPageSizeChange: (pageSize: number) => void;
 }
 
 const VaultFilters = ({
@@ -31,8 +34,8 @@ const VaultFilters = ({
   onOrderByChange,
   direction,
   onToggleDirection,
-  limit,
-  onLimitChange,
+  pageSize,
+  onPageSizeChange,
 }: VaultFiltersProps) => {
   const { t, i18n } = useTranslation();
   const filtersSchema = useMemo(
@@ -52,7 +55,7 @@ const VaultFilters = ({
       search,
       status: statusFilter,
       order_by: orderBy,
-      limit,
+      page_size: pageSize,
     },
   });
 
@@ -61,15 +64,15 @@ const VaultFilters = ({
       search,
       status: statusFilter,
       order_by: orderBy,
-      limit,
+      page_size: pageSize,
     });
-  }, [reset, search, statusFilter, orderBy, limit]);
+  }, [reset, search, statusFilter, orderBy, pageSize]);
 
   const onSubmit = (data: VaultFiltersFormData) => {
     onSearchChange(data.search.trim());
     onStatusChange(data.status as CardStatus | "");
     onOrderByChange(data.order_by);
-    onLimitChange(data.limit);
+    onPageSizeChange(data.page_size);
   };
 
   return (
@@ -84,7 +87,7 @@ const VaultFilters = ({
         style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
       />
       <div
-        className="pointer-events-none absolute -bottom-20 left-86 h-32 w-32 bg-hyperion-sage-mint/60"
+        className="pointer-events-none absolute -bottom-20 left-166 h-32 w-32 bg-hyperion-sage-mint/60"
         style={{ borderRadius: "50% 50% 62% 38% / 46% 54% 46% 54%" }}
       />
       <div className="w-64">
@@ -96,6 +99,8 @@ const VaultFilters = ({
           placeholder={t("vault.filters.searchPlaceholder", "Search files...")}
           inputProps={register("search")}
           error={errors.search?.message}
+          isCancellable={Boolean(search)}
+          onClear={() => onSearchChange("")}
         />
       </div>
 
@@ -130,6 +135,8 @@ const VaultFilters = ({
           ]}
           selectProps={register("status")}
           error={errors.status?.message}
+          isCancellable={Boolean(statusFilter)}
+          onClear={() => onStatusChange("")}
         />
       </div>
 
@@ -173,9 +180,9 @@ const VaultFilters = ({
 
       <div className="w-40">
         <SelectField
-          label={t("vault.filters.limitLabel", "Items Per Page")}
+          label={t("vault.filters.pageSizeLabel", "Items Per Page")}
           icon={Filter}
-          id="vault-limit"
+          id="vault-page-size"
           options={[
             { label: "10", value: "10" },
             { label: "20", value: "20" },
@@ -183,13 +190,13 @@ const VaultFilters = ({
             { label: "100", value: "100" },
           ]}
           selectProps={{
-            ...register("limit", { valueAsNumber: true }),
+            ...register("page_size", { valueAsNumber: true }),
           }}
-          error={errors.limit?.message}
+          error={errors.page_size?.message}
         />
       </div>
 
-      <div className="min-w-[170px]">
+      <div className="w-full flex flex-col sm:flex-row gap-6 ml-auto">
         <Button
           type="submit"
           text={t("vault.filters.apply", "Apply filters")}
@@ -197,6 +204,21 @@ const VaultFilters = ({
           className="w-auto px-8 py-3"
           disabled={isSubmitting}
         />
+        <Button
+          type="button"
+          text={t("vault.filters.reset", "Reset")}
+          onClick={() => {
+            reset();
+            onSearchChange("");
+            onStatusChange("");
+            onOrderByChange("created_at");
+            onPageSizeChange(20);
+          }}
+          disabled={isSubmitting}
+          theme="danger"
+          className="px-8"
+          icon={<X className="w-4 h-4 text-white" />}
+        ></Button>
       </div>
     </form>
   );

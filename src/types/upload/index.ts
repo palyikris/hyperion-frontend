@@ -6,6 +6,14 @@ export type CardStatus =
   | "READY"
   | "FAILED";
 
+export interface VaultResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  items: GalleryItem[];
+}
+
 export type GalleryItem = {
   id: string;
   filename: string;

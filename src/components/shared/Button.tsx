@@ -9,6 +9,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   animateIcon?: boolean;
+  theme?: "primary" | "info" | "danger";
 };
 
 export const Button = ({
@@ -19,11 +20,25 @@ export const Button = ({
   type = "button",
   disabled = false,
   animateIcon = true,
+  theme = "primary",
 }: ButtonProps) => {
+  const themeClasses = {
+    primary: "bg-hyperion-deep-sea text-white hover:bg-hyperion-deep-sea/90",
+    info: "bg-hyperion-cool-aqua text-hyperion-deep-sea hover:bg-hyperion-cool-aqua/90",
+    danger:
+      "bg-hyperion-burnt-orange text-white hover:bg-hyperion-burnt-orange/90",
+  };
+
+  const themeClass = themeClasses[theme];
+
+  const baseClassName =
+    "w-full font-bold py-4 shadow-lg shadow-hyperion-deep-sea/20 hover:shadow-xl hover:shadow-hyperion-deep-sea/30 transition-all duration-500 transform active:scale-[0.97] hover:-translate-y-1 flex items-center justify-center space-x-3 group disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none";
+  const combinedClassName = `${baseClassName} ${themeClass} ${className}`;
+
   return (
     <MagneticWrapper>
       <button
-        className={`w-full bg-hyperion-deep-sea text-white font-bold py-4 shadow-lg shadow-hyperion-deep-sea/20 hover:shadow-xl hover:shadow-hyperion-deep-sea/30 transition-all duration-500 transform active:scale-[0.97] hover:-translate-y-1 flex items-center justify-center space-x-3 group disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none ${className}`}
+        className={combinedClassName}
         style={{
           borderRadius: "28px 44px 30px 48px / 40px 28px 46px 32px",
           transition: "all 0.5s ease, border-radius 0.5s ease",

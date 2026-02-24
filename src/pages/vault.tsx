@@ -1,10 +1,14 @@
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import Gallery from "../components/features/upload/Gallery";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import VaultHeader from "../components/features/vault/VaultHeader";
 import VaultFilters from "../components/features/vault/VaultFilters";
+import VaultPagination from "../components/features/vault/VaultPagination";
 import VaultEmptyState from "../components/features/vault/VaultEmptyState";
+import ConfirmModal from "../components/shared/ConfirmModal";
 import { useVault } from "../hooks/vault/useVault";
+import { useDeleteAllVault } from "../hooks/vault/useDeleteAllVault";
 import type { CardStatus } from "../types/upload";
 import Divider from "../components/shared/Divider";
 import { useTranslation } from "react-i18next";
@@ -15,25 +19,65 @@ const VaultPage = () => {
   const [statusFilter, setStatusFilter] = useState<CardStatus | "">("");
   const [orderBy, setOrderBy] = useState("created_at");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
-  const [limit, setLimit] = useState(20);
-  const [offset] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [page, setPage] = useState(1);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
-  const { data = { items: [] }, isLoading } = useVault({
+  // Wrapper functions to reset page when filters change
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+
+  const handleStatusChange = (status: CardStatus | "") => {
+    setStatusFilter(status);
+    setPage(1);
+  };
+
+  const handleOrderByChange = (field: string) => {
+    setOrderBy(field);
+    setPage(1);
+  };
+
+  const handleToggleDirection = () => {
+    setDirection((d) => (d === "asc" ? "desc" : "asc"));
+    setPage(1);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setPage(1);
+  };
+
+  const {
+    data = { items: [], total: 0, page: 1, page_size: 20, total_pages: 0 },
+    isLoading,
+  } = useVault({
     search: search || undefined,
     status: (statusFilter as CardStatus) || undefined,
     order_by: orderBy,
     direction: direction,
-    limit,
-    offset,
+    page_size: pageSize,
+    page,
   });
 
-  const {t} = useTranslation();
+  const deleteAllMutation = useDeleteAllVault();
+  const { t } = useTranslation();
+
+  const handleDeleteAll = () => {
+    setShowDeleteAllModal(true);
+  };
+
+  const handleConfirmDeleteAll = () => {
+    setShowDeleteAllModal(false);
+    deleteAllMutation.mutate();
+  };
 
   const items = data.items || [];
 
   console.log("Vault items:", items);
 
-  if (isLoading && !items.length) {
+  if ((isLoading && !items.length) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
   }
 
@@ -63,20 +107,33 @@ const VaultPage = () => {
       </div>
       <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
         <header className="flex flex-col items-start gap-4">
-          <VaultHeader />
+          <div className="w-full flex justify-between items-start">
+            <VaultHeader />
+            {items.length > 0 && (
+              <button
+                onClick={handleDeleteAll}
+                disabled={deleteAllMutation.isPending || isLoading}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-hyperion-burnt-orange/20 text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title={t("vault.button.deleteAllTooltip", "Delete all media")}
+              >
+                <Trash2 size={18} />
+                <span className="text-sm font-semibold whitespace-nowrap">
+                  {t("vault.button.deleteAll", "Delete All")}
+                </span>
+              </button>
+            )}
+          </div>
           <VaultFilters
             search={search}
-            onSearchChange={setSearch}
+            onSearchChange={handleSearchChange}
             statusFilter={statusFilter}
-            onStatusChange={setStatusFilter}
+            onStatusChange={handleStatusChange}
             orderBy={orderBy}
-            onOrderByChange={setOrderBy}
+            onOrderByChange={handleOrderByChange}
             direction={direction}
-            onToggleDirection={() =>
-              setDirection((d) => (d === "asc" ? "desc" : "asc"))
-            }
-            limit={limit}
-            onLimitChange={setLimit}
+            onToggleDirection={handleToggleDirection}
+            pageSize={pageSize}
+            onPageSizeChange={handlePageSizeChange}
           />
         </header>
 
@@ -89,7 +146,31 @@ const VaultPage = () => {
         />
 
         {items.length > 0 ? <Gallery items={items} /> : <VaultEmptyState />}
+
+        {items.length > 0 && (
+          <VaultPagination
+            currentPage={data.page}
+            totalPages={data.total_pages}
+            onPageChange={setPage}
+            isLoading={isLoading}
+          />
+        )}
       </div>
+
+      <ConfirmModal
+        isOpen={showDeleteAllModal}
+        title={t("vault.modal.deleteAllTitle", "Delete All Media?")}
+        description={t(
+          "vault.modal.deleteAllDescription",
+          "This will permanently delete all items from your vault. This action cannot be undone.",
+        )}
+        icon={<Trash2 size={32} />}
+        onConfirm={handleConfirmDeleteAll}
+        onClose={() => setShowDeleteAllModal(false)}
+        confirmText={t("common.delete", "Delete")}
+        cancelText={t("common.cancel", "Cancel")}
+        isDangerous
+      />
     </div>
   );
 };
