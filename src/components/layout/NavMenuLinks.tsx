@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { mainNavLinks } from "./navLinks";
@@ -20,6 +20,16 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  // Determine number of links to display based on screen size
+  const visibleLinksCount = useMemo(() => {
+    if (typeof window === "undefined") return 4;
+
+    const width = window.innerWidth;
+    if (width >= 1280) return mainNavLinks.length;
+    if (width >= 1024) return 5;
+    return 4;
+  }, []);
+
   const navLinksWithActive = mainNavLinks.map((link) => ({
     ...link,
     isActive: link.href === pathData,
@@ -30,7 +40,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
       className="flex flex-col gap-4 w-full px-4"
       onMouseLeave={() => onHover(null)}
     >
-      {navLinksWithActive.slice(0, 4).map((link) => (
+      {navLinksWithActive.slice(0, visibleLinksCount).map((link) => (
         <a
           key={link.labelKey}
           href={link.href}
