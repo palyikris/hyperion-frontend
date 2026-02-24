@@ -220,7 +220,8 @@
     },
     "page": {
       "subtitle": "Archívum és információkezelés"
-    }
+    },
+    "empty": "Nincs média, amely megfelel a keresési feltételeknek. Próbáld meg módosítani a szűrőket vagy tölts fel új képeket."
   },
   "upload": {
     "page": {

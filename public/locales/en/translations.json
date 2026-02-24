@@ -220,7 +220,8 @@
     },
     "page": {
       "subtitle": "Archive & Intel management"
-    }
+    },
+    "empty": "No media found matching your criteria. Try adjusting your filters or upload some new images."
   },
   "upload": {
     "page": {
