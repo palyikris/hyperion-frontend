@@ -84,7 +84,6 @@ const GalleryCard = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { t } = useTranslation();
 
-  console.log("worker_name:", worker_name);
 
   const handleDelete = () => {
     setIsDeleteModalOpen(true);

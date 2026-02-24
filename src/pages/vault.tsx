@@ -75,7 +75,6 @@ const VaultPage = () => {
 
   const items = data.items || [];
 
-  console.log("Vault items:", items);
 
   if ((isLoading && !items.length) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
