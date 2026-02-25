@@ -5,13 +5,11 @@ import Divider from "../components/shared/Divider";
 import { Title } from "../components/shared/Title";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { useRecentGallery } from "../hooks/upload/useRecentGallery";
-import { useUploadSocket } from "../hooks/upload/useUploadSocket";
 
 const UploadPage = () => {
   const { t } = useTranslation();
   const recentGalleryQuery = useRecentGallery();
 
-  useUploadSocket();
 
   const handleCardZoom = (itemId: string) => {
     console.log("Zooming to card:", itemId);
