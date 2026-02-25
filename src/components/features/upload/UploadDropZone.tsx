@@ -5,6 +5,7 @@ import { MorphBox } from "../../shared/animation/MorphBox";
 import { useUploadFiles } from "../../../hooks/upload/useUploadFiles";
 import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
+import { UploadIcon } from "lucide-react";
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
@@ -189,7 +190,12 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
       {/* Selected Files Section */}
       {selectedFiles.length > 0 && (
         <ScrollReveal className="mt-8">
-          <div className="bg-white border border-hyperion-fog-grey shadow-sm p-6 rounded-2xl">
+          <div
+            className="bg-white border border-hyperion-fog-grey shadow-sm p-6 rounded-2xl"
+            style={{
+              borderRadius: "68px 44px 30px 48px / 40px 28px 46px 32px",
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-hyperion-forest">
                 {t("upload.selectedFiles.heading", {
@@ -200,6 +206,8 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
                 <Button
                   onClick={handleUpload}
                   text={t("nav.main.upload")}
+                  icon={<UploadIcon className="w-4 h-4" />}
+                  className="px-6"
                 ></Button>
               )}
             </div>
