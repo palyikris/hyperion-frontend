@@ -27,6 +27,8 @@ const Gallery = ({ items, onCardZoom }: GalleryProps) => {
           }
           onZoom={() => onCardZoom?.(item.id)}
           worker_name={item.assigned_worker}
+          technical_metadata={item.technical_metadata}
+          address={item.address}
         />
       ))}
     </section>

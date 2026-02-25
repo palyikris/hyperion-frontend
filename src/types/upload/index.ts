@@ -23,7 +23,7 @@ export type GalleryItem = {
   timestamp: string;
   metadata: GalleryItemMetadata;
   assigned_worker?: string;
-  technical_metadata?: Record<string, string | number | boolean>;
+  technical_metadata?: GalleryItemTechnicalMetadata;
   lat?: number;
   lng?: number;
   altitude?: number;
@@ -35,6 +35,19 @@ export interface GalleryItemMetadata {
   size: number;
   width: number;
   height: number;
+}
+
+export interface GalleryItemTechnicalMetadata {
+  make: string;
+  model: string;
+  software: string;
+  date_taken: string;
+  gps: {
+    lat: number;
+    lng: number;
+    altitude: number;
+    address: string;
+  };
 }
 export interface WSStatusUpdate {
   type: "MEDIA_STATUS_UPDATE";

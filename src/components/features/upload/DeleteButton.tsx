@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 
 type DeleteButtonProps = {
-  onDelete?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
 };
 
 const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
@@ -11,7 +11,7 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
         type="button"
         onClick={(event) => {
           event.stopPropagation();
-          onDelete?.();
+          onDelete?.(event);
         }}
         className="bg-hyperion-burnt-orange/90 p-2 rounded-full shadow-lg hover:bg-hyperion-burnt-orange transition-colors"
         aria-label="Delete item"

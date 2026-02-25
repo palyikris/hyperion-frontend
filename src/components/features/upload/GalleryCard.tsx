@@ -1,26 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react";
-import type { CardStatus } from "../../../types/upload";
+import { Trash2, Info } from "lucide-react";
+import type {
+  CardStatus,
+  GalleryItemTechnicalMetadata,
+} from "../../../types/upload";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import ImageSection from "./ImageSection";
 import CardMetadata from "./CardMetadata";
 import ConfirmModal from "../../shared/ConfirmModal";
 import { useDeleteVaultItem } from "../../../hooks/vault/useDeleteVaultItem";
 import { useTranslation } from "react-i18next";
+import GalleryCardTechnicalOverlay from "./GalleryCardTechnicalOverlay";
 
-type GalleryCardProps = {
+interface GalleryCardProps {
   id: string;
   title: string;
   imageUrl: string;
   status: CardStatus;
   gpsCoordinates: string;
+  address?: string;
   timestamp: string;
   metadataInfo: string;
+  technical_metadata?: GalleryItemTechnicalMetadata;
   onZoom?: () => void;
   index: number;
   worker_name?: string;
-};
+}
 
 const statusConfig: Record<
   CardStatus,
@@ -33,7 +39,7 @@ const statusConfig: Record<
 > = {
   PENDING: {
     bgColor: "bg-hyperion-muted-gold",
-    textColor: "text-hyperion-hyperion-cream",
+    textColor: "text-hyperion-cream",
     borderColor: "border-hyperion-muted-gold",
   },
   UPLOADED: {
@@ -69,39 +75,39 @@ const GalleryCard = ({
   title,
   imageUrl,
   status,
-  gpsCoordinates,
+  address,
   timestamp,
   metadataInfo,
   index,
   onZoom,
   worker_name,
+  technical_metadata,
 }: GalleryCardProps) => {
   const config = statusConfig[status];
-  const isProcessing = status === "PROCESSING";
+  const isProcessing = status === "PROCESSING" || status === "EXTRACTING";
   const navigate = useNavigate();
   const deleteMutation = useDeleteVaultItem();
   const isDeleting = deleteMutation.isPending;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const { t } = useTranslation();
 
+  const initialRadius = "36px 76px 42px 86px / 68px 38px 78px 46px";
+  // const hoverRadius = "86px 42px 76px 36px / 46px 78px 38px 68px";
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = () => {
     deleteMutation.mutate(id, {
-      onSettled: () => {
-        setIsDeleteModalOpen(false);
-      },
+      onSettled: () => setIsDeleteModalOpen(false),
     });
   };
 
   const handleClick = () => {
-    if (isProcessing || isDeleting) {
-      return;
-    }
-
+    if (isProcessing || isDeleting) return;
     navigate(`/lab/${id}`);
   };
 
@@ -119,42 +125,42 @@ const GalleryCard = ({
         isDangerous
       />
       <ScrollReveal
-        className={`${isProcessing || isDeleting ? "" : "group"} bg-white overflow-hidden border ${config.borderColor} transition-all duration-300 ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-pointer hover:shadow-2xl"}`}
+        className={`relative ${isProcessing || isDeleting ? "" : "group"} bg-white border ${config.borderColor} ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-pointer"}`}
         style={{
-          borderRadius: "36px 76px 42px 86px / 68px 38px 78px 46px",
+          borderRadius: initialRadius,
           boxShadow: "0 10px 24px rgba(8, 36, 33, 0.08)",
-          transition: "all 0.3s ease, border-radius 0.3s ease",
           opacity: isDeleting ? 0.6 : 1,
+          overflow: "hidden",
+          willChange: "transform, border-radius",
+          transform: "translateZ(0)",
+          isolation: "isolate",
         }}
-        whileHover={
-          isProcessing || isDeleting
-            ? undefined
-            : {
-                y: -6,
-                rotate: -0.6,
-                scale: 1.01,
-                boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
-              }
-        }
-        onMouseEnter={
-          isProcessing || isDeleting
-            ? undefined
-            : (e) => {
-                e.currentTarget.style.borderRadius =
-                  "86px 42px 76px 36px / 46px 78px 38px 68px";
-              }
-        }
-        onMouseLeave={
-          isProcessing || isDeleting
-            ? undefined
-            : (e) => {
-                e.currentTarget.style.borderRadius =
-                  "36px 76px 42px 86px / 68px 38px 78px 46px";
-              }
-        }
+        // whileHover={
+        //   isProcessing || isDeleting
+        //     ? undefined
+        //     : {
+        //         y: -6,
+        //         rotate: -0.6,
+        //         scale: 1.01,
+        //         boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
+        //         // borderRadius: hoverRadius,
+        //       }
+        // }
         onClick={handleClick}
         delay={index * 0.02}
       >
+        {status === "READY" && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowInfo(true);
+            }}
+            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 backdrop-blur-md text-hyperion-forest shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-hyperion-cool-aqua hover:text-white"
+          >
+            <Info size={18} />
+          </button>
+        )}
+
         <ImageSection
           imageUrl={imageUrl}
           title={title}
@@ -165,9 +171,15 @@ const GalleryCard = ({
           onDelete={handleDelete}
         />
 
+        <GalleryCardTechnicalOverlay
+          showInfo={showInfo}
+          setShowInfo={setShowInfo}
+          technical_metadata={technical_metadata}
+          address={address}
+        />
+
         <CardMetadata
           title={title}
-          gpsCoordinates={gpsCoordinates}
           timestamp={timestamp}
           metadataInfo={metadataInfo}
           status={status}

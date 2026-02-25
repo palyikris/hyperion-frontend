@@ -14,7 +14,7 @@ type ImageSectionProps = {
     textColor: string;
   };
   onZoom?: () => void;
-  onDelete?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
 };
 
 const ImageSection = ({

@@ -4,22 +4,22 @@ import { Calendar, FileText, MapPin, User2 } from "lucide-react";
 
 type CardMetadataProps = {
   title: string;
-  gpsCoordinates: string;
   timestamp: string;
   metadataInfo: string;
   status: CardStatus;
   isDeleting?: boolean;
   worker_name?: string;
+  address?: string;
 };
 
 const CardMetadata = ({
   title,
-  gpsCoordinates,
   timestamp,
   metadataInfo,
   status,
   isDeleting,
   worker_name,
+  address,
 }: CardMetadataProps) => {
   const { t } = useTranslation();
 
@@ -37,11 +37,11 @@ const CardMetadata = ({
       </div>
 
       <div className="relative z-10 flex flex-col gap-2">
-        {gpsCoordinates !== "N/A" && (
+        {address !== "N/A" && (
           <div className="flex items-start gap-2 text-xs text-hyperion-slate-grey/70">
             <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
             <span className="wrap-break-word leading-tight">
-              {t("upload.card.gpsLabel")} {gpsCoordinates}
+              {t("upload.card.gpsLabel")} {address}
             </span>
           </div>
         )}
