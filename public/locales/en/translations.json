@@ -228,6 +228,10 @@
       "title": "Upload & Recents",
       "subtitle": "Image uploads and recent activity"
     },
+    "toast": {
+      "compressionErrorTitle": "Image Compression Failed",
+      "compressionErrorMessage": "Failed to compress {{fileName}}. It will be uploaded without compression."
+    },
     "divider": {
       "label": "Recent Uploads"
     },

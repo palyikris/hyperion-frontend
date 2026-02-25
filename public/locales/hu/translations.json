@@ -228,6 +228,10 @@
       "title": "Feltöltés és legutóbbiak",
       "subtitle": "Képfeltöltések és legutóbbi aktivitás"
     },
+    "toast": {
+      "compressionErrorTitle": "Képtömörítés sikertelen",
+      "compressionErrorMessage": "Nem sikerült tömöríteni: {{fileName}}. Tömörítés nélkül lesz feltöltve."
+    },
     "divider": {
       "label": "Legutóbbi feltöltések"
     },
