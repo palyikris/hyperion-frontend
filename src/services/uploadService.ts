@@ -15,6 +15,7 @@ export const uploadService = {
       maxWidthOrHeight: 2560,
       useWebWorker: true,
       preserveExif: true,
+      initialQuality: 0.85,
     };
 
     const formData = new FormData();
