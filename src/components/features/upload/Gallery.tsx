@@ -18,7 +18,7 @@ const Gallery = ({ items, onCardZoom }: GalleryProps) => {
           title={item.filename}
           imageUrl={item.image_url}
           status={item.status}
-          gpsCoordinates={item.gpsCoordinates || "N/A"}
+          gpsCoordinates={item.address || "N/A"}
           timestamp={item.timestamp}
           metadataInfo={
             item.metadata

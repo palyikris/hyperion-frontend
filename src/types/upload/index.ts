@@ -24,6 +24,10 @@ export type GalleryItem = {
   metadata: GalleryItemMetadata;
   assigned_worker?: string;
   technical_metadata?: Record<string, string | number | boolean>;
+  lat?: number;
+  lng?: number;
+  altitude?: number;
+  address?: string;
 };
 
 export interface GalleryItemMetadata {
@@ -39,4 +43,5 @@ export interface WSStatusUpdate {
   image_url?: string;
   worker?: string;
   timestamp: string;
+  address?: string;
 }

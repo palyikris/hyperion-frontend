@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { CardStatus } from "../../../types/upload";
-import { Calendar, FileText, User2 } from "lucide-react";
+import { Calendar, FileText, MapPin, User2 } from "lucide-react";
 
 type CardMetadataProps = {
   title: string;
@@ -24,17 +24,28 @@ const CardMetadata = ({
   const { t } = useTranslation();
 
   return (
-    <div className="px-4 py-10 pt-4 space-y-3">
-      <div className="flex justify-between items-start gap-2">
+    <div className="relative overflow-hidden px-4 py-10 pt-4 space-y-3">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-5 -right-5 h-20 w-20 rounded-[58%_42%_35%_65%/56%_44%_60%_40%] bg-hyperion-sage-mint/60"
+      />
+
+      <div className="relative z-10 flex items-start gap-2">
         <h4 className="font-bold text-hyperion-forest truncate">
           {isDeleting ? t("upload.card.deleting") : title}
         </h4>
-        <span className="text-[10px] font-bold text-hyperion-slate-grey/60 bg-hyperion-fog-grey px-1.5 py-0.5 rounded whitespace-nowrap">
-          {t("upload.card.gpsLabel")} {gpsCoordinates}
-        </span>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="relative z-10 flex flex-col gap-2">
+        {gpsCoordinates !== "N/A" && (
+          <div className="flex items-start gap-2 text-xs text-hyperion-slate-grey/70">
+            <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
+            <span className="wrap-break-word leading-tight">
+              {t("upload.card.gpsLabel")} {gpsCoordinates}
+            </span>
+          </div>
+        )}
+
         <div className="flex items-center gap-2 text-xs text-hyperion-slate-grey/70">
           <Calendar className="w-4 h-4" />
           {new Date(timestamp).toISOString().split("T")[0]}

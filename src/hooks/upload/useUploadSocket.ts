@@ -47,6 +47,7 @@ export const useUploadSocket = () => {
                         status: update.status,
                         image_url: update.image_url ?? item.image_url,
                         assigned_worker: update.worker ?? item.assigned_worker,
+                        address: update.address ?? item.address,
                       }
                     : item,
                 ),
