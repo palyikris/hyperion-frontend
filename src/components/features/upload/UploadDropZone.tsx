@@ -2,15 +2,28 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MorphBox } from "../../shared/animation/MorphBox";
+import { useUploadFiles } from "../../../hooks/upload/useUploadFiles";
+import { toastService } from "../../../services/toastService";
+import { Button } from "../../shared/Button";
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
 };
 
+type FileUploadState = {
+  file: File;
+  progress: number;
+  status: "pending" | "uploading" | "completed" | "error";
+  error?: string;
+};
+
 const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadStates, setUploadStates] = useState<FileUploadState[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const { t } = useTranslation();
+  const uploadMutation = useUploadFiles();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -39,6 +52,66 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
     onFilesSelected?.(updatedFiles);
+    setUploadStates(uploadStates.filter((_, i) => i !== index));
+  };
+
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0 || isUploading) return;
+
+    setIsUploading(true);
+    const initialStates: FileUploadState[] = selectedFiles.map((file) => ({
+      file,
+      progress: 0,
+      status: "pending",
+    }));
+    setUploadStates(initialStates);
+
+    try {
+      await uploadMutation.mutateAsync(
+        {
+          files: selectedFiles,
+          onProgress: (progress: number) => {
+            setUploadStates((prevStates) =>
+              prevStates.map((state) => ({
+                ...state,
+                progress,
+                status: progress < 100 ? "uploading" : "completed",
+              })),
+            );
+          },
+        },
+        {
+          onSuccess: () => {
+            setUploadStates((prevStates) =>
+              prevStates.map((state) => ({
+                ...state,
+                status: "completed",
+                progress: 100,
+              })),
+            );
+            setTimeout(() => {
+              setSelectedFiles([]);
+              setUploadStates([]);
+              setIsUploading(false);
+            }, 1500);
+          },
+          onError: (error) => {
+            setUploadStates((prevStates) =>
+              prevStates.map((state) => ({
+                ...state,
+                status: "error",
+                error: error instanceof Error ? error.message : "Upload failed",
+              })),
+            );
+            setIsUploading(false);
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Upload error:", error);
+      toastService.error(t("upload.errors.general"));
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -107,6 +180,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               accept=".jpg,.jpeg,.png,.tiff"
               onChange={handleFileChange}
               className="absolute inset-0 opacity-0 cursor-pointer"
+              disabled={isUploading}
             />
           </label>
         </MorphBox>
@@ -116,47 +190,126 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
       {selectedFiles.length > 0 && (
         <ScrollReveal className="mt-8">
           <div className="bg-white border border-hyperion-fog-grey shadow-sm p-6 rounded-2xl">
-            <h3 className="text-lg font-semibold text-hyperion-forest mb-4">
-              {t("upload.selectedFiles.heading", {
-                count: selectedFiles.length,
-              })}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-hyperion-forest">
+                {t("upload.selectedFiles.heading", {
+                  count: selectedFiles.length,
+                })}
+              </h3>
+              {!isUploading && (
+                <Button
+                  onClick={handleUpload}
+                  text={t("nav.main.upload")}
+                ></Button>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {selectedFiles.map((file, index) => (
-                <ScrollReveal
-                  key={`${file.name}-${index}`}
-                  className="flex items-center justify-between p-4 border border-hyperion-cool-aqua/30 rounded-lg hover:border-hyperion-cool-aqua/60 transition-colors group"
-                  delay={index * 0.1}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-hyperion-forest truncate">
-                      {file.name}
-                    </p>
-                    <p className="text-xs text-hyperion-slate-grey/60 mt-1">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => removeFile(index)}
-                    className="ml-3 shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"
-                    title={t("common.remove", "Remove")}
+              {selectedFiles.map((file, index) => {
+                const uploadState = uploadStates[index];
+                const isCompleted = uploadState?.status === "completed";
+                const isError = uploadState?.status === "error";
+                const isUploading = uploadState?.status === "uploading";
+
+                return (
+                  <ScrollReveal
+                    key={`${file.name}-${index}`}
+                    className="flex flex-col p-4 border border-hyperion-cool-aqua/30 rounded-lg hover:border-hyperion-cool-aqua/60 transition-colors group"
+                    delay={index * 0.1}
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </ScrollReveal>
-              ))}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-hyperion-forest truncate">
+                          {file.name}
+                        </p>
+                        <p className="text-xs text-hyperion-slate-grey/60 mt-1">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                      {!isUploading && !isCompleted && !isError && (
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="ml-3 shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"
+                          title={t("common.remove", "Remove")}
+                        >
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Progress Bar */}
+                    {(isUploading || isCompleted || isError) && (
+                      <div className="space-y-2">
+                        <div className="w-full h-2 bg-hyperion-fog-grey rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300 ${
+                              isError
+                                ? "bg-hyperion-burnt-orange"
+                                : isCompleted
+                                  ? "bg-hyperion-deep-sea"
+                                  : "bg-hyperion-forest"
+                            }`}
+                            style={{
+                              width: `${uploadState?.progress || 0}%`,
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-hyperion-slate-grey">
+                            {isCompleted
+                              ? t("upload.status.uploaded")
+                              : isError
+                                ? t("upload.status.failed")
+                                : `${uploadState?.progress || 0}%`}
+                          </span>
+                          {isCompleted && (
+                            <svg
+                              className="w-4 h-4 text-green-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                          {isError && (
+                            <svg
+                              className="w-4 h-4 text-red-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        {isError && uploadState?.error && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {uploadState.error}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </ScrollReveal>
+                );
+              })}
             </div>
           </div>
         </ScrollReveal>
