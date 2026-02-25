@@ -2,6 +2,7 @@ import type { CardStatus } from "../../../types/upload";
 import StatusBadge from "./StatusBadge";
 import DeleteButton from "./DeleteButton";
 import ZoomButton from "./ZoomButton";
+import { useState } from "react";
 
 type ImageSectionProps = {
   imageUrl: string;
@@ -27,6 +28,8 @@ const ImageSection = ({
 }: ImageSectionProps) => {
   const hasImage = Boolean(imageUrl);
 
+  const [opacity, setOpacity] = useState(0);
+
   return (
     <div className="aspect-4/3 relative overflow-hidden bg-hyperion-fog-grey">
       {hasImage ? (
@@ -36,6 +39,8 @@ const ImageSection = ({
           className={`w-full h-full object-cover transition-transform duration-500 ${
             isProcessing ? "opacity-60" : "group-hover:scale-105"
           }`}
+          onLoad={() => setOpacity(1)}
+          style={{ opacity }}
         />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-hyperion-fog-grey/90">

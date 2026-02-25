@@ -11,7 +11,7 @@ export const uploadService = {
     signal?: AbortSignal,
   ) => {
     const options = {
-      maxSizeMB: 2,
+      maxSizeMB: 5,
       maxWidthOrHeight: 2560,
       useWebWorker: true,
       preserveExif: true,
