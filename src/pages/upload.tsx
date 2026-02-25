@@ -20,7 +20,9 @@ const UploadPage = () => {
       return;
     }
 
-    uploadFilesMutation.mutate(files);
+    uploadFilesMutation.mutate({
+      files,
+    });
   };
 
   const handleCardZoom = (itemId: string) => {
