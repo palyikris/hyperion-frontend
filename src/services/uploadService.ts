@@ -5,6 +5,7 @@ export const uploadService = {
   uploadFiles: async (
     files: File[],
     onProgress?: (progress: number) => void,
+    signal?: AbortSignal,
   ) => {
     const formData = new FormData();
     files.forEach((file) => {
@@ -23,6 +24,7 @@ export const uploadService = {
           onProgress?.(percentCompleted);
         }
       },
+      signal,
     });
 
     return data;

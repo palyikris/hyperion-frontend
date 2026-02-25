@@ -254,13 +254,15 @@
     "deleteSingleDescription": "Biztosan törölni akarod ezt a médiaelemet? Ez a művelet nem vonható vissza.",
     "deleteConfirm": "Törlés",
     "cancel": "Mégse",
+    "uploadCancel": "Feltöltés megszakítása",
     "status": {
       "pending": "Függőben",
       "uploaded": "Feltöltve",
-      "extracting": "Kinyerés",
+      "extracting": "Kicsomagolás",
       "processing": "Feldolgozás",
       "ready": "Kész",
       "failed": "Sikertelen",
+      "cancelled": "Feltöltés megszakítva",
       "unknown": "Ismeretlen"
     }
   }

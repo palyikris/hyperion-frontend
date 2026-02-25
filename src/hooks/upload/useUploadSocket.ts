@@ -8,19 +8,24 @@ export const useUploadSocket = () => {
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
+
+
       queryClient.setQueryData(
         ["upload", "recent-gallery"],
-        (oldData: GalleryItem[]) => {
-          if (!oldData) return oldData;
-          return oldData.map((item) =>
-            item.id === update.media_id
-              ? {
-                  ...item,
-                  status: update.status,
-                  image_url: update.image_url ?? item.image_url,
-                }
-              : item,
-          );
+        (oldData: { items: GalleryItem[] }) => {
+          if (!oldData || !oldData.items) return oldData;
+          return {
+            ...oldData,
+            items: oldData.items.map((item) =>
+              item.id === update.media_id
+                ? {
+                    ...item,
+                    status: update.status,
+                    image_url: update.image_url ?? item.image_url,
+                  }
+                : item,
+            ),
+          };
         },
       );
 

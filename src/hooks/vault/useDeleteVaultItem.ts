@@ -11,6 +11,7 @@ export const useDeleteVaultItem = () => {
     mutationFn: (id: string) => vaultService.deleteVaultItem(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vault"] });
+      queryClient.invalidateQueries({ queryKey: ["upload", "recent-gallery"] });
       toastService.success(
         t("vault.toast.deleteSuccessTitle"),
         t("vault.toast.deleteSuccessMessage"),

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MorphBox } from "../../shared/animation/MorphBox";
 import { useUploadFiles } from "../../../hooks/upload/useUploadFiles";
 import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
-import { UploadIcon } from "lucide-react";
+import { UploadIcon, XIcon } from "lucide-react";
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
@@ -25,6 +25,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { t } = useTranslation();
   const uploadMutation = useUploadFiles();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -56,10 +57,22 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
     setUploadStates(uploadStates.filter((_, i) => i !== index));
   };
 
+  const handleCancelUpload = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsUploading(false);
+    setUploadStates([]);
+    toastService.error(t("upload.status.cancelled"));
+  };
+
   const handleUpload = async () => {
     if (selectedFiles.length === 0 || isUploading) return;
 
     setIsUploading(true);
+    abortControllerRef.current = new AbortController();
+
     const initialStates: FileUploadState[] = selectedFiles.map((file) => ({
       file,
       progress: 0,
@@ -71,6 +84,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
       await uploadMutation.mutateAsync(
         {
           files: selectedFiles,
+          signal: abortControllerRef.current.signal,
           onProgress: (progress: number) => {
             setUploadStates((prevStates) =>
               prevStates.map((state) => ({
@@ -94,9 +108,14 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               setSelectedFiles([]);
               setUploadStates([]);
               setIsUploading(false);
+              abortControllerRef.current = null;
             }, 1500);
           },
           onError: (error) => {
+            // Don't show error if it was cancelled
+            if (error instanceof Error && error.name === "CanceledError") {
+              return;
+            }
             setUploadStates((prevStates) =>
               prevStates.map((state) => ({
                 ...state,
@@ -105,13 +124,19 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               })),
             );
             setIsUploading(false);
+            abortControllerRef.current = null;
           },
         },
       );
     } catch (error) {
+      // Don't show error if it was cancelled
+      if (error instanceof Error && error.name === "CanceledError") {
+        return;
+      }
       console.error("Upload error:", error);
       toastService.error(t("upload.errors.general"));
       setIsUploading(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -202,7 +227,14 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
                   count: selectedFiles.length,
                 })}
               </h3>
-              {!isUploading && (
+              {isUploading ? (
+                <Button
+                  onClick={handleCancelUpload}
+                  text={t("upload.uploadCancel")}
+                  icon={<XIcon className="w-4 h-4" />}
+                  className="px-6 bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
+                ></Button>
+              ) : (
                 <Button
                   onClick={handleUpload}
                   text={t("nav.main.upload")}
@@ -283,7 +315,7 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
                           </span>
                           {isCompleted && (
                             <svg
-                              className="w-4 h-4 text-green-500"
+                              className="w-4 h-4 text-hyperion-deep-sea"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >

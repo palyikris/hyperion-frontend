@@ -8,10 +8,12 @@ export const useUploadFiles = () => {
     mutationFn: ({
       files,
       onProgress,
+      signal,
     }: {
       files: File[];
       onProgress?: (progress: number) => void;
-    }) => uploadService.uploadFiles(files, onProgress),
+      signal?: AbortSignal;
+    }) => uploadService.uploadFiles(files, onProgress, signal),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["upload", "recent-gallery"] });
     },
