@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion, type TargetAndTransition } from "framer-motion";
 import { type ReactNode } from "react";
 
@@ -11,6 +10,14 @@ interface ScrollRevealProps {
   onMouseEnter?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (e: React.MouseEvent<HTMLDivElement>) => void;
   whileHover?: TargetAndTransition;
+  onHoverStart?: (
+    event: PointerEvent,
+    info: import("framer-motion").EventInfo,
+  ) => void;
+  onHoverEnd?: (
+    event: PointerEvent,
+    info: import("framer-motion").EventInfo,
+  ) => void;
 }
 
 export const ScrollReveal = ({
@@ -22,6 +29,8 @@ export const ScrollReveal = ({
   onMouseEnter,
   onMouseLeave,
   whileHover,
+  onHoverStart,
+  onHoverEnd,
 }: ScrollRevealProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -38,6 +47,8 @@ export const ScrollReveal = ({
     onMouseLeave={onMouseLeave}
     className={className}
     style={style}
+    onHoverStart={onHoverStart}
+    onHoverEnd={onHoverEnd}
   >
     {children}
   </motion.div>

@@ -95,7 +95,6 @@ const GalleryCard = ({
   const { t } = useTranslation();
 
   const initialRadius = "36px 76px 42px 86px / 68px 38px 78px 46px";
-  const hoverRadius = "86px 42px 76px 36px / 46px 78px 38px 68px";
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -145,7 +144,6 @@ const GalleryCard = ({
                 rotate: -0.6,
                 scale: 1.01,
                 boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
-                borderRadius: hoverRadius,
               }
         }
         onClick={handleClick}
