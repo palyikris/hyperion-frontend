@@ -4,10 +4,10 @@ import type { GalleryItem } from "../../../types/upload";
 type GalleryProps = {
   items: GalleryItem[];
   onCardZoom?: (itemId: string) => void;
+  showInfo?: boolean;
 };
 
-const Gallery = ({ items, onCardZoom }: GalleryProps) => {
-
+const Gallery = ({ items, onCardZoom, showInfo }: GalleryProps) => {
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {items.map((item, i) => (
@@ -29,6 +29,7 @@ const Gallery = ({ items, onCardZoom }: GalleryProps) => {
           worker_name={item.assigned_worker}
           technical_metadata={item.technical_metadata}
           address={item.address}
+          showInfo={showInfo}
         />
       ))}
     </section>

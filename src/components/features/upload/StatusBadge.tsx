@@ -32,7 +32,7 @@ const StatusBadge = ({ status, config }: StatusBadgeProps) => {
   };
 
   return (
-    <div className="absolute top-6 left-6">
+    <div className="absolute top-4 left-4">
       <span
         className={`px-3 py-1 ${config.bgColor} ${config.textColor} text-xs font-bold rounded-full shadow-sm flex items-center gap-1`}
       >

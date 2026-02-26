@@ -9,21 +9,24 @@ interface GalleryCardTechnicalOverlayProps {
   setShowInfo: (show: boolean) => void;
   technical_metadata?: GalleryItemTechnicalMetadata;
   address?: string;
+  borderRadius?: string;
 }
 
-const GalleryCardTechnicalOverlay: React.FC<GalleryCardTechnicalOverlayProps> = ({
-  showInfo,
-  setShowInfo,
-  technical_metadata,
-  address,
-}) => (
+const GalleryCardTechnicalOverlay: React.FC<
+  GalleryCardTechnicalOverlayProps
+> = ({ showInfo, setShowInfo, technical_metadata, address, borderRadius }) => (
   <AnimatePresence>
     {showInfo && technical_metadata && (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 z-30 p-6 bg-hyperion-forest/90 backdrop-blur-xl text-white flex flex-col"
+        className="absolute inset-0 z-30 p-6 bg-hyperion-forest text-white flex flex-col"
+        style={
+          borderRadius
+            ? { borderRadius, backgroundClip: "padding-box" }
+            : { backgroundClip: "padding-box" }
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-2">

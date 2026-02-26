@@ -26,6 +26,7 @@ interface GalleryCardProps {
   onZoom?: () => void;
   index: number;
   worker_name?: string;
+  showInfo?: boolean;
 }
 
 const statusConfig: Record<
@@ -82,6 +83,7 @@ const GalleryCard = ({
   onZoom,
   worker_name,
   technical_metadata,
+  showInfo: initialShowInfo = true,
 }: GalleryCardProps) => {
   const config = statusConfig[status];
   const isProcessing = status === "PROCESSING" || status === "EXTRACTING";
@@ -93,7 +95,7 @@ const GalleryCard = ({
   const { t } = useTranslation();
 
   const initialRadius = "36px 76px 42px 86px / 68px 38px 78px 46px";
-  // const hoverRadius = "86px 42px 76px 36px / 46px 78px 38px 68px";
+  const hoverRadius = "86px 42px 76px 36px / 46px 78px 38px 68px";
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -135,27 +137,28 @@ const GalleryCard = ({
           transform: "translateZ(0)",
           isolation: "isolate",
         }}
-        // whileHover={
-        //   isProcessing || isDeleting
-        //     ? undefined
-        //     : {
-        //         y: -6,
-        //         rotate: -0.6,
-        //         scale: 1.01,
-        //         boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
-        //         // borderRadius: hoverRadius,
-        //       }
-        // }
+        whileHover={
+          isProcessing || isDeleting
+            ? undefined
+            : {
+                y: -6,
+                rotate: -0.6,
+                scale: 1.01,
+                boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
+                borderRadius: hoverRadius,
+              }
+        }
         onClick={handleClick}
         delay={index * 0.02}
       >
-        {status === "READY" && (
+        {status === "READY" && initialShowInfo && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowInfo(true);
             }}
-            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 backdrop-blur-md text-hyperion-forest shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-hyperion-cool-aqua hover:text-white"
+            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white text-hyperion-forest shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-hyperion-cool-aqua hover:text-white border border-hyperion-fog-grey"
+            style={{ boxShadow: "0 2px 8px rgba(8,36,33,0.10)" }}
           >
             <Info size={18} />
           </button>
@@ -176,6 +179,7 @@ const GalleryCard = ({
           setShowInfo={setShowInfo}
           technical_metadata={technical_metadata}
           address={address}
+          borderRadius={initialRadius}
         />
 
         <CardMetadata
@@ -185,6 +189,7 @@ const GalleryCard = ({
           status={status}
           isDeleting={isDeleting}
           worker_name={worker_name}
+          address={address}
         />
       </ScrollReveal>
     </>

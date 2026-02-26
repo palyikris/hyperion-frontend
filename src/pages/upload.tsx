@@ -65,7 +65,7 @@ const UploadPage = () => {
           textClassName="text-hyperion-forest/70"
         />
 
-        <Gallery items={items} onCardZoom={handleCardZoom} />
+        <Gallery items={items} onCardZoom={handleCardZoom} showInfo={false} />
       </div>
     </div>
   );
