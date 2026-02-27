@@ -1,12 +1,17 @@
 type ZoomButtonProps = {
   onZoom?: () => void;
+  onSearchIconClick?: (e: React.MouseEvent) => void;
 };
 
-const ZoomButton = ({ onZoom }: ZoomButtonProps) => {
+const ZoomButton = ({ onZoom, onSearchIconClick }: ZoomButtonProps) => {
   return (
     <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
       <button
-        onClick={onZoom}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onSearchIconClick) onSearchIconClick(e);
+          else if (onZoom) onZoom();
+        }}
         className="bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
       >
         <svg

@@ -15,6 +15,7 @@ type ImageSectionProps = {
   };
   onZoom?: () => void;
   onDelete?: (e: React.MouseEvent) => void;
+  onSearchIconClick?: (e: React.MouseEvent) => void;
 };
 
 const ImageSection = ({
@@ -25,6 +26,7 @@ const ImageSection = ({
   config,
   onZoom,
   onDelete,
+  onSearchIconClick,
 }: ImageSectionProps) => {
   const hasImage = Boolean(imageUrl);
 
@@ -38,9 +40,13 @@ const ImageSection = ({
           src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${imageUrl}`}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             isProcessing ? "opacity-60" : "group-hover:scale-105"
-          }`}
+          } ${onZoom ? "cursor-zoom-in" : ""}`}
           onLoad={() => setOpacity(1)}
           style={{ opacity }}
+          onClick={() => {
+            // Only trigger zoom if not clicking the search icon
+            if (onZoom) onZoom();
+          }}
         />
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-hyperion-fog-grey/90">
@@ -68,7 +74,7 @@ const ImageSection = ({
       {!isProcessing && hasImage && (
         <>
           <DeleteButton onDelete={onDelete} />
-          <ZoomButton onZoom={onZoom} />
+          <ZoomButton onZoom={onZoom} onSearchIconClick={onSearchIconClick} />
         </>
       )}
     </div>

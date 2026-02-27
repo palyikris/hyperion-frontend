@@ -109,6 +109,14 @@ const GalleryCard = ({
 
   const handleClick = () => {
     if (isProcessing || isDeleting) return;
+    // Only navigate if not processing or deleting, and only if not clicking the zoom icon
+    // (Zoom icon will have its own handler)
+    // Default card click does nothing now (or could open zoom if desired)
+  };
+
+  // Handler for search/zoom icon: navigate to /lab/:id
+  const handleSearchIconClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     navigate(`/lab/${id}`);
   };
 
@@ -170,6 +178,7 @@ const GalleryCard = ({
           config={config}
           onZoom={onZoom}
           onDelete={handleDelete}
+          onSearchIconClick={handleSearchIconClick}
         />
 
         <GalleryCardTechnicalOverlay

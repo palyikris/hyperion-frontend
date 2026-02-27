@@ -224,6 +224,19 @@
     "empty": "No media found matching your criteria. Try adjusting your filters or upload some new images."
   },
   "upload": {
+    "imageModal": {
+      "range": "RNG: 402m",
+      "heading": "HDG: 184°",
+      "pitch": "Pitch",
+      "roll": "Roll",
+      "osName": "HYPERION_OS_AERIAL",
+      "transmission": "Transmission: Stable",
+      "power": "POWER: 88%",
+      "enableSpectral": "ENABLE BIO-SPECTRAL",
+      "spectralActive": "SYSTEM: SPECTRAL_ACTIVE",
+      "altitude": "ALTITUDE",
+      "terminateLink": "TERMINATE_LINK"
+    },
     "page": {
       "title": "Upload & Recents",
       "subtitle": "Image uploads and recent activity"

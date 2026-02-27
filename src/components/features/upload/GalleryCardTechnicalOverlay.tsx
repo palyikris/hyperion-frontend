@@ -15,8 +15,6 @@ interface GalleryCardTechnicalOverlayProps {
 const GalleryCardTechnicalOverlay: React.FC<
   GalleryCardTechnicalOverlayProps
 > = ({ showInfo, setShowInfo, technical_metadata, address, borderRadius }) => {
-  console.log("borderRadius in overlay:", borderRadius);
-
   return (
     <AnimatePresence>
       {showInfo && technical_metadata && (

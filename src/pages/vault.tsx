@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import Gallery from "../components/features/upload/Gallery";
+import ImageModal from "../components/features/upload/ImageModal";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import VaultHeader from "../components/features/vault/VaultHeader";
 import VaultFilters from "../components/features/vault/VaultFilters";
@@ -22,7 +23,6 @@ const VaultPage = () => {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
-
 
   // Wrapper functions to reset page when filters change
   const handleSearchChange = (val: string) => {
@@ -74,7 +74,16 @@ const VaultPage = () => {
     deleteAllMutation.mutate();
   };
 
+  const [zoomedImage, setZoomedImage] = useState<{
+    id: string;
+    url: string;
+  } | null>(null);
   const items = data.items || [];
+
+  const handleCardZoom = (itemId: string, imageUrl: string) => {
+    setZoomedImage({ id: itemId, url: imageUrl });
+  };
+  const handleCloseModal = () => setZoomedImage(null);
 
   if ((isLoading && !items.length) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
@@ -144,7 +153,17 @@ const VaultPage = () => {
           className="py-6"
         />
 
-        {items.length > 0 ? <Gallery items={items} /> : <VaultEmptyState />}
+        {items.length > 0 ? (
+          <Gallery items={items} onCardZoom={handleCardZoom} />
+        ) : (
+          <VaultEmptyState />
+        )}
+        <ImageModal
+          open={!!zoomedImage}
+          imageUrl={zoomedImage?.url || ""}
+          alt={zoomedImage?.id}
+          onClose={handleCloseModal}
+        />
 
         {items.length > 0 && (
           <VaultPagination

@@ -3,7 +3,7 @@ import type { GalleryItem } from "../../../types/upload";
 
 type GalleryProps = {
   items: GalleryItem[];
-  onCardZoom?: (itemId: string) => void;
+  onCardZoom?: (itemId: string, imageUrl: string) => void;
   showInfo?: boolean;
 };
 
@@ -25,7 +25,7 @@ const Gallery = ({ items, onCardZoom, showInfo }: GalleryProps) => {
               ? `${(item.metadata.size / 1048576).toFixed(2)} MB, ${item.metadata.width}x${item.metadata.height}`
               : "No metadata"
           }
-          onZoom={() => onCardZoom?.(item.id)}
+          onZoom={() => onCardZoom?.(item.id, item.image_url)}
           worker_name={item.assigned_worker}
           technical_metadata={item.technical_metadata}
           address={item.address}

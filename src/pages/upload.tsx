@@ -1,20 +1,27 @@
 import { useTranslation } from "react-i18next";
 import Gallery from "../components/features/upload/Gallery";
+import ImageModal from "../components/features/upload/ImageModal";
 import UploadDropZone from "../components/features/upload/UploadDropZone";
 import Divider from "../components/shared/Divider";
 import { Title } from "../components/shared/Title";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { useRecentGallery } from "../hooks/upload/useRecentGallery";
+import { useState } from "react";
 
 const UploadPage = () => {
   const { t } = useTranslation();
   const recentGalleryQuery = useRecentGallery();
 
+  const [zoomedImage, setZoomedImage] = useState<{
+    id: string;
+    url: string;
+  } | null>(null);
 
-  const handleCardZoom = (itemId: string) => {
-    console.log("Zooming to card:", itemId);
-    // Handle zoom/open modal logic here
+  const handleCardZoom = (itemId: string, imageUrl: string) => {
+    setZoomedImage({ id: itemId, url: imageUrl });
   };
+
+  const handleCloseModal = () => setZoomedImage(null);
 
   if (recentGalleryQuery.isLoading) {
     return <LoadingScreen />;
@@ -22,6 +29,8 @@ const UploadPage = () => {
 
   const galleryItems = recentGalleryQuery.data;
   const items = galleryItems?.items || [];
+
+  console.log("zoomed image", zoomedImage);
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
@@ -67,6 +76,13 @@ const UploadPage = () => {
 
         <Gallery items={items} onCardZoom={handleCardZoom} showInfo={false} />
       </div>
+
+      <ImageModal
+        open={!!zoomedImage}
+        imageUrl={zoomedImage?.url || ""}
+        alt={zoomedImage?.id}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

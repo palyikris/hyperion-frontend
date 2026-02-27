@@ -224,6 +224,19 @@
     "empty": "Nincs média, amely megfelel a keresési feltételeknek. Próbáld meg módosítani a szűrőket vagy tölts fel új képeket."
   },
   "upload": {
+    "imageModal": {
+      "range": "TÁV: 402m",
+      "heading": "IRÁNY: 184°",
+      "pitch": "Dőlés",
+      "roll": "Gördülés",
+      "osName": "HYPERION_OS_AERIAL",
+      "transmission": "Átvitel: Stabil",
+      "power": "ENERGIA: 88%",
+      "enableSpectral": "BIO-SPEKTRÁL BEKAPCSOLÁSA",
+      "spectralActive": "RENDSZER: SPEKTRÁLIS_AKTÍV",
+      "altitude": "MAGASSÁG",
+      "terminateLink": "KAPCSOLAT MEGSZAKÍTÁSA"
+    },
     "page": {
       "title": "Feltöltés és legutóbbiak",
       "subtitle": "Képfeltöltések és legutóbbi aktivitás"
