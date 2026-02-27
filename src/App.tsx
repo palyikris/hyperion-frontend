@@ -8,6 +8,7 @@ import SettingsPage from "./pages/settings";
 import DashboardPage from "./pages/dashboard";
 import UploadPage from "./pages/upload";
 import VaultPage from "./pages/vault";
+import { MapPage } from "./pages/map";
 
 const AppRouter = () => {
   return (
@@ -28,7 +29,7 @@ const AppRouter = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/stats" element={<>stats</>}></Route>
-            <Route path="/map" element={<>map</>} />
+            <Route path="/map" element={<MapPage />} />
             <Route path="/lab/:id" element={<>lab</>} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/vault" element={<VaultPage />} />

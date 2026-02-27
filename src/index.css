@@ -2,6 +2,54 @@
 
 @import "tailwindcss";
 
+/* src/index.css */
+@import "leaflet/dist/leaflet.css";
+
+/* Force the leaflet container to take up space */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 500px; /* Fallback height */
+  background-color: #f8f9f4; /* Hyperion Cream White */
+}
+
+/* Hyperion Map Customization */
+.leaflet-container {
+  background-color: #F8F9F4 !important; /* Cream White */
+}
+
+/* Desaturate tiles to make brand markers pop */
+.leaflet-tile-pane {
+  filter: grayscale(0.4) brightness(0.95) sepia(0.05);
+}
+
+/* Glassmorphism Panel */
+.map-glass-panel {
+  background: rgba(248, 249, 244, 0.85); /* Cream White with opacity */
+  backdrop-filter: blur(8px);
+  border: 1px solid #E5E7EB; /* Light Fog Grey */
+  box-shadow: 0 8px 32px 0 rgba(26, 95, 84, 0.1); /* Deep Sea Green tinted shadow */
+}
+
+/* Custom Popup Styling */
+.custom-popup .leaflet-popup-content-wrapper {
+  background: #F8F9F4;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #8FCACA; /* Sage Mint border */
+}
+
+.custom-popup .leaflet-popup-tip {
+  background: #F8F9F4;
+}
+
+.leaflet-popup-content{
+  margin: 0;
+  border-radius: 1.5rem;
+  width: auto;
+}
+
 @theme {
   /* Primary - The foundations of the brand */
   --color-hyperion-deep-sea: #1A5F54;

@@ -1,4 +1,31 @@
 {
+  "map": {
+    "go_to_my_location": "Go to my location",
+    "allow_location_access_title": "Allow Location Access?",
+    "allow_location_access_desc": "We need your permission to access your location and center the map where you are.",
+    "allow": "Allow",
+    "cancel": "Cancel",
+    "geolocation_not_supported": "Geolocation is not supported by your browser.",
+    "unable_to_retrieve_location": "Unable to retrieve your location.",
+    "you_are_here": "You are here",
+    "filters": {
+      "spatial": "Spatial Filters",
+      "detection_quality": "Detection Quality",
+      "min": "Min",
+      "has_trash": "HAS TRASH",
+      "clean": "CLEAN"
+    },
+    "preview": {
+      "latest_in_view": "Latest In View"
+    },
+    "popup": {
+      "unnamed_report": "Unnamed Report",
+      "location_pending": "Location Pending...",
+      "logs": "Logs",
+      "default_worker": "Helios-01",
+      "open_lab_view": "Open Lab View"
+    }
+  },
   "login": {
     "page": {
       "authImageAlt": "Auth image showing animals looking at trash",

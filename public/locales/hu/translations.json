@@ -1,4 +1,31 @@
 {
+  "map": {
+    "go_to_my_location": "Ugrás a helyzetemre",
+    "allow_location_access_title": "Helyhozzáférés engedélyezése?",
+    "allow_location_access_desc": "Szükségünk van az engedélyedre, hogy elérjük a helyzeted és a térképet oda központosítsuk.",
+    "allow": "Engedélyezem",
+    "cancel": "Mégse",
+    "geolocation_not_supported": "A böngésződ nem támogatja a helymeghatározást.",
+    "unable_to_retrieve_location": "Nem sikerült lekérni a helyzeted.",
+    "you_are_here": "Itt vagy",
+    "filters": {
+      "spatial": "Térbeli szűrők",
+      "detection_quality": "Detektálási minőség",
+      "min": "Min.",
+      "has_trash": "SZEMÉT VAN",
+      "clean": "TISZTA"
+    },
+    "preview": {
+      "latest_in_view": "Legutóbbiak a nézetben"
+    },
+    "popup": {
+      "unnamed_report": "Névtelen jelentés",
+      "location_pending": "Helyszín folyamatban...",
+      "logs": "Napló",
+      "default_worker": "Helios-01",
+      "open_lab_view": "Labor nézet megnyitása"
+    }
+  },
   "login": {
     "page": {
       "authImageAlt": "Hitelesitesi kep: allatokat neznek a szemetre",
