@@ -8,12 +8,18 @@
     "geolocation_not_supported": "Geolocation is not supported by your browser.",
     "unable_to_retrieve_location": "Unable to retrieve your location.",
     "you_are_here": "You are here",
+    "area_captured": "Area captured successfully",
     "filters": {
       "spatial": "Spatial Filters",
       "detection_quality": "Detection Quality",
       "min": "Min",
       "has_trash": "HAS TRASH",
-      "clean": "CLEAN"
+      "clean": "CLEAN",
+      "clear": "Clear",
+      "update_selection": "Update Selection",
+      "sync_view": "Sync with Viewport",
+      "area_locked": "Area Locked",
+      "area_locked_desc": "Filtering data within current map boundaries."
     },
     "preview": {
       "latest_in_view": "Latest In View"

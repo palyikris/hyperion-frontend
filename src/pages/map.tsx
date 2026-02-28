@@ -8,9 +8,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import MapFilters from "../components/features/map/MapFilters";
 import MarkerPopup from "../components/features/map/MarkerPopup";
-import { MapPinned, Filter } from "lucide-react";
+import { MapPinned, Filter as FilterIcon } from "lucide-react";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
+import type { MapFiltersFormData } from "../schemas/map/filters";
 
 const createMapIcon = (_status: string, hasTrash: boolean) => {
   const color = hasTrash ? "#D97B5A" : "#8FCACA";
@@ -46,7 +47,7 @@ const createUserLocationIcon = () => {
         className="relative z-10 w-4 h-4 rounded-full border-2 border-hyperion-cream shadow-md"
         style={{ backgroundColor: color }}
       />
-    </div>
+    </div>,
   );
   return L.divIcon({
     html,
@@ -58,19 +59,20 @@ const createUserLocationIcon = () => {
 
 export const MapPage: React.FC = () => {
   const { t } = useTranslation();
+  const mapRef = useRef<LeafletMap | null>(null);
 
-  const [filters, setFilters] = useState<{
-    has_trash: boolean | undefined;
-    min_confidence: number;
-  }>({
+  const [filters, setFilters] = useState<MapFiltersFormData>({
     has_trash: undefined,
     min_confidence: 0,
+    min_lat: undefined,
+    max_lat: undefined,
+    min_lng: undefined,
+    max_lng: undefined,
   });
-  // Filters visibility state
+
   const [showFilters, setShowFilters] = useState(false);
   const { data, isLoading } = useMapData(filters);
 
-  const mapRef = useRef<LeafletMap | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -86,17 +88,30 @@ export const MapPage: React.FC = () => {
     }
   };
 
+  console.log("Map filters:", filters);
+
+  const handleCaptureBounds = () => {
+    if (!mapRef.current) return;
+    const bounds = mapRef.current.getBounds();
+
+    setFilters((prev) => ({
+      ...prev,
+      min_lat: bounds.getSouth(),
+      max_lat: bounds.getNorth(),
+      min_lng: bounds.getWest(),
+      max_lng: bounds.getEast(),
+    }));
+
+    toastService.success(t("map.area_captured", "Area captured successfully"));
+  };
+
   const handleGoToMyLocation = () => {
     if (!navigator.geolocation) {
       toastService.error(
-        t(
-          "map.geolocation_not_supported",
-          "Geolocation is not supported by your browser.",
-        ),
+        t("map.geolocation_not_supported", "Geolocation not supported."),
       );
       return;
     }
-    if (locating) return;
     setShowLocationModal(true);
   };
 
@@ -111,73 +126,66 @@ export const MapPage: React.FC = () => {
         setLocating(false);
       },
       () => {
-        alert(
-          t(
-            "map.unable_to_retrieve_location",
-            "Unable to retrieve your location.",
-          ),
+        toastService.error(
+          t("map.unable_to_retrieve_location", "Unable to retrieve location."),
         );
         setLocating(false);
       },
     );
   };
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  if (isLoading && !data) return <LoadingScreen />;
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden">
-      <button
-        onClick={handleGoToMyLocation}
-        className="absolute z-1000 right-6 bottom-6 bg-hyperion-deep-sea shadow-lg rounded-full p-2 hover:bg-hyperion-deep-sea/80 transition"
-        style={{ width: 44, height: 44 }}
-        title={t("map.go_to_my_location", "Go to my location")}
-        disabled={locating}
-      >
-        <MapPinned className="text-hyperion-cream w-5 h-5 mx-auto" />
-      </button>
+      {/* Control Buttons Container */}
+      <div className="absolute z-1000 right-6 bottom-6 flex flex-col gap-4">
+        <AnimatePresence>
+          {!showFilters && (
+            <motion.button
+              key="show-filters-btn"
+              initial={{ opacity: 0, scale: 0.7, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.7, y: 10 }}
+              onClick={() => setShowFilters(true)}
+              className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
+              title={t("map.show_filters", "Show filters")}
+            >
+              <FilterIcon className="text-hyperion-cream w-5 h-5" />
+            </motion.button>
+          )}
+        </AnimatePresence>
 
+        <button
+          onClick={handleGoToMyLocation}
+          className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
+          title={t("map.go_to_my_location", "Go to my location")}
+          disabled={locating}
+        >
+          <MapPinned
+            className={`text-hyperion-cream w-5 h-5 ${locating ? "animate-pulse" : ""}`}
+          />
+        </button>
+      </div>
 
-      <AnimatePresence>
-        {!showFilters && (
-          <motion.button
-            key="show-filters-btn"
-            initial={{ opacity: 0, scale: 0.7, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.7, y: 30 }}
-            transition={{ type: "spring", stiffness: 350, damping: 22 }}
-            onClick={() => setShowFilters(true)}
-            className="absolute z-1000 right-6 bottom-20 bg-hyperion-deep-sea shadow-lg rounded-full p-2 hover:bg-hyperion-deep-sea/80"
-            style={{ width: 44, height: 44 }}
-            title={t("map.show_filters", "Show filters")}
-          >
-            <Filter className="text-hyperion-cream w-5 h-5 mx-auto" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-
-      {/* Filters Panel with animation */}
-      <AnimatePresence>
-        <MapFilters
-          filters={filters}
-          setFilters={setFilters}
-          items={data?.items}
-          flyTo={flyTo}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-        />
-      </AnimatePresence>
+      <MapFilters
+        filters={filters}
+        onFiltersChange={setFilters}
+        items={data?.items}
+        flyTo={flyTo}
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        onCaptureBounds={handleCaptureBounds}
+      />
 
       <ConfirmModal
         isOpen={showLocationModal}
         title={t("map.allow_location_access_title", "Allow Location Access?")}
         description={t(
           "map.allow_location_access_desc",
-          "We need your permission to access your location and center the map where you are.",
+          "We need your permission to center the map where you are.",
         )}
-        icon={<MapPinned className="w-8 h-8" />}
+        icon={<MapPinned className="w-8 h-8 text-hyperion-deep-sea" />}
         onConfirm={handleConfirmLocation}
         onClose={() => setShowLocationModal(false)}
         confirmText={t("map.allow", "Allow")}
@@ -192,17 +200,19 @@ export const MapPage: React.FC = () => {
         ref={mapRef}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+
         {data?.items.map((item) => (
           <Marker
             key={item.id}
             position={[item.lat, item.lng]}
-            icon={createMapIcon(item.status, true /* setting has_trash true */)}
+            icon={createMapIcon(item.status, true)}
           >
-            <Popup className="custom-popup" minWidth={260}>
+            <Popup className="custom-popup" minWidth={420}>
               <MarkerPopup item={item} />
             </Popup>
           </Marker>
         ))}
+
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
@@ -216,4 +226,4 @@ export const MapPage: React.FC = () => {
       </MapContainer>
     </div>
   );
-};;
+};
