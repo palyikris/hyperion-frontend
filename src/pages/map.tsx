@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useMapData } from "../hooks/map/useMapData";
@@ -7,7 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import MapFilters from "../components/features/map/MapFilters";
 import MarkerPopup from "../components/features/map/MarkerPopup";
-import { MapPinned } from "lucide-react";
+import { MapPinned, Filter } from "lucide-react";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 
@@ -56,29 +57,43 @@ const createUserLocationIcon = () => {
 };
 
 export const MapPage: React.FC = () => {
-
   const { t } = useTranslation();
 
-  const [filters, setFilters] = useState<{ has_trash: boolean | undefined; min_confidence: number }>({
+  const [filters, setFilters] = useState<{
+    has_trash: boolean | undefined;
+    min_confidence: number;
+  }>({
     has_trash: undefined,
     min_confidence: 0,
   });
+  // Filters visibility state
+  const [showFilters, setShowFilters] = useState(false);
   const { data, isLoading } = useMapData(filters);
 
   const mapRef = useRef<LeafletMap | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [locating, setLocating] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
 
   const flyTo = (lat: number, lng: number) => {
     if (mapRef.current) {
-      mapRef.current.flyTo([lat, lng], mapRef.current.getZoom(), { duration: 1.2 });
+      mapRef.current.flyTo([lat, lng], mapRef.current.getZoom(), {
+        duration: 1.2,
+      });
     }
   };
 
   const handleGoToMyLocation = () => {
     if (!navigator.geolocation) {
-      toastService.error(t("map.geolocation_not_supported", "Geolocation is not supported by your browser."));
+      toastService.error(
+        t(
+          "map.geolocation_not_supported",
+          "Geolocation is not supported by your browser.",
+        ),
+      );
       return;
     }
     if (locating) return;
@@ -96,12 +111,16 @@ export const MapPage: React.FC = () => {
         setLocating(false);
       },
       () => {
-        alert(t("map.unable_to_retrieve_location", "Unable to retrieve your location."));
+        alert(
+          t(
+            "map.unable_to_retrieve_location",
+            "Unable to retrieve your location.",
+          ),
+        );
         setLocating(false);
-      }
+      },
     );
   };
-
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -111,28 +130,58 @@ export const MapPage: React.FC = () => {
     <div className="fixed inset-0 w-full h-full overflow-hidden">
       <button
         onClick={handleGoToMyLocation}
-        className="absolute z-1000 right-6 top-6 bg-white shadow-lg rounded-full p-2 border border-hyperion-deep-sea hover:bg-gray-100 transition"
+        className="absolute z-1000 right-6 bottom-6 bg-hyperion-deep-sea shadow-lg rounded-full p-2 hover:bg-hyperion-deep-sea/80 transition"
         style={{ width: 44, height: 44 }}
         title={t("map.go_to_my_location", "Go to my location")}
         disabled={locating}
       >
-        <MapPinned className="text-hyperion-deep-sea w-5 h-5 mx-auto"/>
+        <MapPinned className="text-hyperion-cream w-5 h-5 mx-auto" />
       </button>
+
+
+      <AnimatePresence>
+        {!showFilters && (
+          <motion.button
+            key="show-filters-btn"
+            initial={{ opacity: 0, scale: 0.7, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.7, y: 30 }}
+            transition={{ type: "spring", stiffness: 350, damping: 22 }}
+            onClick={() => setShowFilters(true)}
+            className="absolute z-1000 right-6 bottom-20 bg-hyperion-deep-sea shadow-lg rounded-full p-2 hover:bg-hyperion-deep-sea/80"
+            style={{ width: 44, height: 44 }}
+            title={t("map.show_filters", "Show filters")}
+          >
+            <Filter className="text-hyperion-cream w-5 h-5 mx-auto" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+
+      {/* Filters Panel with animation */}
+      <AnimatePresence>
+        <MapFilters
+          filters={filters}
+          setFilters={setFilters}
+          items={data?.items}
+          flyTo={flyTo}
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+        />
+      </AnimatePresence>
+
       <ConfirmModal
         isOpen={showLocationModal}
         title={t("map.allow_location_access_title", "Allow Location Access?")}
-        description={t("map.allow_location_access_desc", "We need your permission to access your location and center the map where you are.")}
+        description={t(
+          "map.allow_location_access_desc",
+          "We need your permission to access your location and center the map where you are.",
+        )}
         icon={<MapPinned className="w-8 h-8" />}
         onConfirm={handleConfirmLocation}
         onClose={() => setShowLocationModal(false)}
         confirmText={t("map.allow", "Allow")}
         cancelText={t("map.cancel", "Cancel")}
-      />
-      <MapFilters
-        filters={filters}
-        setFilters={setFilters}
-        items={data?.items}
-        flyTo={flyTo}
       />
 
       <MapContainer
@@ -159,10 +208,12 @@ export const MapPage: React.FC = () => {
             position={[userLocation.lat, userLocation.lng]}
             icon={createUserLocationIcon()}
           >
-            <Popup minWidth={180}>{t("map.you_are_here", "You are here")}</Popup>
+            <Popup minWidth={180}>
+              {t("map.you_are_here", "You are here")}
+            </Popup>
           </Marker>
         )}
       </MapContainer>
     </div>
   );
-};
+};;
