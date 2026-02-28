@@ -50,6 +50,18 @@
   width: auto;
 }
 
+.custom-cluster-icon {
+  background: var(--color-hyperion-forest) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @theme {
   /* Primary - The foundations of the brand */
   --color-hyperion-deep-sea: #1A5F54;

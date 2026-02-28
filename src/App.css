@@ -1,3 +1,35 @@
+/* Custom cluster icon styles */
+.custom-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8FCACA 60%, #C9A66B 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  color: #fff;
+  font-weight: bold;
+  border: 2px solid #fff;
+  transition: background 0.2s;
+}
+.custom-cluster.small {
+  background: linear-gradient(135deg, #8FCACA 60%, #C9A66B 100%);
+}
+.custom-cluster.medium {
+  background: linear-gradient(135deg, #D97B5A 60%, #C9A66B 100%);
+}
+.custom-cluster.large {
+  background: linear-gradient(135deg, #C9A66B 60%, #1A5F54 100%);
+}
+.custom-cluster-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;

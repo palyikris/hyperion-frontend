@@ -1,17 +1,37 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Rectangle } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+
 import { useMapData } from "../hooks/map/useMapData";
+import type { MapItem } from "../types/map";
 import L, { Map as LeafletMap } from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import MapFilters from "../components/features/map/MapFilters";
-import MarkerPopup from "../components/features/map/MarkerPopup";
+import { MarkerSidebar } from "../components/features/map";
+import MapSearch from "../components/features/map/MapSearch";
 import { MapPinned, Filter as FilterIcon } from "lucide-react";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
+
+interface Cluster {
+  getChildCount: () => number;
+}
+
+const createClusterCustomIcon = (cluster: Cluster) => {
+  const count = cluster.getChildCount();
+  let size: "small" | "medium" | "large" = "small";
+  if (count >= 100) size = "large";
+  else if (count >= 10) size = "medium";
+  return L.divIcon({
+    html: `<div class="custom-cluster-icon ${size}"><span>${count}</span></div>`,
+    className: `custom-cluster custom-cluster-${size}`,
+    iconSize: [40, 40],
+  });
+};
 
 const createMapIcon = (_status: string, hasTrash: boolean) => {
   const color = hasTrash ? "#D97B5A" : "#8FCACA";
@@ -134,6 +154,9 @@ export const MapPage: React.FC = () => {
     );
   };
 
+  // Sidebar state for selected marker
+  const [selectedItem, setSelectedItem] = useState<MapItem | null>(null);
+
   if (isLoading && !data) return <LoadingScreen />;
 
   return (
@@ -199,31 +222,51 @@ export const MapPage: React.FC = () => {
         className="absolute inset-0 h-full w-full"
         ref={mapRef}
       >
+        {/* Address/City Search */}
+        <MapSearch map={mapRef.current} />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-        {data?.items.map((item) => (
-          <Marker
-            key={item.id}
-            position={[item.lat, item.lng]}
-            icon={createMapIcon(item.status, true)}
-          >
-            <Popup className="custom-popup" minWidth={420}>
-              <MarkerPopup item={item} />
-            </Popup>
-          </Marker>
-        ))}
+        <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
+          {data?.items.map((item) => (
+            <Marker
+              key={item.id}
+              position={[item.lat, item.lng]}
+              icon={createMapIcon(item.status, true)}
+              eventHandlers={{
+                click: () => setSelectedItem(item),
+              }}
+            />
+          ))}
+        </MarkerClusterGroup>
 
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
             icon={createUserLocationIcon()}
-          >
-            <Popup minWidth={180}>
-              {t("map.you_are_here", "You are here")}
-            </Popup>
-          </Marker>
+          ></Marker>
         )}
+        {/* Area Locked Rectangle Overlay */}
+        {filters.min_lat !== undefined &&
+          filters.max_lat !== undefined &&
+          filters.min_lng !== undefined &&
+          filters.max_lng !== undefined && (
+            <Rectangle
+              bounds={[
+                [filters.min_lat, filters.min_lng],
+                [filters.max_lat, filters.max_lng],
+              ]}
+              pathOptions={{ color: "#C9A66B", weight: 2, fillOpacity: 0.1 }}
+            />
+          )}
       </MapContainer>
+
+      {/* Sidebar for marker details */}
+      {selectedItem && (
+        <MarkerSidebar
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
     </div>
   );
 };
