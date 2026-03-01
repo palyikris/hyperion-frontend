@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Rectangle } from "react-leaflet";
@@ -17,6 +17,7 @@ import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
 import { useDebounce } from "../hooks/useDebounce";
+import HeatmapLayer from "../components/features/map/HeatmapLayer";
 
 interface Cluster {
   getChildCount: () => number;
@@ -92,8 +93,17 @@ export const MapPage: React.FC = () => {
   });
 
   const [showFilters, setShowFilters] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(false);
   const debouncedFilters = useDebounce(filters, 350);
   const { data, isLoading } = useMapData(debouncedFilters);
+
+  const heatmapPoints = useMemo(
+    () =>
+      (data?.items ?? []).map(
+        (item) => [item.lat, item.lng, 1.0] as [number, number, number],
+      ),
+    [data?.items],
+  );
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -181,6 +191,61 @@ export const MapPage: React.FC = () => {
           )}
         </AnimatePresence>
 
+        <motion.button
+          onClick={() => {
+            setSelectedItem(null);
+            setShowHeatmap((prev) => !prev);
+          }}
+          className={`relative overflow-hidden rounded-full p-2.5 py-3 transition-all flex items-center justify-center shadow-lg ${
+            showHeatmap
+              ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
+              : "bg-hyperion-deep-sea hover:bg-hyperion-forest"
+          }`}
+          title={
+            showHeatmap
+              ? t("map.show_markers", "Show markers")
+              : t("map.show_heatmap", "Show heatmap")
+          }
+          aria-pressed={showHeatmap}
+          animate={
+            showHeatmap
+              ? {
+                  scale: [1, 1.08, 1],
+                  boxShadow: [
+                    "0 8px 16px rgba(0,0,0,0.18)",
+                    "0 0 0 3px rgba(248,249,244,0.45)",
+                    "0 8px 16px rgba(0,0,0,0.18)",
+                  ],
+                }
+              : {
+                  scale: 1,
+                  boxShadow: "0 8px 16px rgba(0,0,0,0.18)",
+                }
+          }
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <motion.span
+            className="text-hyperion-cream text-xs font-semibold"
+            animate={showHeatmap ? { y: [0, -1, 0] } : { y: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            HM
+          </motion.span>
+
+          <AnimatePresence>
+            {showHeatmap && (
+              <motion.span
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-1 right-1 h-2 w-2 rounded-full bg-hyperion-cream"
+              />
+            )}
+          </AnimatePresence>
+        </motion.button>
+
         <button
           onClick={handleGoToMyLocation}
           className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
@@ -228,18 +293,22 @@ export const MapPage: React.FC = () => {
         <MapSearch />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-        <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
-          {data?.items.map((item) => (
-            <Marker
-              key={item.id}
-              position={[item.lat, item.lng]}
-              icon={createMapIcon(item.status, true)}
-              eventHandlers={{
-                click: () => setSelectedItem(item),
-              }}
-            />
-          ))}
-        </MarkerClusterGroup>
+        {showHeatmap ? (
+          <HeatmapLayer points={heatmapPoints} />
+        ) : (
+          <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
+            {data?.items.map((item) => (
+              <Marker
+                key={item.id}
+                position={[item.lat, item.lng]}
+                icon={createMapIcon(item.status, true)}
+                eventHandlers={{
+                  click: () => setSelectedItem(item),
+                }}
+              />
+            ))}
+          </MarkerClusterGroup>
+        )}
 
         {userLocation && (
           <Marker
