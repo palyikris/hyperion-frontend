@@ -1,7 +1,14 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { MapContainer, TileLayer, Marker, Rectangle } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Rectangle,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 import { useMapData } from "../hooks/map/useMapData";
@@ -17,12 +24,98 @@ import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
 import { useDebounce } from "../hooks/useDebounce";
-import HeatmapLayer from "../components/features/map/HeatmapLayer";
 import ImageModal from "../components/features/upload/ImageModal";
+import { useMapGrid } from "../hooks/map/useMapGrid";
+import GridPopup from "../components/features/map/GridPopup";
+import HeatmapLayer from "../components/features/map/HeatmapLayer";
 
 interface Cluster {
   getChildCount: () => number;
 }
+
+type ViewMode = "markers" | "heatmap" | "grid";
+
+type PersistedMapViewport = {
+  lat: number;
+  lng: number;
+  zoom: number;
+};
+
+type ViewportState = {
+  zoom: number;
+  center: {
+    lat: number;
+    lng: number;
+  };
+  bounds: {
+    south: number;
+    west: number;
+    north: number;
+    east: number;
+  };
+};
+
+const MAP_VIEWPORT_STORAGE_KEY = "hyperion.map.viewport";
+const DEFAULT_MAP_CENTER: [number, number] = [47.4979, 19.0402];
+const DEFAULT_MAP_ZOOM = 12;
+
+const isValidViewportNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+const getStoredMapViewport = (): PersistedMapViewport | null => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.localStorage.getItem(MAP_VIEWPORT_STORAGE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as Partial<PersistedMapViewport>;
+
+    if (
+      !isValidViewportNumber(parsed.lat) ||
+      !isValidViewportNumber(parsed.lng) ||
+      !isValidViewportNumber(parsed.zoom)
+    ) {
+      return null;
+    }
+
+    const lat = parsed.lat;
+    const lng = parsed.lng;
+    const zoom = parsed.zoom;
+
+    if (
+      lat < -90 ||
+      lat > 90 ||
+      lng < -180 ||
+      lng > 180 ||
+      zoom < 0 ||
+      zoom > 22
+    ) {
+      return null;
+    }
+
+    return {
+      lat,
+      lng,
+      zoom,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const storeMapViewport = ({ lat, lng, zoom }: PersistedMapViewport) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      MAP_VIEWPORT_STORAGE_KEY,
+      JSON.stringify({ lat, lng, zoom }),
+    );
+  } catch {
+    return;
+  }
+};
 
 const createClusterCustomIcon = (cluster: Cluster) => {
   const count = cluster.getChildCount();
@@ -80,9 +173,77 @@ const createUserLocationIcon = () => {
   });
 };
 
+const parseHexColor = (hex: string) => {
+  const cleanHex = hex.replace("#", "");
+  const bigint = Number.parseInt(cleanHex, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255,
+  };
+};
+
+const mixHexColors = (startHex: string, endHex: string, ratio: number) => {
+  const clamped = Math.min(Math.max(ratio, 0), 1);
+  const start = parseHexColor(startHex);
+  const end = parseHexColor(endHex);
+
+  const r = Math.round(start.r + (end.r - start.r) * clamped);
+  const g = Math.round(start.g + (end.g - start.g) * clamped);
+  const b = Math.round(start.b + (end.b - start.b) * clamped);
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
+const MapViewportEvents: React.FC<{
+  onViewportChange: (state: ViewportState) => void;
+}> = ({ onViewportChange }) => {
+  const map = useMapEvents({
+    moveend: () => {
+      const bounds = map.getBounds();
+      const center = map.getCenter();
+      onViewportChange({
+        zoom: map.getZoom(),
+        center: {
+          lat: center.lat,
+          lng: center.lng,
+        },
+        bounds: {
+          south: bounds.getSouth(),
+          west: bounds.getWest(),
+          north: bounds.getNorth(),
+          east: bounds.getEast(),
+        },
+      });
+    },
+  });
+
+  useEffect(() => {
+    const bounds = map.getBounds();
+    const center = map.getCenter();
+    onViewportChange({
+      zoom: map.getZoom(),
+      center: {
+        lat: center.lat,
+        lng: center.lng,
+      },
+      bounds: {
+        south: bounds.getSouth(),
+        west: bounds.getWest(),
+        north: bounds.getNorth(),
+        east: bounds.getEast(),
+      },
+    });
+  }, [map, onViewportChange]);
+
+  return null;
+};
+
 export const MapPage: React.FC = () => {
   const { t } = useTranslation();
   const mapRef = useRef<LeafletMap | null>(null);
+  const transitionTimerRef = useRef<number | null>(null);
+  const storedViewport = useMemo(() => getStoredMapViewport(), []);
 
   const [filters, setFilters] = useState<MapFiltersFormData>({
     has_trash: undefined,
@@ -94,17 +255,79 @@ export const MapPage: React.FC = () => {
   });
 
   const [showFilters, setShowFilters] = useState(false);
-  const [showHeatmap, setShowHeatmap] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("markers");
+  const [minGridDensity, setMinGridDensity] = useState(0);
+  const [viewportState, setViewportState] = useState<ViewportState | null>(
+    null,
+  );
+  const [showLayerTransition, setShowLayerTransition] = useState(false);
+  const [initialCenter] = useState<[number, number]>(() =>
+    storedViewport
+      ? [storedViewport.lat, storedViewport.lng]
+      : DEFAULT_MAP_CENTER,
+  );
+  const [initialZoom] = useState<number>(
+    () => storedViewport?.zoom ?? DEFAULT_MAP_ZOOM,
+  );
   const debouncedFilters = useDebounce(filters, 350);
+  const debouncedViewport = useDebounce(viewportState, 300);
   const { data, isLoading } = useMapData(debouncedFilters);
 
   const heatmapPoints = useMemo(
     () =>
       (data?.items ?? []).map(
-        (item) => [item.lat, item.lng, 1.0] as [number, number, number],
+        (item) =>
+          [item.lat, item.lng, item.has_trash ? 1 : 0.45] as [
+            number,
+            number,
+            number,
+          ],
       ),
     [data?.items],
   );
+
+  const gridCells = useMapGrid({
+    items: data?.items ?? [],
+    zoom: debouncedViewport?.zoom ?? 12,
+    bounds: debouncedViewport?.bounds ?? null,
+    minDensityPercent: minGridDensity,
+  });
+
+  const maxGridCount = useMemo(
+    () => Math.max(1, ...gridCells.map((cell) => cell.count)),
+    [gridCells],
+  );
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    setShowLayerTransition(true);
+
+    if (transitionTimerRef.current !== null) {
+      window.clearTimeout(transitionTimerRef.current);
+    }
+
+    transitionTimerRef.current = window.setTimeout(() => {
+      setShowLayerTransition(false);
+      transitionTimerRef.current = null;
+    }, 260);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current !== null) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleViewportChange = (state: ViewportState) => {
+    setViewportState(state);
+    storeMapViewport({
+      lat: state.center.lat,
+      lng: state.center.lng,
+      zoom: state.zoom,
+    });
+  };
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -206,61 +429,6 @@ export const MapPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <motion.button
-          onClick={() => {
-            setSelectedItem(null);
-            setShowHeatmap((prev) => !prev);
-          }}
-          className={`relative overflow-hidden rounded-full p-2.5 py-3 transition-all flex items-center justify-center shadow-lg ${
-            showHeatmap
-              ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
-              : "bg-hyperion-deep-sea hover:bg-hyperion-forest"
-          }`}
-          title={
-            showHeatmap
-              ? t("map.show_markers", "Show markers")
-              : t("map.show_heatmap", "Show heatmap")
-          }
-          aria-pressed={showHeatmap}
-          animate={
-            showHeatmap
-              ? {
-                  scale: [1, 1.08, 1],
-                  boxShadow: [
-                    "0 8px 16px rgba(0,0,0,0.18)",
-                    "0 0 0 3px rgba(248,249,244,0.45)",
-                    "0 8px 16px rgba(0,0,0,0.18)",
-                  ],
-                }
-              : {
-                  scale: 1,
-                  boxShadow: "0 8px 16px rgba(0,0,0,0.18)",
-                }
-          }
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <motion.span
-            className="text-hyperion-cream text-xs font-semibold"
-            animate={showHeatmap ? { y: [0, -1, 0] } : { y: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-          >
-            HM
-          </motion.span>
-
-          <AnimatePresence>
-            {showHeatmap && (
-              <motion.span
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-1 right-1 h-2 w-2 rounded-full bg-hyperion-cream"
-              />
-            )}
-          </AnimatePresence>
-        </motion.button>
-
         <button
           onClick={handleGoToMyLocation}
           className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
@@ -281,6 +449,10 @@ export const MapPage: React.FC = () => {
         showFilters={showFilters}
         setShowFilters={setShowFilters}
         onCaptureBounds={handleCaptureBounds}
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+        minGridDensity={minGridDensity}
+        onMinGridDensityChange={setMinGridDensity}
       />
 
       <ConfirmModal
@@ -298,31 +470,65 @@ export const MapPage: React.FC = () => {
       />
 
       <MapContainer
-        center={[47.4979, 19.0402]}
-        zoom={12}
+        center={initialCenter}
+        zoom={initialZoom}
         zoomControl={false}
         className="absolute inset-0 h-full w-full"
         ref={mapRef}
       >
+        <MapViewportEvents onViewportChange={handleViewportChange} />
         {/* Address/City Search */}
         <MapSearch />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-        {showHeatmap ? (
-          <HeatmapLayer points={heatmapPoints} />
-        ) : (
+        {viewMode === "markers" ? (
           <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
             {data?.items.map((item) => (
               <Marker
                 key={item.id}
                 position={[item.lat, item.lng]}
-                icon={createMapIcon(item.status, true)}
+                icon={createMapIcon(item.status, item.has_trash)}
                 eventHandlers={{
                   click: () => setSelectedItem(item),
                 }}
               />
             ))}
           </MarkerClusterGroup>
+        ) : viewMode === "heatmap" ? (
+          <HeatmapLayer points={heatmapPoints} />
+        ) : (
+          <>
+            {gridCells.map((cell) => {
+              const cellIntensity = cell.density;
+              const fillColor = mixHexColors(
+                "#8FCACA",
+                "#D97B5A",
+                cellIntensity,
+              );
+              const normalizedCount = cell.count / maxGridCount;
+              const fillOpacity = 0.14 + normalizedCount * 0.5;
+
+              return (
+                <Rectangle
+                  key={cell.id}
+                  bounds={[
+                    [cell.bounds.south, cell.bounds.west],
+                    [cell.bounds.north, cell.bounds.east],
+                  ]}
+                  pathOptions={{
+                    color: fillColor,
+                    fillColor,
+                    fillOpacity,
+                    weight: 1,
+                  }}
+                >
+                  <Popup>
+                    <GridPopup cell={cell} />
+                  </Popup>
+                </Rectangle>
+              );
+            })}
+          </>
         )}
 
         {userLocation && (
@@ -345,6 +551,19 @@ export const MapPage: React.FC = () => {
             />
           )}
       </MapContainer>
+
+      <AnimatePresence>
+        {showLayerTransition && (
+          <motion.div
+            key={`transition-${viewMode}`}
+            initial={{ opacity: 0.14 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.26, ease: "easeOut" }}
+            className="pointer-events-none absolute inset-0 z-850 bg-hyperion-cream"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar for marker details */}
       {selectedItem && (
