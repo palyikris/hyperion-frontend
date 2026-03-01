@@ -1,12 +1,10 @@
-import { useMemo } from "react";
-import type { GridBounds, GridCell, MapItem } from "../../types/map";
-
-type ViewportBounds = {
-  south: number;
-  west: number;
-  north: number;
-  east: number;
-};
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { GridCell, MapItem } from "../../types/map";
+import {
+  computeGridCells,
+  type MapGridWorkerRequest,
+  type ViewportBounds,
+} from "./mapGridBucketing";
 
 type UseMapGridOptions = {
   items: MapItem[];
@@ -14,105 +12,70 @@ type UseMapGridOptions = {
   bounds: ViewportBounds | null;
 };
 
-const getGridStepByZoom = (zoom: number) => {
-  if (zoom >= 16) return 0.001;
-  if (zoom >= 14) return 0.002;
-  if (zoom >= 12) return 0.005;
-  if (zoom >= 10) return 0.01;
-  return 0.02;
-};
-
-const buildGridCellBounds = (
-  latIndex: number,
-  lngIndex: number,
-  step: number,
-): GridBounds => {
-  const south = latIndex * step;
-  const west = lngIndex * step;
-
-  return {
-    south,
-    west,
-    north: south + step,
-    east: west + step,
-  };
-};
+const GRID_WORKER_THRESHOLD = 1000;
 
 export const useMapGrid = ({
   items,
   zoom,
   bounds,
 }: UseMapGridOptions): GridCell[] => {
-  return useMemo(() => {
-    if (!bounds) return [];
+  const [workerCells, setWorkerCells] = useState<GridCell[]>([]);
+  const requestIdRef = useRef(0);
 
-    const step = getGridStepByZoom(zoom);
-    const byCell = new Map<string, GridCell>();
+  const shouldUseWorker =
+    bounds !== null && items.length > GRID_WORKER_THRESHOLD;
 
-    for (const item of items) {
-      if (
-        item.lat < bounds.south ||
-        item.lat > bounds.north ||
-        item.lng < bounds.west ||
-        item.lng > bounds.east
-      ) {
-        continue;
-      }
+  const syncCells = useMemo(
+    () =>
+      computeGridCells({
+        items,
+        zoom,
+        bounds,
+      }),
+    [items, zoom, bounds],
+  );
 
-      const latIndex = Math.floor(item.lat / step);
-      const lngIndex = Math.floor(item.lng / step);
-      const id = `${latIndex}:${lngIndex}`;
-
-      if (!byCell.has(id)) {
-        byCell.set(id, {
-          id,
-          bounds: buildGridCellBounds(latIndex, lngIndex, step),
-          count: 0,
-          density: 0,
-          confidence: 0,
-          dominantLabel: null,
-          labelDistribution: {},
-          items: [],
-        });
-      }
-
-      const cell = byCell.get(id);
-      if (!cell) continue;
-
-      cell.count += 1;
-      cell.items.push(item);
-      cell.confidence += item.confidence ?? 0;
-
-      if (item.has_trash) {
-        cell.density += 1;
-      }
-
-      for (const detection of item.detections ?? []) {
-        if (!detection.label) continue;
-        cell.labelDistribution[detection.label] =
-          (cell.labelDistribution[detection.label] ?? 0) + 1;
-      }
+  useEffect(() => {
+    if (!shouldUseWorker) {
+      return;
     }
 
-    return Array.from(byCell.values()).map((cell) => {
-      const density = cell.count > 0 ? cell.density / cell.count : 0;
-      const confidence = cell.count > 0 ? cell.confidence / cell.count : 0;
+    if (typeof Worker === "undefined") {
+      return;
+    }
 
-      let dominantLabel: string | null = null;
-      let dominantCount = 0;
-      for (const [label, count] of Object.entries(cell.labelDistribution)) {
-        if (count > dominantCount) {
-          dominantCount = count;
-          dominantLabel = label;
-        }
-      }
+    const requestId = ++requestIdRef.current;
+    const worker = new Worker(
+      new URL("./workers/mapGrid.worker.ts", import.meta.url),
+      {
+        type: "module",
+      },
+    );
 
-      return {
-        ...cell,
-        density,
-        confidence,
-        dominantLabel,
-      };
-    });
-  }, [items, zoom, bounds]);
+    worker.onmessage = (event: MessageEvent<GridCell[]>) => {
+      if (requestId !== requestIdRef.current) return;
+      setWorkerCells(event.data);
+      worker.terminate();
+    };
+
+    worker.onerror = () => {
+      if (requestId !== requestIdRef.current) return;
+      setWorkerCells(syncCells);
+      worker.terminate();
+    };
+
+    const payload: MapGridWorkerRequest = {
+      items,
+      zoom,
+      bounds,
+    };
+
+    worker.postMessage(payload);
+
+    return () => {
+      worker.terminate();
+    };
+  }, [shouldUseWorker, items, zoom, bounds, syncCells]);
+
+  return shouldUseWorker ? workerCells : syncCells;
 };

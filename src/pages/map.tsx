@@ -195,6 +195,17 @@ const mixHexColors = (startHex: string, endHex: string, ratio: number) => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
+const areMapFiltersEqual = (
+  first: MapFiltersFormData,
+  second: MapFiltersFormData,
+) =>
+  first.has_trash === second.has_trash &&
+  first.min_confidence === second.min_confidence &&
+  first.min_lat === second.min_lat &&
+  first.max_lat === second.max_lat &&
+  first.min_lng === second.min_lng &&
+  first.max_lng === second.max_lng;
+
 const MapViewportEvents: React.FC<{
   onViewportChange: (state: ViewportState) => void;
 }> = ({ onViewportChange }) => {
@@ -242,7 +253,6 @@ const MapViewportEvents: React.FC<{
 export const MapPage: React.FC = () => {
   const { t } = useTranslation();
   const mapRef = useRef<LeafletMap | null>(null);
-  const transitionTimerRef = useRef<number | null>(null);
   const storedViewport = useMemo(() => getStoredMapViewport(), []);
 
   const [filters, setFilters] = useState<MapFiltersFormData>({
@@ -270,7 +280,18 @@ export const MapPage: React.FC = () => {
   );
   const debouncedFilters = useDebounce(filters, 350);
   const debouncedViewport = useDebounce(viewportState, 150);
-  const { data, isLoading } = useMapData(debouncedFilters);
+  const { data, isLoading } = useMapData(debouncedFilters, {
+    onSettled: () => setShowLayerTransition(false),
+  });
+
+  const setFiltersWithTransition = useCallback(
+    (nextFilters: MapFiltersFormData) => {
+      if (areMapFiltersEqual(filters, nextFilters)) return;
+      setShowLayerTransition(true);
+      setFilters(nextFilters);
+    },
+    [filters],
+  );
 
   const heatmapPoints = useMemo(
     () =>
@@ -299,34 +320,14 @@ export const MapPage: React.FC = () => {
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     if (mode === "grid") {
-      setFilters((prev) =>
-        prev.has_trash === true
-          ? prev
-          : {
-              ...prev,
-              has_trash: true,
-            },
-      );
-    }
-    setShowLayerTransition(true);
-
-    if (transitionTimerRef.current !== null) {
-      window.clearTimeout(transitionTimerRef.current);
-    }
-
-    transitionTimerRef.current = window.setTimeout(() => {
-      setShowLayerTransition(false);
-      transitionTimerRef.current = null;
-    }, 400);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (transitionTimerRef.current !== null) {
-        window.clearTimeout(transitionTimerRef.current);
+      if (filters.has_trash !== true) {
+        setFiltersWithTransition({
+          ...filters,
+          has_trash: true,
+        });
       }
-    };
-  }, []);
+    }
+  };
 
   const handleViewportChange = useCallback((state: ViewportState) => {
     setViewportState(state);
@@ -356,13 +357,13 @@ export const MapPage: React.FC = () => {
     if (!mapRef.current) return;
     const bounds = mapRef.current.getBounds();
 
-    setFilters((prev) => ({
-      ...prev,
+    setFiltersWithTransition({
+      ...filters,
       min_lat: bounds.getSouth(),
       max_lat: bounds.getNorth(),
       min_lng: bounds.getWest(),
       max_lng: bounds.getEast(),
-    }));
+    });
 
     toastService.success(t("map.area_captured", "Area captured successfully"));
   };
@@ -429,7 +430,7 @@ export const MapPage: React.FC = () => {
       <MapFilters
         filters={filters}
         onFiltersChange={(nextFilters) =>
-          setFilters(
+          setFiltersWithTransition(
             viewMode === "grid"
               ? {
                   ...nextFilters,
