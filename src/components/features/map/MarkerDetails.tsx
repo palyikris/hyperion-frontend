@@ -4,7 +4,10 @@ import { History, ChevronRight, Image as ImageIcon } from "lucide-react";
 import { useMapLogs } from "../../../hooks/map/useMapLogs";
 import type { MapItem, MapMediaLog } from "../../../types/map";
 
-type MarkerDetailsProps = { item: MapItem };
+type MarkerDetailsProps = {
+  item: MapItem;
+  onImageZoom?: () => void;
+};
 
 type MarkerPreviewImageProps = {
   src: string;
@@ -36,7 +39,7 @@ const MarkerPreviewImage: React.FC<MarkerPreviewImageProps> = ({
   );
 };
 
-const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item }) => {
+const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
   const { t } = useTranslation();
   const { data: logsData, isLoading: isLogsLoading } = useMapLogs(item.id);
   const logs = logsData?.history ?? [];
@@ -47,7 +50,13 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item }) => {
       <div className="flex-1 p-0 flex flex-col min-w-0 gap-6">
         {/* Image Preview Card */}
         <div className="w-full flex justify-center">
-          <div className="rounded-2xl overflow-hidden shadow border border-hyperion-sage-mint/30 bg-white/80 flex items-center justify-center min-h-30 max-w-sm w-full">
+          <button
+            type="button"
+            onClick={() => {
+              if (item.image_url) onImageZoom?.();
+            }}
+            className={`rounded-2xl overflow-hidden shadow border border-hyperion-sage-mint/30 bg-white/80 flex items-center justify-center min-h-30 max-w-sm w-full ${item.image_url ? "cursor-zoom-in" : "cursor-default"}`}
+          >
             {item.image_url ? (
               <MarkerPreviewImage
                 src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`}
@@ -59,7 +68,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item }) => {
                 <span className="text-xs mt-2">No Image</span>
               </div>
             )}
-          </div>
+          </button>
         </div>
         {/* Header Data */}
         {/* Optionally, add more meta here if needed */}

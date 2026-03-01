@@ -273,6 +273,11 @@ body[data-loading-screen="true"] .layout-content {
   padding-left: 0 !important;
 }
 
+body[data-image-modal-open="true"] .group\/sidebar,
+body[data-image-modal-open="true"] .sidenav-mobile-toggle {
+  display: none;
+}
+
 /* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 12px;

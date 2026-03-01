@@ -57,7 +57,7 @@ const SideNav = () => {
         type="button"
         onClick={handleToggle}
         aria-label={t("nav.openMenu")}
-        className="md:hidden fixed left-4 top-4 z-[60] flex h-11 w-11 items-center justify-center rounded-full bg-hyperion-deep-sea text-hyperion-cream shadow-xl"
+        className="sidenav-mobile-toggle md:hidden fixed left-4 top-4 z-60 flex h-11 w-11 items-center justify-center rounded-full bg-hyperion-deep-sea text-hyperion-cream shadow-xl"
       >
         <span className="sr-only">{t("nav.openMenu")}</span>
         <div className="flex flex-col gap-1">

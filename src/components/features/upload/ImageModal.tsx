@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import { DecryptText } from "../../shared/animation/DecryptText";
 import { useTranslation } from "react-i18next";
+import { getFullResUrl } from "../../../utils/imageUtils";
 
 interface ImageModalProps {
   open: boolean;
@@ -23,11 +24,19 @@ const ImageModal: React.FC<ImageModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const hfBaseUrl =
+    "https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main";
+  const fullResImageUrl = getFullResUrl(imageUrl);
+  const thumbnailSrc = imageUrl ? `${hfBaseUrl}/${imageUrl}` : "";
+  const fullResSrc = fullResImageUrl ? `${hfBaseUrl}/${fullResImageUrl}` : "";
+  const shouldSwapToFullRes =
+    Boolean(fullResImageUrl) && fullResImageUrl !== imageUrl;
   const [visionMode, setVisionMode] = useState<"standard" | "spectral">(
     "standard",
   );
   const [altitude, setAltitude] = useState(124.0);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [fullResLoaded, setFullResLoaded] = useState(false);
 
   // 1. GIMBAL PARALLAX LOGIC
   const mouseX = useMotionValue(0);
@@ -61,40 +70,77 @@ const ImageModal: React.FC<ImageModalProps> = ({
     return () => clearInterval(interval);
   }, [open]);
 
-  // Reset loading state when image source changes, and ensure loader is visible for at least 1s
+  // Preload full resolution image while thumbnail remains visible
   useEffect(() => {
+    if (!open) return;
+
     let isMounted = true;
-    // Avoid calling setState synchronously in effect body
     Promise.resolve().then(() => {
-      if (isMounted) setIsImageLoading(true);
+      if (!isMounted) return;
+      setIsImageLoading(true);
+      setFullResLoaded(!shouldSwapToFullRes);
     });
-    let minDelayDone = false;
-    let imgLoaded = false;
-    const minDelay = setTimeout(() => {
-      minDelayDone = true;
-      if (imgLoaded && isMounted) setIsImageLoading(false);
-    }, 1000);
 
+    const minDelayPromise = new Promise<void>((resolve) => {
+      window.setTimeout(resolve, 350);
+    });
 
-    // Patch the onLoad callback to coordinate with min delay
-    const origSetIsImageLoading = setIsImageLoading;
-    (window as Window & { __hyperionImageModalSetLoaded?: () => void }).__hyperionImageModalSetLoaded = () => {
-      imgLoaded = true;
-      if (minDelayDone && isMounted) origSetIsImageLoading(false);
-    };
+    const fullResPromise = new Promise<void>((resolve) => {
+      if (!shouldSwapToFullRes || !fullResSrc) {
+        resolve();
+        return;
+      }
+
+      const fullImage = new Image();
+      fullImage.src = fullResSrc;
+      fullImage.onload = () => {
+        if (isMounted) setFullResLoaded(true);
+        resolve();
+      };
+      fullImage.onerror = () => {
+        if (isMounted) setFullResLoaded(false);
+        resolve();
+      };
+    });
+
+    const thumbnailPromise = new Promise<void>((resolve) => {
+      if (!thumbnailSrc) {
+        resolve();
+        return;
+      }
+
+      const thumbnailImage = new Image();
+      thumbnailImage.src = thumbnailSrc;
+      thumbnailImage.onload = () => resolve();
+      thumbnailImage.onerror = () => resolve();
+    });
+
+    Promise.all([minDelayPromise, thumbnailPromise, fullResPromise]).then(
+      () => {
+        if (isMounted) setIsImageLoading(false);
+      },
+    );
 
     return () => {
       isMounted = false;
-      clearTimeout(minDelay);
-      delete (window as Window & { __hyperionImageModalSetLoaded?: () => void }).__hyperionImageModalSetLoaded;
     };
-  }, [imageUrl]);
+  }, [fullResSrc, open, shouldSwapToFullRes, thumbnailSrc]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    document.body.setAttribute("data-image-modal-open", "true");
+    return () => {
+      document.body.removeAttribute("data-image-modal-open");
+    };
+  }, [open]);
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-hyperion-deep-sea/80 backdrop-blur-2xl"
+          className="fixed inset-0 z-3000 flex items-center justify-center bg-hyperion-deep-sea/80 backdrop-blur-2xl"
+          style={{ zIndex: 3000 }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -261,17 +307,27 @@ const ImageModal: React.FC<ImageModalProps> = ({
                 transition={{ duration: 1 }}
               >
                 <img
-                  src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${imageUrl}`}
+                  src={thumbnailSrc}
                   alt={alt}
-                  onLoad={() => {
-                    if ((window as unknown as { __hyperionImageModalSetLoaded?: () => void }).__hyperionImageModalSetLoaded) {
-                      (window as unknown as { __hyperionImageModalSetLoaded?: () => void }).__hyperionImageModalSetLoaded!();
-                    } else {
-                      setIsImageLoading(false);
-                    }
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${fullResLoaded ? "opacity-0" : "opacity-100"}`}
+                  style={{
+                    filter: fullResLoaded ? "none" : "blur(12px)",
+                    transform: fullResLoaded ? "scale(1)" : "scale(1.03)",
                   }}
-                  className="w-full h-full object-cover"
                 />
+                {shouldSwapToFullRes ? (
+                  <img
+                    src={fullResSrc}
+                    alt={alt}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${fullResLoaded ? "opacity-100" : "opacity-0"}`}
+                  />
+                ) : (
+                  <img
+                    src={thumbnailSrc}
+                    alt={alt}
+                    className="absolute inset-0 w-full h-full object-cover opacity-100"
+                  />
+                )}
                 <AnimatePresence>
                   {visionMode === "spectral" && (
                     <motion.div

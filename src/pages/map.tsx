@@ -18,6 +18,7 @@ import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
 import { useDebounce } from "../hooks/useDebounce";
 import HeatmapLayer from "../components/features/map/HeatmapLayer";
+import ImageModal from "../components/features/upload/ImageModal";
 
 interface Cluster {
   getChildCount: () => number;
@@ -168,6 +169,20 @@ export const MapPage: React.FC = () => {
 
   // Sidebar state for selected marker
   const [selectedItem, setSelectedItem] = useState<MapItem | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<{
+    id: string;
+    url: string;
+  } | null>(null);
+
+  const handleMarkerImageZoom = (item: MapItem) => {
+    if (!item.image_url) return;
+    setZoomedImage({
+      id: item.id,
+      url: item.image_url,
+    });
+  };
+
+  const handleCloseImageModal = () => setZoomedImage(null);
 
   if (isLoading && !data) return <LoadingScreen />;
 
@@ -336,8 +351,16 @@ export const MapPage: React.FC = () => {
         <MarkerSidebar
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
+          onImageZoom={() => handleMarkerImageZoom(selectedItem)}
         />
       )}
+
+      <ImageModal
+        open={!!zoomedImage}
+        imageUrl={zoomedImage?.url || ""}
+        alt={zoomedImage?.id}
+        onClose={handleCloseImageModal}
+      />
     </div>
   );
 };
