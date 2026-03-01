@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 interface ScrollRevealProps {
   children: ReactNode;
   delay?: number;
+  revealOnScroll?: boolean;
   onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
@@ -24,6 +25,7 @@ export const ScrollReveal = ({
   children,
   onClick,
   delay = 0.3,
+  revealOnScroll = true,
   className,
   style,
   onMouseEnter,
@@ -31,25 +33,36 @@ export const ScrollReveal = ({
   whileHover,
   onHoverStart,
   onHoverEnd,
-}: ScrollRevealProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    whileHover={whileHover}
-    viewport={{ once: true, amount: 0.3 }}
-    transition={{
-      duration: 0.6,
-      delay: delay,
-      ease: [0.21, 0.47, 0.32, 0.98], // snappy easing
-    }}
-    onClick={onClick}
-    onMouseEnter={onMouseEnter}
-    onMouseLeave={onMouseLeave}
-    className={className}
-    style={style}
-    onHoverStart={onHoverStart}
-    onHoverEnd={onHoverEnd}
-  >
-    {children}
-  </motion.div>
-);
+}: ScrollRevealProps) => {
+  const revealProps = revealOnScroll
+    ? {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0.3 },
+      }
+    : {
+        initial: { opacity: 1, y: 0 },
+        animate: { opacity: 1, y: 0 },
+      };
+
+  return (
+    <motion.div
+      {...revealProps}
+      whileHover={whileHover}
+      transition={{
+        duration: 0.6,
+        delay: delay,
+        ease: [0.21, 0.47, 0.32, 0.98],
+      }}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={className}
+      style={style}
+      onHoverStart={onHoverStart}
+      onHoverEnd={onHoverEnd}
+    >
+      {children}
+    </motion.div>
+  );
+};

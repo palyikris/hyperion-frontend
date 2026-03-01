@@ -22,7 +22,10 @@ type ChartTooltipProps = {
     value?: number;
     payload?: {
       metric: string;
-      value: number;
+      hotspotCount: number;
+      highConfidenceMediaCount: number;
+      remainingCount: number;
+      confidenceShare: number;
     };
   }[];
 };
@@ -44,8 +47,23 @@ const HotspotTooltip = ({ active, payload }: ChartTooltipProps) => {
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-slate-grey/80">
         {point.metric}
       </p>
-      <p className="mt-1 text-xl font-bold text-hyperion-deep-sea">
-        {point.value.toLocaleString()}
+      <p className="mt-1 text-sm text-hyperion-slate-grey/90">
+        Hotspots:{" "}
+        <span className="font-semibold text-hyperion-deep-sea">
+          {point.hotspotCount.toLocaleString()}
+        </span>
+      </p>
+      <p className="mt-0.5 text-sm text-hyperion-slate-grey/90">
+        Verified media:{" "}
+        <span className="font-semibold text-hyperion-deep-sea">
+          {point.highConfidenceMediaCount.toLocaleString()}
+        </span>
+      </p>
+      <p className="mt-0.5 text-sm text-hyperion-slate-grey/90">
+        Confidence share:{" "}
+        <span className="font-semibold text-hyperion-deep-sea">
+          {point.confidenceShare}%
+        </span>
       </p>
     </motion.div>
   );
@@ -56,33 +74,40 @@ const HotspotDensityChart = () => {
   const hotspotDensityQuery = useHotspotDensity();
 
   const hotspotCount = hotspotDensityQuery.data?.hotspotCount ?? 0;
-  const highConfidenceMediaCount = hotspotDensityQuery.data?.highConfidenceMediaCount ?? 0;
+  const highConfidenceMediaCount =
+    hotspotDensityQuery.data?.highConfidenceMediaCount ?? 0;
 
-  const isLoading = hotspotDensityQuery.isPending || hotspotDensityQuery.isFetching;
+  const isLoading =
+    hotspotDensityQuery.isPending || hotspotDensityQuery.isFetching;
   const hasData = hotspotDensityQuery.data !== undefined;
 
-  const confidenceShare = hotspotCount > 0
-    ? Math.round((highConfidenceMediaCount / hotspotCount) * 100)
-    : 0;
+  const confidenceShare =
+    hotspotCount > 0
+      ? Math.round((highConfidenceMediaCount / hotspotCount) * 100)
+      : 0;
 
+  const remainingCount = Math.max(hotspotCount - highConfidenceMediaCount, 0);
   const chartData = [
     {
       metric: t("stats.hotspot.chart.hotspots"),
-      value: hotspotCount,
-    },
-    {
-      metric: t("stats.hotspot.chart.highConfidence"),
-      value: highConfidenceMediaCount,
+      hotspotCount,
+      highConfidenceMediaCount,
+      remainingCount,
+      confidenceShare,
     },
   ];
 
-  const barColors = [
-    "var(--color-hyperion-deep-sea)",
-    "var(--color-hyperion-burnt-orange)",
-  ];
+  const hotspotIntensity =
+    hotspotCount > 0
+      ? Math.min(1, 0.35 + Math.log10(hotspotCount + 1) / 2.8)
+      : 0.25;
+  const confidenceCircumference = 2 * Math.PI * 40;
+  const confidenceProgress =
+    confidenceCircumference - (confidenceShare / 100) * confidenceCircumference;
 
   return (
     <ScrollReveal
+      revealOnScroll={false}
       className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
       style={{ borderRadius: "62px 36px 56px 40px / 42px 58px 46px 54px" }}
     >
@@ -95,13 +120,7 @@ const HotspotDensityChart = () => {
         style={{ borderRadius: "42% 58% 38% 62% / 62% 38% 54% 46%" }}
       />
 
-      <div className="relative space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          {t("stats.hotspot.title")}
-        </p>
-      </div>
-
-      <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="relative mt-6 grid gap-4 sm:grid-cols-2">
         <MagneticWrapper>
           <MorphBox
             className="h-full border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/30 p-4"
@@ -115,7 +134,9 @@ const HotspotDensityChart = () => {
               value={hotspotCount}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.hotspot.cards.detectedClusters")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.hotspot.cards.detectedClusters")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
@@ -132,25 +153,9 @@ const HotspotDensityChart = () => {
               value={highConfidenceMediaCount}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.hotspot.cards.verifiedMedia")}</p>
-          </MorphBox>
-        </MagneticWrapper>
-
-        <MagneticWrapper>
-          <MorphBox
-            className="h-full border border-hyperion-burnt-orange/60 bg-hyperion-burnt-orange/12 p-4"
-            blobShape="16px"
-            hoverShape="20px"
-          >
-            <p className="text-[10px] uppercase tracking-[0.24em] text-hyperion-slate-grey/70">
-              {t("stats.hotspot.cards.confidenceShare")}
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.hotspot.cards.verifiedMedia")}
             </p>
-            <RollingNumber
-              value={confidenceShare}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
-              postfix="%"
-            />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.hotspot.cards.ratioInsight")}</p>
           </MorphBox>
         </MagneticWrapper>
       </div>
@@ -162,6 +167,53 @@ const HotspotDensityChart = () => {
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
+        <div
+          className="pointer-events-none absolute inset-2 rounded-xl opacity-25"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, var(--color-hyperion-fog-grey) 1px, transparent 1px), linear-gradient(to bottom, var(--color-hyperion-fog-grey) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="pointer-events-none absolute right-4 top-4 z-10 flex h-28 w-28 items-center justify-center rounded-full bg-white/70 backdrop-blur-md">
+          <svg
+            width="92"
+            height="92"
+            viewBox="0 0 92 92"
+            role="img"
+            aria-label="Confidence Share Ring"
+          >
+            <circle
+              cx="46"
+              cy="46"
+              r="40"
+              stroke="var(--color-hyperion-fog-grey)"
+              strokeWidth="8"
+              fill="none"
+            />
+            <circle
+              cx="46"
+              cy="46"
+              r="40"
+              stroke="var(--color-hyperion-sage-mint)"
+              strokeWidth="8"
+              fill="none"
+              strokeLinecap="round"
+              strokeDasharray={confidenceCircumference}
+              strokeDashoffset={confidenceProgress}
+              transform="rotate(-90 46 46)"
+            />
+          </svg>
+          <div className="absolute text-center">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-hyperion-slate-grey/70">
+              Verified
+            </p>
+            <p className="text-xl font-bold text-hyperion-forest">
+              {confidenceShare}%
+            </p>
+          </div>
+        </div>
+
         {hotspotDensityQuery.isError ? (
           <div className="flex h-full items-center justify-center rounded-xl border border-hyperion-burnt-orange/25 bg-hyperion-burnt-orange/5 px-4 text-center text-sm text-hyperion-slate-grey">
             {t("stats.hotspot.states.error")}
@@ -176,8 +228,14 @@ const HotspotDensityChart = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 12, right: 20, left: 4, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="4 4" stroke="var(--color-hyperion-fog-grey)" />
+            <BarChart
+              data={chartData}
+              margin={{ top: 12, right: 20, left: 4, bottom: 8 }}
+            >
+              <CartesianGrid
+                strokeDasharray="4 4"
+                stroke="var(--color-hyperion-fog-grey)"
+              />
               <XAxis
                 dataKey="metric"
                 tick={{ fontSize: 12 }}
@@ -190,16 +248,40 @@ const HotspotDensityChart = () => {
                 tickLine={false}
                 allowDecimals={false}
               />
-              <Tooltip content={<HotspotTooltip />} cursor={{ fill: "var(--color-hyperion-soft-sky)" }} />
+              <Tooltip
+                content={<HotspotTooltip />}
+                cursor={{ fill: "var(--color-hyperion-soft-sky)" }}
+              />
               <Bar
-                dataKey="value"
+                dataKey="remainingCount"
+                stackId="density"
                 radius={[14, 14, 6, 6]}
                 animationBegin={180}
                 animationDuration={1500}
-                animationEasing="ease-out"
+                animationEasing="ease-in-out"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`${entry.metric}-${index}`} fill={barColors[index % barColors.length]} />
+                  <Cell
+                    key={`${entry.metric}-remaining-${index}`}
+                    fill="var(--color-hyperion-deep-sea)"
+                    fillOpacity={hotspotIntensity}
+                  />
+                ))}
+              </Bar>
+              <Bar
+                dataKey="highConfidenceMediaCount"
+                stackId="density"
+                radius={[14, 14, 0, 0]}
+                animationBegin={260}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`${entry.metric}-verified-${index}`}
+                    fill="var(--color-hyperion-sage-mint)"
+                    fillOpacity={0.95}
+                  />
                 ))}
               </Bar>
             </BarChart>

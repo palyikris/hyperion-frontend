@@ -10,6 +10,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -35,6 +36,11 @@ const MeanTimeTooltip = ({ active, payload }: ChartTooltipProps) => {
   }
 
   const worker = payload[0].payload;
+  const roundedSeconds = Math.round(worker.avgProcessingSeconds);
+  const humanizedTime =
+    roundedSeconds >= 60
+      ? `${(roundedSeconds / 60).toFixed(1)}m`
+      : `${roundedSeconds}s`;
 
   return (
     <motion.div
@@ -47,13 +53,35 @@ const MeanTimeTooltip = ({ active, payload }: ChartTooltipProps) => {
         {worker.workerName}
       </p>
       <p className="mt-1 text-lg font-bold text-hyperion-deep-sea">
-        {t("stats.meanTime.tooltip.seconds", { value: Math.round(worker.avgProcessingSeconds) })}
+        {humanizedTime}
       </p>
       <p className="mt-1 text-xs text-hyperion-slate-grey/80">
         {t("stats.meanTime.tooltip.tasks", { value: worker.taskCount })}
       </p>
     </motion.div>
   );
+};
+
+const getProcessingColor = (value: number, average: number) => {
+  if (average <= 0) {
+    return "var(--color-hyperion-soft-sky)";
+  }
+
+  const ratio = value / average;
+
+  if (ratio <= 0.8) {
+    return "var(--color-hyperion-sage-mint)";
+  }
+
+  if (ratio <= 1) {
+    return "var(--color-hyperion-cool-aqua)";
+  }
+
+  if (ratio <= 1.2) {
+    return "var(--color-hyperion-soft-sky)";
+  }
+
+  return "var(--color-hyperion-burnt-orange)";
 };
 
 const MeanTimeToProcessChart = () => {
@@ -82,6 +110,7 @@ const MeanTimeToProcessChart = () => {
 
   return (
     <ScrollReveal
+      revealOnScroll={false}
       className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
       style={{ borderRadius: "40px 60px 36px 56px / 58px 38px 62px 42px" }}
     >
@@ -93,12 +122,6 @@ const MeanTimeToProcessChart = () => {
         className="pointer-events-none absolute -bottom-12 left-8 h-24 w-44 bg-hyperion-cool-aqua/55"
         style={{ borderRadius: "42% 58% 38% 62% / 62% 38% 54% 46%" }}
       />
-
-      <div className="relative space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          {t("stats.meanTime.title")}
-        </p>
-      </div>
 
       <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
         <MagneticWrapper>
@@ -115,7 +138,9 @@ const MeanTimeToProcessChart = () => {
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
               postfix={` ${t("stats.meanTime.units.seconds")}`}
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.meanTime.cards.systemWide")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.meanTime.cards.systemWide")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
@@ -132,7 +157,9 @@ const MeanTimeToProcessChart = () => {
               value={workersTracked}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.meanTime.cards.workersTracked")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.meanTime.cards.workersTracked")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
@@ -149,7 +176,9 @@ const MeanTimeToProcessChart = () => {
               value={totalTasks}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.meanTime.cards.processedToday")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.meanTime.cards.processedToday")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
       </div>
@@ -175,36 +204,61 @@ const MeanTimeToProcessChart = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 12, right: 20, left: 4, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="4 4" stroke="var(--color-hyperion-fog-grey)" />
-              <XAxis
-                dataKey="workerName"
-                tick={{ fontSize: 12 }}
-                axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
-                tickLine={false}
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 12, right: 28, left: 12, bottom: 8 }}
+            >
+              <CartesianGrid
+                strokeDasharray="4 4"
+                stroke="var(--color-hyperion-fog-grey)"
               />
-              <YAxis
+              <XAxis
+                type="number"
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
                 allowDecimals={false}
               />
-              <Tooltip content={<MeanTimeTooltip />} cursor={{ fill: "var(--color-hyperion-soft-sky)" }} />
+              <YAxis
+                type="category"
+                dataKey="workerName"
+                tick={{ fontSize: 12 }}
+                axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
+                tickLine={false}
+                width={110}
+              />
+              <Tooltip
+                content={<MeanTimeTooltip />}
+                cursor={{ fill: "var(--color-hyperion-soft-sky)" }}
+              />
+              <ReferenceLine
+                x={overallAvgSeconds}
+                stroke="var(--color-hyperion-burnt-orange)"
+                strokeDasharray="6 4"
+                strokeWidth={2}
+                label={{
+                  value: "Fleet Average",
+                  position: "insideTopRight",
+                  fill: "var(--color-hyperion-slate-grey)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              />
               <Bar
                 dataKey="avgProcessingSeconds"
                 radius={[14, 14, 6, 6]}
                 animationBegin={180}
                 animationDuration={1500}
-                animationEasing="ease-out"
+                animationEasing="ease-in-out"
               >
                 {chartData.map((entry, index) => (
                   <Cell
                     key={`${entry.workerName}-${index}`}
-                    fill={
-                      entry.avgProcessingSeconds <= overallAvgSeconds
-                        ? "var(--color-hyperion-sage-mint)"
-                        : "var(--color-hyperion-burnt-orange)"
-                    }
+                    fill={getProcessingColor(
+                      entry.avgProcessingSeconds,
+                      overallAvgSeconds,
+                    )}
                   />
                 ))}
               </Bar>

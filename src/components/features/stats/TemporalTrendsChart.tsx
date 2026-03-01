@@ -12,6 +12,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,7 +29,13 @@ const RANGE_TO_DAYS: Record<RangeOption, number> = {
 
 type ChartTooltipProps = {
   active?: boolean;
-  payload?: { value?: number }[];
+  payload?: {
+    value?: number;
+    payload?: {
+      previousCount: number | null;
+      percentChange: number | null;
+    };
+  }[];
   label?: string;
 };
 
@@ -53,6 +60,10 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   }
 
   const rawValue = Number(payload[0].value ?? 0);
+  const point = payload[0].payload;
+  const percentChange = point?.percentChange;
+  const changePrefix =
+    percentChange && percentChange !== null && percentChange > 0 ? "+" : "";
 
   return (
     <motion.div
@@ -67,6 +78,12 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
       <p className="relative mt-1 text-xl font-bold text-hyperion-deep-sea">
         {t("stats.temporal.tooltip.detections", { count: rawValue })}
       </p>
+      <p className="relative mt-1 text-xs text-hyperion-slate-grey/80">
+        Percentage Change:{" "}
+        {percentChange && percentChange === null
+          ? "N/A"
+          : `${changePrefix}${percentChange?.toFixed(1)}%`}
+      </p>
     </motion.div>
   );
 };
@@ -74,6 +91,7 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
 const TemporalTrendsChart = () => {
   const { t } = useTranslation();
   const [selectedRange, setSelectedRange] = useState<RangeOption>("month");
+  const [activeLabel, setActiveLabel] = useState<string | null>(null);
   const selectedDays = RANGE_TO_DAYS[selectedRange];
   const temporalTrendsQuery = useTemporalTrends(selectedDays);
 
@@ -81,16 +99,32 @@ const TemporalTrendsChart = () => {
     ? temporalTrendsQuery.data
     : [];
 
-  const chartData = safeData.map((entry) => ({
-    ...entry,
-    shortDate: formatDate(entry.date),
-  }));
+  const chartData = safeData.map((entry, index) => {
+    const previousCount = index > 0 ? safeData[index - 1].count : null;
+    const percentChange =
+      previousCount && previousCount > 0
+        ? ((entry.count - previousCount) / previousCount) * 100
+        : null;
 
-  const totalDetections = safeData.reduce((accumulator, entry) => accumulator + entry.count, 0);
-  const latestDetections = safeData.length > 0 ? safeData[safeData.length - 1].count : 0;
-  const peakDetections = safeData.length > 0 ? Math.max(...safeData.map((entry) => entry.count)) : 0;
+    return {
+      ...entry,
+      shortDate: formatDate(entry.date),
+      previousCount,
+      percentChange,
+    };
+  });
+
+  const totalDetections = safeData.reduce(
+    (accumulator, entry) => accumulator + entry.count,
+    0,
+  );
+  const latestDetections =
+    safeData.length > 0 ? safeData[safeData.length - 1].count : 0;
+  const peakDetections =
+    safeData.length > 0 ? Math.max(...safeData.map((entry) => entry.count)) : 0;
   const hasData = safeData.length > 0;
-  const isLoading = temporalTrendsQuery.isPending || temporalTrendsQuery.isFetching;
+  const isLoading =
+    temporalTrendsQuery.isPending || temporalTrendsQuery.isFetching;
 
   const rangeOptions = useMemo(
     () => [
@@ -103,6 +137,7 @@ const TemporalTrendsChart = () => {
 
   return (
     <ScrollReveal
+      revealOnScroll={false}
       className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
       style={{ borderRadius: "60px 40px 56px 36px / 44px 62px 40px 58px" }}
     >
@@ -116,11 +151,6 @@ const TemporalTrendsChart = () => {
       />
 
       <div className="relative flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-            {t("stats.temporal.title")}
-          </p>
-        </div>
         <div className="w-full max-w-55">
           <SelectField
             label={t("stats.temporal.range.label")}
@@ -153,7 +183,9 @@ const TemporalTrendsChart = () => {
               value={totalDetections}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.temporal.cards.acrossSelectedPeriod")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.temporal.cards.acrossSelectedPeriod")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
@@ -170,7 +202,9 @@ const TemporalTrendsChart = () => {
               value={temporalTrendsQuery.isPending ? 0 : latestDetections}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.temporal.cards.mostRecentDetections")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.temporal.cards.mostRecentDetections")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
@@ -187,7 +221,9 @@ const TemporalTrendsChart = () => {
               value={temporalTrendsQuery.isPending ? 0 : peakDetections}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.temporal.cards.highestDailyVolume")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.temporal.cards.highestDailyVolume")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
       </div>
@@ -213,17 +249,87 @@ const TemporalTrendsChart = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 12, right: 20, left: 4, bottom: 8 }}>
+            <AreaChart
+              data={chartData}
+              margin={{ top: 12, right: 20, left: 4, bottom: 8 }}
+              onMouseMove={(state) => {
+                if (state?.activeLabel) {
+                  setActiveLabel(String(state.activeLabel));
+                }
+              }}
+              onMouseLeave={() => setActiveLabel(null)}
+            >
               <defs>
-                <linearGradient id="temporalTrendFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-hyperion-deep-sea)" stopOpacity={0.45} />
-                  <stop offset="95%" stopColor="var(--color-hyperion-soft-sky)" stopOpacity={0.05} />
+                <linearGradient
+                  id="temporalTrendFill"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor="var(--color-hyperion-deep-sea)"
+                    stopOpacity={0.05}
+                  />
+                  <stop
+                    offset="35%"
+                    stopColor="var(--color-hyperion-deep-sea)"
+                    stopOpacity={0.45}
+                  />
+                  <stop
+                    offset="75%"
+                    stopColor="var(--color-hyperion-soft-sky)"
+                    stopOpacity={0.2}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="var(--color-hyperion-soft-sky)"
+                    stopOpacity={0}
+                  />
                 </linearGradient>
+                <filter
+                  id="activeDateGlow"
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="0"
+                    stdDeviation="4"
+                    floodColor="var(--color-hyperion-soft-sky)"
+                    floodOpacity="0.7"
+                  />
+                </filter>
               </defs>
-              <CartesianGrid strokeDasharray="4 4" stroke="var(--color-hyperion-fog-grey)" />
+              <CartesianGrid
+                strokeDasharray="4 4"
+                stroke="var(--color-hyperion-fog-grey)"
+              />
               <XAxis
                 dataKey="shortDate"
-                tick={{ fontSize: 12 }}
+                tick={(props) => {
+                  const isActive = activeLabel === props.payload?.value;
+
+                  return (
+                    <g transform={`translate(${props.x},${props.y})`}>
+                      <text
+                        x={0}
+                        y={0}
+                        dy={16}
+                        textAnchor="middle"
+                        fill="var(--color-hyperion-slate-grey)"
+                        fontSize={12}
+                        fontWeight={isActive ? 700 : 500}
+                        filter={isActive ? "url(#activeDateGlow)" : undefined}
+                      >
+                        {props.payload?.value}
+                      </text>
+                    </g>
+                  );
+                }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
                 minTickGap={22}
@@ -235,18 +341,38 @@ const TemporalTrendsChart = () => {
                 allowDecimals={false}
                 domain={[0, "dataMax + 1"]}
               />
-              <Tooltip content={<TrendsTooltip />} cursor={{ stroke: "var(--color-hyperion-soft-sky)" }} />
+              <Tooltip
+                content={<TrendsTooltip />}
+                cursor={{ stroke: "var(--color-hyperion-soft-sky)" }}
+              />
+              {activeLabel ? (
+                <ReferenceLine
+                  x={activeLabel}
+                  stroke="var(--color-hyperion-soft-sky)"
+                  strokeDasharray="4 3"
+                  strokeWidth={2}
+                />
+              ) : null}
               <Area
+                key={selectedRange}
                 type="monotone"
                 dataKey="count"
                 stroke="var(--color-hyperion-deep-sea)"
                 strokeWidth={3}
                 fill="url(#temporalTrendFill)"
-                dot={{ r: 3, fill: "var(--color-hyperion-burnt-orange)", strokeWidth: 0 }}
-                activeDot={{ r: 5, fill: "var(--color-hyperion-burnt-orange)", strokeWidth: 0 }}
+                dot={{
+                  r: 3,
+                  fill: "var(--color-hyperion-burnt-orange)",
+                  strokeWidth: 0,
+                }}
+                activeDot={{
+                  r: 5,
+                  fill: "var(--color-hyperion-burnt-orange)",
+                  strokeWidth: 0,
+                }}
                 animationBegin={200}
-                animationDuration={1400}
-                animationEasing="ease-out"
+                animationDuration={1100}
+                animationEasing="ease-in-out"
               />
             </AreaChart>
           </ResponsiveContainer>

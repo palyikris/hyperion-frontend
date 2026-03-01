@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
@@ -9,7 +10,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,6 +28,18 @@ type ChartTooltipProps = {
       failureCount: number;
     };
   }[];
+};
+
+type SortMode = "mostActive" | "mostReliable";
+
+type WorkerStatus = "healthy" | "warning" | "critical";
+
+type AxisTickProps = {
+  x: string | number;
+  y: string | number;
+  payload?: {
+    value: string | number;
+  };
 };
 
 const AIFleetTooltip = ({ active, payload }: ChartTooltipProps) => {
@@ -50,10 +62,14 @@ const AIFleetTooltip = ({ active, payload }: ChartTooltipProps) => {
         {worker.name}
       </p>
       <p className="mt-1 text-lg font-bold text-hyperion-deep-sea">
-        {t("stats.aiFleet.tooltip.reliability", { value: worker.reliabilityPercent })}
+        {t("stats.aiFleet.tooltip.reliability", {
+          value: worker.reliabilityPercent,
+        })}
       </p>
       <p className="mt-1 text-xs text-hyperion-slate-grey/80">
-        {t("stats.aiFleet.tooltip.tasks", { value: worker.tasksProcessedToday })}
+        {t("stats.aiFleet.tooltip.tasks", {
+          value: worker.tasksProcessedToday,
+        })}
       </p>
       <p className="mt-0.5 text-xs text-hyperion-slate-grey/80">
         {t("stats.aiFleet.tooltip.successFailure", {
@@ -65,33 +81,53 @@ const AIFleetTooltip = ({ active, payload }: ChartTooltipProps) => {
   );
 };
 
-const getReliabilityColor = (value: number) => {
-  if (value >= 90) {
-    return "var(--color-hyperion-deep-sea)";
-  }
-
-  if (value >= 75) {
-    return "var(--color-hyperion-sage-mint)";
-  }
-
-  return "var(--color-hyperion-burnt-orange)";
-};
-
 const AIFleetEfficiencyChart = () => {
   const { t } = useTranslation();
   const aiFleetEfficiencyQuery = useAIFleetEfficiency();
+  const [sortMode, setSortMode] = useState<SortMode>("mostActive");
 
   const workers = aiFleetEfficiencyQuery.data?.workers ?? [];
   const hasData = workers.length > 0;
-  const isLoading = aiFleetEfficiencyQuery.isPending || aiFleetEfficiencyQuery.isFetching;
+  const isLoading =
+    aiFleetEfficiencyQuery.isPending || aiFleetEfficiencyQuery.isFetching;
 
-  const chartData = workers.map((worker) => ({
-    name: worker.name,
-    reliabilityPercent: Math.round(worker.reliabilityScore * 100),
-    tasksProcessedToday: worker.tasksProcessedToday,
-    successCount: worker.successCount,
-    failureCount: worker.failureCount,
-  }));
+  const chartData = workers.map((worker) => {
+    const reliabilityPercent = Math.round(worker.reliabilityScore * 100);
+    const status: WorkerStatus =
+      reliabilityPercent >= 90
+        ? "healthy"
+        : reliabilityPercent >= 75
+          ? "warning"
+          : "critical";
+
+    return {
+      name: worker.name,
+      reliabilityPercent,
+      tasksProcessedToday: worker.tasksProcessedToday,
+      successCount: worker.successCount,
+      failureCount: worker.failureCount,
+      status,
+    };
+  });
+
+  const sortedData = useMemo(() => {
+    const cloned = [...chartData];
+
+    cloned.sort((left, right) => {
+      if (sortMode === "mostActive") {
+        return right.tasksProcessedToday - left.tasksProcessedToday;
+      }
+
+      return right.reliabilityPercent - left.reliabilityPercent;
+    });
+
+    return cloned;
+  }, [chartData, sortMode]);
+
+  const statusByWorker = useMemo(
+    () => new Map(sortedData.map((entry) => [entry.name, entry.status])),
+    [sortedData],
+  );
 
   const fleetReliabilityPercent = aiFleetEfficiencyQuery.data
     ? Math.round(aiFleetEfficiencyQuery.data.fleetReliabilityScore * 100)
@@ -101,6 +137,7 @@ const AIFleetEfficiencyChart = () => {
 
   return (
     <ScrollReveal
+      revealOnScroll={false}
       className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
       style={{ borderRadius: "54px 40px 62px 36px / 40px 60px 44px 56px" }}
     >
@@ -114,15 +151,36 @@ const AIFleetEfficiencyChart = () => {
       />
 
       <div className="relative space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
-          {t("stats.aiFleet.title")}
-        </p>
+        <div className="flex items-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => setSortMode("mostActive")}
+            className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+              sortMode === "mostActive"
+                ? "border-hyperion-deep-sea/70 bg-hyperion-soft-sky/40 text-hyperion-forest"
+                : "border-hyperion-fog-grey bg-white/60 text-hyperion-slate-grey/80"
+            }`}
+          >
+            Most Active
+          </button>
+          <button
+            type="button"
+            onClick={() => setSortMode("mostReliable")}
+            className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${
+              sortMode === "mostReliable"
+                ? "border-hyperion-deep-sea/70 bg-hyperion-soft-sky/40 text-hyperion-forest"
+                : "border-hyperion-fog-grey bg-white/60 text-hyperion-slate-grey/80"
+            }`}
+          >
+            Most Reliable
+          </button>
+        </div>
       </div>
 
       <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
         <MagneticWrapper>
           <MorphBox
-            className="h-full border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/30 p-4"
+            className="h-full border border-hyperion-soft-sky/60 bg-white/30 p-4 backdrop-blur-xl"
             blobShape="16px"
             hoverShape="20px"
           >
@@ -134,13 +192,15 @@ const AIFleetEfficiencyChart = () => {
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
               postfix="%"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.aiFleet.cards.fleetWide")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.aiFleet.cards.fleetWide")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
         <MagneticWrapper>
           <MorphBox
-            className="h-full border border-hyperion-sage-mint/70 bg-hyperion-sage-mint/30 p-4"
+            className="h-full border border-hyperion-sage-mint/60 bg-white/28 p-4 backdrop-blur-xl"
             blobShape="16px"
             hoverShape="20px"
           >
@@ -151,13 +211,15 @@ const AIFleetEfficiencyChart = () => {
               value={totalSuccesses}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.aiFleet.cards.completedTasks")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.aiFleet.cards.completedTasks")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
 
         <MagneticWrapper>
           <MorphBox
-            className="h-full border border-hyperion-burnt-orange/60 bg-hyperion-burnt-orange/12 p-4"
+            className="h-full border border-hyperion-burnt-orange/45 bg-white/26 p-4 backdrop-blur-xl"
             blobShape="16px"
             hoverShape="20px"
           >
@@ -168,7 +230,9 @@ const AIFleetEfficiencyChart = () => {
               value={totalFailures}
               className="mt-2 block text-3xl font-semibold text-hyperion-forest"
             />
-            <p className="mt-1 text-xs text-hyperion-slate-grey/70">{t("stats.aiFleet.cards.needsReview")}</p>
+            <p className="mt-1 text-xs text-hyperion-slate-grey/70">
+              {t("stats.aiFleet.cards.needsReview")}
+            </p>
           </MorphBox>
         </MagneticWrapper>
       </div>
@@ -194,11 +258,63 @@ const AIFleetEfficiencyChart = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 12, right: 20, left: 4, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="4 4" stroke="var(--color-hyperion-fog-grey)" />
+            <BarChart
+              data={sortedData}
+              margin={{ top: 14, right: 20, left: 4, bottom: 8 }}
+            >
+              <CartesianGrid
+                strokeDasharray="4 4"
+                stroke="var(--color-hyperion-fog-grey)"
+              />
               <XAxis
                 dataKey="name"
-                tick={{ fontSize: 12 }}
+                tick={(props: AxisTickProps) => {
+                  const workerName = String(props.payload?.value ?? "");
+                  const status = statusByWorker.get(workerName) ?? "critical";
+                  const statusColor =
+                    status === "healthy"
+                      ? "var(--color-hyperion-sage-mint)"
+                      : status === "warning"
+                        ? "var(--color-hyperion-burnt-orange)"
+                        : "var(--color-hyperion-deep-sea)";
+
+                  return (
+                    <g transform={`translate(${props.x},${props.y})`}>
+                      <circle cx={-12} cy={16} r={4.3} fill={statusColor} />
+                      <circle
+                        cx={-12}
+                        cy={16}
+                        r={4.3}
+                        fill={statusColor}
+                        opacity={0.35}
+                      >
+                        <animate
+                          attributeName="r"
+                          values="4.3;8;4.3"
+                          dur="1.6s"
+                          repeatCount="indefinite"
+                        />
+                        <animate
+                          attributeName="opacity"
+                          values="0.35;0;0.35"
+                          dur="1.6s"
+                          repeatCount="indefinite"
+                        />
+                      </circle>
+                      <text
+                        x={0}
+                        y={0}
+                        dy={20}
+                        textAnchor="middle"
+                        fill="var(--color-hyperion-slate-grey)"
+                        fontSize={12}
+                        fontWeight={600}
+                      >
+                        {workerName}
+                      </text>
+                    </g>
+                  );
+                }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
               />
@@ -206,23 +322,30 @@ const AIFleetEfficiencyChart = () => {
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
-                domain={[0, 100]}
+                allowDecimals={false}
               />
-              <Tooltip content={<AIFleetTooltip />} cursor={{ fill: "var(--color-hyperion-soft-sky)" }} />
+              <Tooltip
+                content={<AIFleetTooltip />}
+                cursor={{ fill: "var(--color-hyperion-soft-sky)" }}
+              />
               <Bar
-                dataKey="reliabilityPercent"
+                stackId="ops"
+                dataKey="successCount"
                 radius={[14, 14, 6, 6]}
+                fill="var(--color-hyperion-sage-mint)"
                 animationBegin={180}
                 animationDuration={1500}
-                animationEasing="ease-out"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`${entry.name}-${index}`}
-                    fill={getReliabilityColor(entry.reliabilityPercent)}
-                  />
-                ))}
-              </Bar>
+                animationEasing="ease-in-out"
+              />
+              <Bar
+                stackId="ops"
+                dataKey="failureCount"
+                radius={[14, 14, 6, 6]}
+                fill="var(--color-hyperion-burnt-orange)"
+                animationBegin={280}
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+              />
             </BarChart>
           </ResponsiveContainer>
         )}
