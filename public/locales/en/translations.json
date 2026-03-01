@@ -215,6 +215,53 @@
       "currentTask": "Task"
     }
   },
+  "stats": {
+    "page": {
+      "title": "Stats",
+      "subtitle": "Environmental Footprint & Temporal Trends",
+      "loadError": "Failed to load stats charts."
+    },
+    "environmental": {
+      "title": "Environmental Footprint",
+      "cards": {
+        "totalArea": "Total Area (sqm)",
+        "sqmImpacted": "Sqm impacted",
+        "totalDetections": "Total Detections",
+        "eventsIdentified": "Events identified",
+        "areaPerDetection": "Area / Detection",
+        "impactIntensity": "Impact intensity"
+      },
+      "chart": {
+        "areaMetric": "Area (sqm)",
+        "detectionsMetric": "Detections"
+      }
+    },
+    "temporal": {
+      "title": "Temporal Trends",
+      "range": {
+        "label": "Range",
+        "lastWeek": "Last Week",
+        "lastMonth": "Last Month",
+        "lastQuarter": "Last Quarter"
+      },
+      "cards": {
+        "totalDetections": "Total Detections",
+        "acrossSelectedPeriod": "Across selected period",
+        "latestDay": "Latest Day",
+        "mostRecentDetections": "Most recent detections",
+        "peakDay": "Peak Day",
+        "highestDailyVolume": "Highest daily volume"
+      },
+      "states": {
+        "error": "Failed to load temporal trends.",
+        "loading": "Loading temporal trends...",
+        "empty": "No trend data available for this range."
+      },
+      "tooltip": {
+        "detections": "{{count}} detections"
+      }
+    }
+  },
   "common": {
     "remove": "Remove",
     "delete": "Delete",

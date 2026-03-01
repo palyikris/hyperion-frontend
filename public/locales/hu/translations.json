@@ -215,6 +215,53 @@
       "currentTask": "Feladat"
     }
   },
+  "stats": {
+    "page": {
+      "title": "Statisztikák",
+      "subtitle": "Környezeti lábnyom és időbeli trendek",
+      "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
+    },
+    "environmental": {
+      "title": "Környezeti lábnyom",
+      "cards": {
+        "totalArea": "Összterület (m²)",
+        "sqmImpacted": "Érintett m²",
+        "totalDetections": "Összes detektálás",
+        "eventsIdentified": "Azonosított események",
+        "areaPerDetection": "Terület / detektálás",
+        "impactIntensity": "Hatás intenzitása"
+      },
+      "chart": {
+        "areaMetric": "Terület (m²)",
+        "detectionsMetric": "Detektálások"
+      }
+    },
+    "temporal": {
+      "title": "Időbeli trendek",
+      "range": {
+        "label": "Időtartam",
+        "lastWeek": "Elmúlt hét",
+        "lastMonth": "Elmúlt hónap",
+        "lastQuarter": "Elmúlt negyedév"
+      },
+      "cards": {
+        "totalDetections": "Összes detektálás",
+        "acrossSelectedPeriod": "A kiválasztott időszakban",
+        "latestDay": "Legutóbbi nap",
+        "mostRecentDetections": "Legfrissebb detektálások",
+        "peakDay": "Csúcsnap",
+        "highestDailyVolume": "Legmagasabb napi érték"
+      },
+      "states": {
+        "error": "Nem sikerült betölteni az időbeli trendeket.",
+        "loading": "Időbeli trendek betöltése...",
+        "empty": "Ehhez az időtartamhoz nincs trendadat."
+      },
+      "tooltip": {
+        "detections": "{{count}} detektálás"
+      }
+    }
+  },
   "common": {
     "remove": "Eltávolítás",
     "delete": "Törlés",
