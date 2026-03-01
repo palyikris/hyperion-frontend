@@ -8,6 +8,7 @@ import { RollingNumber } from "../../shared/animation/RollingNumber";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { SelectField } from "../../shared/SelectField";
 import { useTemporalTrends } from "../../../hooks/stats/useTemporalTrends";
+import { useTouchTooltipTrigger } from "../../../hooks/useTouchTooltipTrigger";
 import {
   Area,
   AreaChart,
@@ -79,9 +80,9 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
         {t("stats.temporal.tooltip.detections", { count: rawValue })}
       </p>
       <p className="relative mt-1 text-xs text-hyperion-slate-grey/80">
-        Percentage Change:{" "}
-        {percentChange && percentChange === null
-          ? "N/A"
+        {t("stats.temporal.tooltip.percentageChange")}:{" "}
+        {percentChange === null
+          ? t("stats.temporal.tooltip.notAvailable")
           : `${changePrefix}${percentChange?.toFixed(1)}%`}
       </p>
     </motion.div>
@@ -92,6 +93,7 @@ const TemporalTrendsChart = () => {
   const { t } = useTranslation();
   const [selectedRange, setSelectedRange] = useState<RangeOption>("month");
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
+  const tooltipTrigger = useTouchTooltipTrigger();
   const selectedDays = RANGE_TO_DAYS[selectedRange];
   const temporalTrendsQuery = useTemporalTrends(selectedDays);
 
@@ -138,7 +140,7 @@ const TemporalTrendsChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
+      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "60px 40px 56px 36px / 44px 62px 40px 58px" }}
     >
       <div
@@ -181,7 +183,7 @@ const TemporalTrendsChart = () => {
             </p>
             <RollingNumber
               value={totalDetections}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.temporal.cards.acrossSelectedPeriod")}
@@ -200,7 +202,7 @@ const TemporalTrendsChart = () => {
             </p>
             <RollingNumber
               value={temporalTrendsQuery.isPending ? 0 : latestDetections}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.temporal.cards.mostRecentDetections")}
@@ -219,7 +221,7 @@ const TemporalTrendsChart = () => {
             </p>
             <RollingNumber
               value={temporalTrendsQuery.isPending ? 0 : peakDetections}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.temporal.cards.highestDailyVolume")}
@@ -344,6 +346,7 @@ const TemporalTrendsChart = () => {
               <Tooltip
                 content={<TrendsTooltip />}
                 cursor={{ stroke: "var(--color-hyperion-soft-sky)" }}
+                trigger={tooltipTrigger}
               />
               {activeLabel ? (
                 <ReferenceLine

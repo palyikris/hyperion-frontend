@@ -221,19 +221,40 @@
       "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő, hotspot sűrűség és hulladékösszetétel",
       "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
     },
+    "command": {
+      "live": "Élő",
+      "lastUpdated": "Utoljára frissítve",
+      "refresh": "Adatok frissítése",
+      "exportCsv": "CSV exportálása",
+      "exportPdf": "PDF exportálása"
+    },
+    "info": {
+      "environmental": "Az érintett területet és az észlelt hulladékeseményeket egyesítve mutatja a küldetésszintű ökológiai terhelést.",
+      "trash": "Az osztályozott hulladékkategóriák megoszlása, hogy láthatóvá váljanak a domináns szennyezési minták.",
+      "hotspot": "A magas megbízhatóságú észlelések koncentrációját és az aktivitási zónák térbeli intenzitását méri.",
+      "temporal": "Az észlelések időbeli alakulását követi az erősödés, a szezonalitás és a beavatkozások hatásának feltárására.",
+      "fleet": "Összesíti az autonóm ügynökök megbízhatóságát, áteresztőképességét és siker-hiba arányát.",
+      "mttp": "A bemenettől a feldolgozás befejezéséig mért medián késleltetést mutatja a dolgozói optimalizáláshoz."
+    },
     "environmental": {
       "title": "Környezeti lábnyom",
       "cards": {
-        "totalArea": "Összterület (m²)",
-        "sqmImpacted": "Érintett m²",
+        "impactMasterCard": "Hatás összesítő kártya",
+        "totalArea": "Összterület (m2)",
+        "sqmImpacted": "Érintett m2",
         "totalDetections": "Összes detektálás",
         "eventsIdentified": "Azonosított események",
         "areaPerDetection": "Terület / detektálás",
         "impactIntensity": "Hatás intenzitása"
       },
       "chart": {
-        "areaMetric": "Terület (m²)",
+        "areaMetric": "Terület (m2)",
         "detectionsMetric": "Detektálások"
+      },
+      "tooltip": {
+        "metric": "Metrika",
+        "value": "Érték",
+        "sqmPerEvent": "{{value}} m2/esemény"
       }
     },
     "temporal": {
@@ -258,11 +279,17 @@
         "empty": "Ehhez az időtartamhoz nincs trendadat."
       },
       "tooltip": {
-        "detections": "{{count}} detektálás"
+        "detections": "{{count}} detektálás",
+        "percentageChange": "Százalékos változás",
+        "notAvailable": "N/A"
       }
     },
     "aiFleet": {
       "title": "AI flotta hatékonyság",
+      "sort": {
+        "mostActive": "Legaktívabb",
+        "mostReliable": "Legmegbízhatóbb"
+      },
       "cards": {
         "reliability": "Flotta megbízhatóság",
         "fleetWide": "Flotta szintű megbízhatóság",
@@ -287,6 +314,9 @@
       "units": {
         "seconds": "mp"
       },
+      "chart": {
+        "fleetAverage": "Flottaátlag"
+      },
       "cards": {
         "overallAverage": "Átlag összesen",
         "systemWide": "Rendszerszintű feldolgozási idő",
@@ -307,6 +337,15 @@
     },
     "hotspot": {
       "title": "Hotspot sűrűség",
+      "tooltip": {
+        "hotspots": "Hotspotok",
+        "verifiedMedia": "Ellenőrzött média",
+        "confidenceShare": "Megbízhatósági arány"
+      },
+      "ring": {
+        "ariaLabel": "Megbízhatósági arány gyűrű",
+        "verified": "Ellenőrzött"
+      },
       "cards": {
         "hotspots": "Hotspotok",
         "detectedClusters": "Detektált klaszterek",
@@ -327,6 +366,15 @@
     },
     "trash": {
       "title": "Hulladékösszetétel",
+      "summary": {
+        "topCategory": "Legfőbb kategória"
+      },
+      "legend": {
+        "filters": "Szűrők"
+      },
+      "center": {
+        "totalDetections": "Összes detektálás"
+      },
       "cards": {
         "totalItems": "Összes elem",
         "detectedPieces": "Detektált darabok",
@@ -345,6 +393,9 @@
         "count": "Darab: {{value}}",
         "share": "Arány: {{value}}%"
       }
+    },
+    "shared": {
+      "info": "infó"
     }
   },
   "common": {

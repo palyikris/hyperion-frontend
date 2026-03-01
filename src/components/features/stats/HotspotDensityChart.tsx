@@ -5,6 +5,7 @@ import { MagneticWrapper } from "../../shared/animation/MagneticWrapper";
 import { MorphBox } from "../../shared/animation/MorphBox";
 import { RollingNumber } from "../../shared/animation/RollingNumber";
 import { useHotspotDensity } from "../../../hooks/stats/useHotspotDensity";
+import { useTouchTooltipTrigger } from "../../../hooks/useTouchTooltipTrigger";
 import {
   Bar,
   BarChart,
@@ -31,6 +32,8 @@ type ChartTooltipProps = {
 };
 
 const HotspotTooltip = ({ active, payload }: ChartTooltipProps) => {
+  const { t } = useTranslation();
+
   if (!active || !payload || payload.length === 0 || !payload[0].payload) {
     return null;
   }
@@ -48,19 +51,19 @@ const HotspotTooltip = ({ active, payload }: ChartTooltipProps) => {
         {point.metric}
       </p>
       <p className="mt-1 text-sm text-hyperion-slate-grey/90">
-        Hotspots:{" "}
+        {t("stats.hotspot.tooltip.hotspots")}:{" "}
         <span className="font-semibold text-hyperion-deep-sea">
           {point.hotspotCount.toLocaleString()}
         </span>
       </p>
       <p className="mt-0.5 text-sm text-hyperion-slate-grey/90">
-        Verified media:{" "}
+        {t("stats.hotspot.tooltip.verifiedMedia")}:{" "}
         <span className="font-semibold text-hyperion-deep-sea">
           {point.highConfidenceMediaCount.toLocaleString()}
         </span>
       </p>
       <p className="mt-0.5 text-sm text-hyperion-slate-grey/90">
-        Confidence share:{" "}
+        {t("stats.hotspot.tooltip.confidenceShare")}:{" "}
         <span className="font-semibold text-hyperion-deep-sea">
           {point.confidenceShare}%
         </span>
@@ -72,6 +75,7 @@ const HotspotTooltip = ({ active, payload }: ChartTooltipProps) => {
 const HotspotDensityChart = () => {
   const { t } = useTranslation();
   const hotspotDensityQuery = useHotspotDensity();
+  const tooltipTrigger = useTouchTooltipTrigger();
 
   const hotspotCount = hotspotDensityQuery.data?.hotspotCount ?? 0;
   const highConfidenceMediaCount =
@@ -108,7 +112,7 @@ const HotspotDensityChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
+      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "62px 36px 56px 40px / 42px 58px 46px 54px" }}
     >
       <div
@@ -132,7 +136,7 @@ const HotspotDensityChart = () => {
             </p>
             <RollingNumber
               value={hotspotCount}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.hotspot.cards.detectedClusters")}
@@ -151,7 +155,7 @@ const HotspotDensityChart = () => {
             </p>
             <RollingNumber
               value={highConfidenceMediaCount}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.hotspot.cards.verifiedMedia")}
@@ -181,7 +185,7 @@ const HotspotDensityChart = () => {
             height="92"
             viewBox="0 0 92 92"
             role="img"
-            aria-label="Confidence Share Ring"
+            aria-label={t("stats.hotspot.ring.ariaLabel")}
           >
             <circle
               cx="46"
@@ -206,7 +210,7 @@ const HotspotDensityChart = () => {
           </svg>
           <div className="absolute text-center">
             <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-hyperion-slate-grey/70">
-              Verified
+              {t("stats.hotspot.ring.verified")}
             </p>
             <p className="text-xl font-bold text-hyperion-forest">
               {confidenceShare}%
@@ -251,6 +255,7 @@ const HotspotDensityChart = () => {
               <Tooltip
                 content={<HotspotTooltip />}
                 cursor={{ fill: "var(--color-hyperion-soft-sky)" }}
+                trigger={tooltipTrigger}
               />
               <Bar
                 dataKey="remainingCount"

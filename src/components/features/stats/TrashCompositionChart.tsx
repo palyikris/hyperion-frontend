@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { useTrashComposition } from "../../../hooks/stats/useTrashComposition";
+import { useTouchTooltipTrigger } from "../../../hooks/useTouchTooltipTrigger";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 type ChartTooltipProps = {
@@ -59,6 +60,8 @@ const TrashCompositionChart = () => {
   const { t } = useTranslation();
   const trashCompositionQuery = useTrashComposition();
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const tooltipTrigger = useTouchTooltipTrigger();
+  const isTouchTooltip = tooltipTrigger === "click";
 
   const compositionData = useMemo(
     () =>
@@ -95,7 +98,7 @@ const TrashCompositionChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
+      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "58px 42px 60px 40px / 46px 54px 44px 56px" }}
     >
       <div
@@ -109,7 +112,7 @@ const TrashCompositionChart = () => {
 
       <div className="relative mt-4">
         <p className="text-xs text-hyperion-slate-grey/70">
-          Top category:{" "}
+          {t("stats.trash.summary.topCategory")}:{" "}
           <span className="font-semibold text-hyperion-forest">
             {topCategory?.label ?? t("stats.trash.cards.none")}
           </span>
@@ -139,7 +142,7 @@ const TrashCompositionChart = () => {
           <div className="flex h-full flex-col gap-4 md:flex-row">
             <div className="md:w-56 md:shrink-0">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-hyperion-slate-grey/70">
-                Filters
+                {t("stats.trash.legend.filters")}
               </p>
               <div className="space-y-2">
                 {compositionData.map((entry, index) => {
@@ -296,7 +299,12 @@ const TrashCompositionChart = () => {
                     cy="50%"
                     innerRadius={88}
                     outerRadius={122}
-                    onMouseEnter={(_, index) => setActiveIndex(index)}
+                    onMouseEnter={
+                      isTouchTooltip
+                        ? undefined
+                        : (_, index) => setActiveIndex(index)
+                    }
+                    onClick={(_, index) => setActiveIndex(index)}
                     paddingAngle={2}
                     animationBegin={180}
                     animationDuration={1500}
@@ -321,7 +329,7 @@ const TrashCompositionChart = () => {
                     dominantBaseline="middle"
                     className="fill-hyperion-slate-grey text-[11px] font-semibold uppercase tracking-[0.22em]"
                   >
-                    Total Detections
+                    {t("stats.trash.center.totalDetections")}
                   </text>
                   <text
                     x="50%"
@@ -332,7 +340,10 @@ const TrashCompositionChart = () => {
                   >
                     {totalDetections.toLocaleString()}
                   </text>
-                  <Tooltip content={<TrashCompositionTooltip />} />
+                  <Tooltip
+                    content={<TrashCompositionTooltip />}
+                    trigger={tooltipTrigger}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>

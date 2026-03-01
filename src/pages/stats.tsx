@@ -6,55 +6,19 @@ import MeanTimeToProcessChart from "../components/features/stats/MeanTimeToProce
 import HotspotDensityChart from "../components/features/stats/HotspotDensityChart";
 import TrashCompositionChart from "../components/features/stats/TrashCompositionChart";
 import StatsBentoCard from "../components/features/stats/StatsBentoCard";
-import StatsAtmosphere from "../components/features/stats/StatsAtmosphere";
-import StatsCommandBar, {
-  type FilterView,
-} from "../components/features/stats/StatsCommandBar";
-import StatsKpiRibbon, {
-  type MetricItem,
-} from "../components/features/stats/StatsKpiRibbon";
+import { Button } from "../components/shared/Button";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { Title } from "../components/shared/Title";
 import { useEnvironmentalFootprint } from "../hooks/stats/useEnvironmentalFootprint";
 import { useStatsSummary } from "../hooks/stats/useStatsSummary";
 import { useTranslation } from "react-i18next";
-import {
-  motion,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { useMemo, useState, type MouseEvent } from "react";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.12,
-    },
-  },
-};
+import { useMemo } from "react";
 
 const StatsPage = () => {
   const { t } = useTranslation();
-  const [dateRangeDays, setDateRangeDays] = useState(7);
-  const [view, setView] = useState<FilterView>("all");
+  const dateRangeDays = 7;
   const environmentalFootprintQuery = useEnvironmentalFootprint();
   const summaryQuery = useStatsSummary(dateRangeDays);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const { scrollYProgress } = useScroll();
-  const parallaxY = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -110]),
-    { stiffness: 60, damping: 20 },
-  );
-
-  const glowOffsetX = useTransform(mouseX, [-0.5, 0.5], [-24, 24]);
-  const glowOffsetY = useTransform(mouseY, [-0.5, 0.5], [-20, 20]);
 
   const lastUpdatedLabel = useMemo(() => {
     if (!summaryQuery.dataUpdatedAt) {
@@ -67,76 +31,6 @@ const StatsPage = () => {
       second: "2-digit",
     }).format(new Date(summaryQuery.dataUpdatedAt));
   }, [summaryQuery.dataUpdatedAt]);
-
-  const metrics = useMemo<MetricItem[]>(() => {
-    const summary = summaryQuery.data;
-
-    if (!summary) {
-      return [
-        { label: t("stats.kpi.area", "Total Area"), value: 0, postfix: " m²" },
-        {
-          label: t("stats.kpi.detections", "Active Detections"),
-          value: 0,
-          postfix: "",
-        },
-        {
-          label: t("stats.kpi.fleet", "Fleet Health"),
-          value: 0,
-          postfix: "%",
-        },
-        {
-          label: t("stats.kpi.hotspots", "Hotspots"),
-          value: 0,
-          postfix: "",
-        },
-        {
-          label: t("stats.kpi.mttp", "Mean Process Time"),
-          value: 0,
-          postfix: "s",
-        },
-      ];
-    }
-
-    return [
-      {
-        label: t("stats.kpi.area", "Total Area"),
-        value: Math.round(summary.environmentalFootprint.totalAreaSqm),
-        postfix: " m²",
-      },
-      {
-        label: t("stats.kpi.detections", "Active Detections"),
-        value: summary.environmentalFootprint.totalDetections,
-        postfix: "",
-      },
-      {
-        label: t("stats.kpi.fleet", "Fleet Health"),
-        value: Math.round(
-          summary.aiFleetEfficiency.fleetReliabilityScore * 100,
-        ),
-        postfix: "%",
-      },
-      {
-        label: t("stats.kpi.hotspots", "Hotspots"),
-        value: summary.hotspotDensity.hotspotCount,
-        postfix: "",
-      },
-      {
-        label: t("stats.kpi.mttp", "Mean Process Time"),
-        value: Math.round(summary.meanTimeToProcess.overallAvgSeconds),
-        postfix: "s",
-      },
-    ];
-  }, [summaryQuery.data, t]);
-
-  const isEnvironmentalView = view === "environmental";
-  const isOperationsView = view === "operations";
-
-  const shouldShowTrash = !isOperationsView;
-  const shouldShowHotspot = !isOperationsView;
-  const shouldShowEnvironmental = !isOperationsView;
-  const shouldShowTemporal = view === "all" || isEnvironmentalView;
-  const shouldShowFleet = view === "all" || isOperationsView;
-  const shouldShowMttp = view === "all" || isOperationsView;
 
   const onExportCsv = () => {
     const summary = summaryQuery.data;
@@ -181,180 +75,165 @@ const StatsPage = () => {
     window.print();
   };
 
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    const normalizedX = event.clientX / window.innerWidth - 0.5;
-    const normalizedY = event.clientY / window.innerHeight - 0.5;
-    mouseX.set(normalizedX);
-    mouseY.set(normalizedY);
+  const onRefreshData = () => {
+    void Promise.all([
+      environmentalFootprintQuery.refetch(),
+      summaryQuery.refetch(),
+    ]);
   };
 
   if (environmentalFootprintQuery.isLoading) {
     return <LoadingScreen />;
   }
 
-  return (
-    <div
-      className="relative min-h-screen bg-[#FDFCF8] selection:bg-hyperion-soft-sky/30"
-      onMouseMove={handleMouseMove}
-    >
-      <StatsAtmosphere
-        parallaxY={parallaxY}
-        glowOffsetX={glowOffsetX}
-        glowOffsetY={glowOffsetY}
-      />
+  const isLive =
+    summaryQuery.isSuccess &&
+    Boolean(summaryQuery.data) &&
+    !summaryQuery.isFetching;
 
+  return (
+    <div className="relative min-h-screen bg-[#FDFCF8] selection:bg-hyperion-soft-sky/30">
       <div className="relative z-10 mx-auto w-full max-w-400 px-6 pb-20 pt-12 sm:px-10">
         <header className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="space-y-2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              <Title
-                text={t("stats.page.title")}
-                size="5xl"
-                className="font-light tracking-tight text-hyperion-deep-sea"
-              />
-            </motion.div>
+            <Title
+              text={t("stats.page.title")}
+              size="5xl"
+              className="font-light tracking-tight text-hyperion-deep-sea"
+            />
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <p className="text-xs font-medium uppercase tracking-[0.5em] text-hyperion-slate-grey/60">
                 {t("stats.page.subtitle")}
               </p>
               <div className="flex items-center gap-2 rounded-full border border-white/40 bg-white/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-hyperion-deep-sea/80 backdrop-blur-md">
                 <span className="relative inline-flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-hyperion-sage-mint opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-hyperion-sage-mint" />
+                  {isLive ? (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-hyperion-sage-mint opacity-75" />
+                  ) : null}
+                  <span
+                    className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                      isLive
+                        ? "bg-hyperion-sage-mint"
+                        : summaryQuery.isError
+                          ? "bg-hyperion-burnt-orange"
+                          : "bg-hyperion-fog-grey"
+                    }`}
+                  />
                 </span>
                 <span>
-                  {t("stats.command.lastUpdated", "Last Updated")}:{" "}
-                  {lastUpdatedLabel}
+                  {isLive
+                    ? t("stats.command.live", "Live")
+                    : t("stats.command.lastUpdated", "Last Updated")}
+                  : {lastUpdatedLabel}
                 </span>
               </div>
             </div>
           </div>
-          <div className="h-px flex-1 bg-linear-to-r from-transparent via-hyperion-deep-sea/10 to-transparent hidden lg:block mx-12 mb-4" />
+
+          <div className="flex flex-wrap items-center gap-3 p-2.5 md:self-start">
+            <Button
+              text={
+                summaryQuery.isFetching ||
+                environmentalFootprintQuery.isFetching
+                  ? `${t("stats.command.refresh", "Refresh Data")}...`
+                  : t("stats.command.refresh", "Refresh Data")
+              }
+              onClick={onRefreshData}
+              theme="info"
+              className="w-full! px-5! py-3! text-[11px]! uppercase! tracking-[0.16em]! font-semibold! shadow-none!"
+            />
+
+            <Button
+              text={t("stats.command.exportCsv", "Export CSV")}
+              onClick={onExportCsv}
+              disabled={!summaryQuery.data}
+              theme="info"
+              className="w-full! px-5! py-3! text-[11px]! uppercase! tracking-[0.16em]! font-semibold! shadow-none!"
+            />
+            <Button
+              text={t("stats.command.exportPdf", "Export PDF")}
+              onClick={onExportPdf}
+              theme="primary"
+              className="w-full! px-5! py-3! text-[11px]! uppercase! tracking-[0.16em]! font-semibold! shadow-none!"
+            />
+          </div>
         </header>
 
-        <StatsCommandBar
-          dateRangeDays={dateRangeDays}
-          setDateRangeDays={setDateRangeDays}
-          view={view}
-          setView={setView}
-          onExportCsv={onExportCsv}
-          onExportPdf={onExportPdf}
-          hasData={Boolean(summaryQuery.data)}
-          labels={{
-            all: t("stats.command.all", "All Metrics"),
-            environmental: t(
-              "stats.command.environmental",
-              "Environmental Focus",
-            ),
-            operations: t(
-              "stats.command.operational",
-              "Operational Performance",
-            ),
-            exportCsv: t("stats.command.exportCsv", "Export CSV"),
-            exportPdf: t("stats.command.exportPdf", "Export PDF"),
-          }}
-        />
+        <section className="grid grid-cols-12 auto-rows-[minmax(220px,auto)] gap-6 xl:gap-8">
+          <StatsBentoCard
+            id="chart-environmental"
+            title={t("stats.environmental.title", "Environmental Footprint")}
+            description={t(
+              "stats.info.environmental",
+              "Combines mapped impact area and detected waste events to show mission-level ecological load.",
+            )}
+            className="col-span-12 xl:col-span-7"
+          >
+            <EnvironmentalFootprintChart
+              data={environmentalFootprintQuery.data!}
+            />
+          </StatsBentoCard>
 
-        <StatsKpiRibbon
-          metrics={metrics}
-          dateRangeDays={dateRangeDays}
-          windowLabel={t("stats.command.window", "Window")}
-          windowDetailLabel={t(
-            "stats.command.windowDetail",
-            "Analytics re-scope instantly while preserving trend continuity.",
-          )}
-        />
+          <StatsBentoCard
+            id="chart-trash"
+            title={t("stats.trash.title", "Trash Composition")}
+            description={t(
+              "stats.info.trash",
+              "Distribution of classified waste categories to reveal dominant pollutant patterns.",
+            )}
+            className="col-span-12 xl:col-span-5"
+          >
+            <TrashCompositionChart />
+          </StatsBentoCard>
 
-        <motion.section
-          layout
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-col gap-6 xl:gap-10"
-        >
-          {shouldShowEnvironmental && (
-            <StatsBentoCard
-              title={t("stats.environmental.title", "Environmental Footprint")}
-              description={t(
-                "stats.info.environmental",
-                "Combines mapped impact area and detected waste events to show mission-level ecological load.",
-              )}
-              className="w-full"
-            >
-              <EnvironmentalFootprintChart
-                data={environmentalFootprintQuery.data!}
-              />
-            </StatsBentoCard>
-          )}
+          <StatsBentoCard
+            id="chart-hotspot"
+            title={t("stats.hotspot.title", "Hotspot Density")}
+            description={t(
+              "stats.info.hotspot",
+              "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
+            )}
+            className="col-span-12 xl:col-span-4 lg:row-span-1"
+          >
+            <HotspotDensityChart />
+          </StatsBentoCard>
 
-          {shouldShowTrash && (
-            <StatsBentoCard
-              title={t("stats.trash.title", "Trash Composition")}
-              description={t(
-                "stats.info.trash",
-                "Distribution of classified waste categories to reveal dominant pollutant patterns.",
-              )}
-              className="w-full"
-            >
-              <TrashCompositionChart />
-            </StatsBentoCard>
-          )}
+          <StatsBentoCard
+            id="chart-temporal"
+            title={t("stats.temporal.title", "Temporal Trends")}
+            description={t(
+              "stats.info.temporal",
+              "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect.",
+            )}
+            className="col-span-12 xl:col-span-8 lg:row-span-2"
+          >
+            <TemporalTrendsChart />
+          </StatsBentoCard>
 
-          {shouldShowHotspot && (
-            <StatsBentoCard
-              title={t("stats.hotspot.title", "Hotspot Density")}
-              description={t(
-                "stats.info.hotspot",
-                "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
-              )}
-              className="w-full"
-            >
-              <HotspotDensityChart />
-            </StatsBentoCard>
-          )}
+          <StatsBentoCard
+            id="chart-fleet"
+            title={t("stats.aiFleet.title", "AI Fleet Efficiency")}
+            description={t(
+              "stats.info.fleet",
+              "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
+            )}
+            className="col-span-12 xl:col-span-6"
+          >
+            <AIFleetEfficiencyChart />
+          </StatsBentoCard>
 
-          {shouldShowTemporal && (
-            <StatsBentoCard
-              title={t("stats.temporal.title", "Temporal Trends")}
-              description={t(
-                "stats.info.temporal",
-                "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect.",
-              )}
-              className="w-full"
-            >
-              <TemporalTrendsChart />
-            </StatsBentoCard>
-          )}
-
-          {shouldShowFleet && (
-            <StatsBentoCard
-              title={t("stats.aiFleet.title", "AI Fleet Efficiency")}
-              description={t(
-                "stats.info.fleet",
-                "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
-              )}
-              className="w-full"
-            >
-              <AIFleetEfficiencyChart />
-            </StatsBentoCard>
-          )}
-
-          {shouldShowMttp && (
-            <StatsBentoCard
-              title={t("stats.meanTime.title", "Mean Time to Process")}
-              description={t(
-                "stats.info.mttp",
-                "Shows median operational latency from input to completed processing for worker optimization.",
-              )}
-              className="w-full"
-            >
-              <MeanTimeToProcessChart />
-            </StatsBentoCard>
-          )}
-        </motion.section>
+          <StatsBentoCard
+            id="chart-mttp"
+            title={t("stats.meanTime.title", "Mean Time to Process")}
+            description={t(
+              "stats.info.mttp",
+              "Shows median operational latency from input to completed processing for worker optimization.",
+            )}
+            className="col-span-12 xl:col-span-6"
+          >
+            <MeanTimeToProcessChart />
+          </StatsBentoCard>
+        </section>
       </div>
     </div>
   );

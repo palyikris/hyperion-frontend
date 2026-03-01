@@ -6,10 +6,12 @@ import { MagneticWrapper } from "../../shared/animation/MagneticWrapper";
 import { MorphBox } from "../../shared/animation/MorphBox";
 import { RollingNumber } from "../../shared/animation/RollingNumber";
 import { useAIFleetEfficiency } from "../../../hooks/stats/useAIFleetEfficiency";
+import { useTouchTooltipTrigger } from "../../../hooks/useTouchTooltipTrigger";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -85,6 +87,7 @@ const AIFleetEfficiencyChart = () => {
   const { t } = useTranslation();
   const aiFleetEfficiencyQuery = useAIFleetEfficiency();
   const [sortMode, setSortMode] = useState<SortMode>("mostActive");
+  const tooltipTrigger = useTouchTooltipTrigger();
 
   const workers = aiFleetEfficiencyQuery.data?.workers ?? [];
   const hasData = workers.length > 0;
@@ -102,6 +105,7 @@ const AIFleetEfficiencyChart = () => {
 
     return {
       name: worker.name,
+      reliabilityScore: worker.reliabilityScore,
       reliabilityPercent,
       tasksProcessedToday: worker.tasksProcessedToday,
       successCount: worker.successCount,
@@ -138,7 +142,7 @@ const AIFleetEfficiencyChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-hyperion-forest/15 bg-white/90 p-6 shadow-[rgba(26,95,84,0.15)_0px_20px_50px] sm:p-8"
+      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "54px 40px 62px 36px / 40px 60px 44px 56px" }}
     >
       <div
@@ -161,7 +165,7 @@ const AIFleetEfficiencyChart = () => {
                 : "border-hyperion-fog-grey bg-white/60 text-hyperion-slate-grey/80"
             }`}
           >
-            Most Active
+            {t("stats.aiFleet.sort.mostActive")}
           </button>
           <button
             type="button"
@@ -172,7 +176,7 @@ const AIFleetEfficiencyChart = () => {
                 : "border-hyperion-fog-grey bg-white/60 text-hyperion-slate-grey/80"
             }`}
           >
-            Most Reliable
+            {t("stats.aiFleet.sort.mostReliable")}
           </button>
         </div>
       </div>
@@ -189,7 +193,7 @@ const AIFleetEfficiencyChart = () => {
             </p>
             <RollingNumber
               value={fleetReliabilityPercent}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
               postfix="%"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
@@ -209,7 +213,7 @@ const AIFleetEfficiencyChart = () => {
             </p>
             <RollingNumber
               value={totalSuccesses}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.aiFleet.cards.completedTasks")}
@@ -228,7 +232,7 @@ const AIFleetEfficiencyChart = () => {
             </p>
             <RollingNumber
               value={totalFailures}
-              className="mt-2 block text-3xl font-semibold text-hyperion-forest"
+              className="mt-2 block text-3xl font-light text-hyperion-forest"
             />
             <p className="mt-1 text-xs text-hyperion-slate-grey/70">
               {t("stats.aiFleet.cards.needsReview")}
@@ -280,33 +284,12 @@ const AIFleetEfficiencyChart = () => {
 
                   return (
                     <g transform={`translate(${props.x},${props.y})`}>
-                      <circle cx={-12} cy={16} r={4.3} fill={statusColor} />
-                      <circle
-                        cx={-12}
-                        cy={16}
-                        r={4.3}
-                        fill={statusColor}
-                        opacity={0.35}
-                      >
-                        <animate
-                          attributeName="r"
-                          values="4.3;8;4.3"
-                          dur="1.6s"
-                          repeatCount="indefinite"
-                        />
-                        <animate
-                          attributeName="opacity"
-                          values="0.35;0;0.35"
-                          dur="1.6s"
-                          repeatCount="indefinite"
-                        />
-                      </circle>
                       <text
                         x={0}
                         y={0}
                         dy={20}
                         textAnchor="middle"
-                        fill="var(--color-hyperion-slate-grey)"
+                        fill={statusColor}
                         fontSize={12}
                         fontWeight={600}
                       >
@@ -322,30 +305,36 @@ const AIFleetEfficiencyChart = () => {
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
-                allowDecimals={false}
+                domain={[0, 1]}
+                ticks={[0, 0.25, 0.5, 0.75, 1]}
+                tickFormatter={(value: number) => `${Math.round(value * 100)}%`}
               />
               <Tooltip
                 content={<AIFleetTooltip />}
                 cursor={{ fill: "var(--color-hyperion-soft-sky)" }}
+                trigger={tooltipTrigger}
               />
               <Bar
-                stackId="ops"
-                dataKey="successCount"
+                dataKey="reliabilityScore"
                 radius={[14, 14, 6, 6]}
                 fill="var(--color-hyperion-sage-mint)"
                 animationBegin={180}
                 animationDuration={1500}
                 animationEasing="ease-in-out"
-              />
-              <Bar
-                stackId="ops"
-                dataKey="failureCount"
-                radius={[14, 14, 6, 6]}
-                fill="var(--color-hyperion-burnt-orange)"
-                animationBegin={280}
-                animationDuration={1500}
-                animationEasing="ease-in-out"
-              />
+              >
+                {sortedData.map((entry) => (
+                  <Cell
+                    key={`${entry.name}-${entry.status}`}
+                    fill={
+                      entry.status === "healthy"
+                        ? "var(--color-hyperion-sage-mint)"
+                        : entry.status === "warning"
+                          ? "var(--color-hyperion-burnt-orange)"
+                          : "var(--color-hyperion-deep-sea)"
+                    }
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         )}

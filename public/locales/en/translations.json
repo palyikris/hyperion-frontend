@@ -221,19 +221,40 @@
       "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency, Mean Time to Process, Hotspot Density & Trash Composition",
       "loadError": "Failed to load stats charts."
     },
+    "command": {
+      "live": "Live",
+      "lastUpdated": "Last Updated",
+      "refresh": "Refresh Data",
+      "exportCsv": "Export CSV",
+      "exportPdf": "Export PDF"
+    },
+    "info": {
+      "environmental": "Combines mapped impact area and detected waste events to show mission-level ecological load.",
+      "trash": "Distribution of classified waste categories to reveal dominant pollutant patterns.",
+      "hotspot": "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
+      "temporal": "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect.",
+      "fleet": "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
+      "mttp": "Shows median operational latency from input to completed processing for worker optimization."
+    },
     "environmental": {
       "title": "Environmental Footprint",
       "cards": {
-        "totalArea": "Total Area (sqm)",
-        "sqmImpacted": "Sqm impacted",
+        "impactMasterCard": "Impact Master Card",
+        "totalArea": "Total Area (m2)",
+        "sqmImpacted": "m2 impacted",
         "totalDetections": "Total Detections",
         "eventsIdentified": "Events identified",
         "areaPerDetection": "Area / Detection",
         "impactIntensity": "Impact intensity"
       },
       "chart": {
-        "areaMetric": "Area (sqm)",
+        "areaMetric": "Area (m2)",
         "detectionsMetric": "Detections"
+      },
+      "tooltip": {
+        "metric": "Metric",
+        "value": "Value",
+        "sqmPerEvent": "{{value}} m2/event"
       }
     },
     "temporal": {
@@ -258,11 +279,17 @@
         "empty": "No trend data available for this range."
       },
       "tooltip": {
-        "detections": "{{count}} detections"
+        "detections": "{{count}} detections",
+        "percentageChange": "Percentage Change",
+        "notAvailable": "N/A"
       }
     },
     "aiFleet": {
       "title": "AI Fleet Efficiency",
+      "sort": {
+        "mostActive": "Most Active",
+        "mostReliable": "Most Reliable"
+      },
       "cards": {
         "reliability": "Fleet Reliability",
         "fleetWide": "Fleet-wide reliability",
@@ -287,6 +314,9 @@
       "units": {
         "seconds": "sec"
       },
+      "chart": {
+        "fleetAverage": "Fleet Average"
+      },
       "cards": {
         "overallAverage": "Overall Average",
         "systemWide": "System-wide processing time",
@@ -307,6 +337,15 @@
     },
     "hotspot": {
       "title": "Hotspot Density",
+      "tooltip": {
+        "hotspots": "Hotspots",
+        "verifiedMedia": "Verified media",
+        "confidenceShare": "Confidence share"
+      },
+      "ring": {
+        "ariaLabel": "Confidence Share Ring",
+        "verified": "Verified"
+      },
       "cards": {
         "hotspots": "Hotspots",
         "detectedClusters": "Detected clusters",
@@ -327,6 +366,15 @@
     },
     "trash": {
       "title": "Trash Composition",
+      "summary": {
+        "topCategory": "Top category"
+      },
+      "legend": {
+        "filters": "Filters"
+      },
+      "center": {
+        "totalDetections": "Total Detections"
+      },
       "cards": {
         "totalItems": "Total Items",
         "detectedPieces": "Detected pieces",
@@ -345,6 +393,9 @@
         "count": "Count: {{value}}",
         "share": "Share: {{value}}%"
       }
+    },
+    "shared": {
+      "info": "info"
     }
   },
   "common": {
