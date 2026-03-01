@@ -7,7 +7,35 @@ type MiniListPreviewProps = {
   flyTo?: (lat: number, lng: number) => void;
 };
 
+type MiniListImageProps = {
+  src?: string;
+  alt: string;
+};
 
+const MiniListImage: React.FC<MiniListImageProps> = ({ src, alt }) => {
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  if (!src) {
+    return <div className="w-full h-full bg-hyperion-fog-grey/80" />;
+  }
+
+  return (
+    <div className="relative w-full h-full">
+      {!isLoaded && (
+        <div className="absolute inset-0 animate-pulse bg-hyperion-fog-grey/80" />
+      )}
+      <img
+        src={src}
+        className={`w-full h-full object-cover transition-opacity duration-200 ${isLoaded ? "opacity-100" : "opacity-0"}`}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setIsLoaded(true)}
+      />
+    </div>
+  );
+};
 
 const MiniListPreview: React.FC<MiniListPreviewProps> = ({ items, flyTo }) => {
   const { t } = useTranslation();
@@ -26,12 +54,18 @@ const MiniListPreview: React.FC<MiniListPreviewProps> = ({ items, flyTo }) => {
             }}
           >
             {/* Decorative blob */}
-            <div className="pointer-events-none absolute -top-3 -left-3 w-8 h-8 bg-hyperion-sage-mint/15 blur-md opacity-80 group-hover:opacity-100 transition-all duration-300" style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }} />
+            <div
+              className="pointer-events-none absolute -top-3 -left-3 w-8 h-8 bg-hyperion-sage-mint/15 blur-md opacity-80 group-hover:opacity-100 transition-all duration-300"
+              style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
+            />
             <div className="w-10 h-10 rounded-xl bg-hyperion-fog-grey overflow-hidden shrink-0 shadow-inner">
-              <img
-                src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`}
-                className="w-full h-full object-cover"
-                alt={item.filename}
+              <MiniListImage
+                src={
+                  item.image_url
+                    ? `https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`
+                    : undefined
+                }
+                alt={item.filename || "File preview"}
               />
             </div>
             <div className="flex flex-col min-w-0">

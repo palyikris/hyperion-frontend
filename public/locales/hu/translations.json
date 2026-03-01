@@ -1,6 +1,9 @@
 {
   "map": {
     "go_to_my_location": "Ugrás a helyzetemre",
+    "search_label": "Cím vagy város keresése...",
+    "clear_search_label": "Keresés törlése",
+    "not_found_message": "Nincs találat.",
     "allow_location_access_title": "Helyhozzáférés engedélyezése?",
     "allow_location_access_desc": "Szükségünk van az engedélyedre, hogy elérjük a helyzeted és a térképet oda központosítsuk.",
     "allow": "Engedélyezem",

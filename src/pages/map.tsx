@@ -16,6 +16,7 @@ import { MapPinned, Filter as FilterIcon } from "lucide-react";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
+import { useDebounce } from "../hooks/useDebounce";
 
 interface Cluster {
   getChildCount: () => number;
@@ -91,7 +92,8 @@ export const MapPage: React.FC = () => {
   });
 
   const [showFilters, setShowFilters] = useState(false);
-  const { data, isLoading } = useMapData(filters);
+  const debouncedFilters = useDebounce(filters, 350);
+  const { data, isLoading } = useMapData(debouncedFilters);
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -223,7 +225,7 @@ export const MapPage: React.FC = () => {
         ref={mapRef}
       >
         {/* Address/City Search */}
-        <MapSearch map={mapRef.current} />
+        <MapSearch />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
         <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>

@@ -2,7 +2,28 @@
 
 @import "tailwindcss";
 
-/* src/index.css */
+
+@theme {
+  /* Primary - The foundations of the brand */
+  --color-hyperion-deep-sea: #1A5F54;
+  --color-hyperion-forest: #2D4A3E;
+
+  /* Secondary - Refreshment and structure */
+  --color-hyperion-sage-mint: #8FCACA;
+  --color-hyperion-cool-aqua: #A8DADC;
+  --color-hyperion-soft-sky: #CDEFEF;
+
+  /* Accent - Attention and action */
+  --color-hyperion-muted-gold: #C9A66B;
+  --color-hyperion-burnt-orange: #D97B5A;
+
+  /* Neutral - Structure and text */
+  --color-hyperion-cream: #F8F9F4;
+  --color-hyperion-fog-grey: #E5E7EB;
+  --color-hyperion-slate-grey: #4B5563;
+}
+
+
 @import "leaflet/dist/leaflet.css";
 
 /* Force the leaflet container to take up space */
@@ -62,25 +83,147 @@
   align-items: center;
 }
 
-@theme {
-  /* Primary - The foundations of the brand */
-  --color-hyperion-deep-sea: #1A5F54;
-  --color-hyperion-forest: #2D4A3E;
-
-  /* Secondary - Refreshment and structure */
-  --color-hyperion-sage-mint: #8FCACA;
-  --color-hyperion-cool-aqua: #A8DADC;
-  --color-hyperion-soft-sky: #CDEFEF;
-
-  /* Accent - Attention and action */
-  --color-hyperion-muted-gold: #C9A66B;
-  --color-hyperion-burnt-orange: #D97B5A;
-
-  /* Neutral - Structure and text */
-  --color-hyperion-cream: #F8F9F4;
-  --color-hyperion-fog-grey: #E5E7EB;
-  --color-hyperion-slate-grey: #4B5563;
+/* Hyperion-styled map search (leaflet-geosearch) */
+.leaflet-geosearch-bar {
+  width: min(420px, calc(100% - 2rem));
+  margin-top: 1rem;
+  overflow: hidden;
 }
+
+.leaflet-geosearch-bar .hyperion-map-search-form {
+  position: relative;
+  display: block;
+  padding: 0;
+  background: #fff;
+  border: 2px solid var(--color-hyperion-fog-grey);
+  border-radius: 1rem;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-form:focus-within {
+  border-color: var(--color-hyperion-deep-sea);
+  background: var(--color-hyperion-cream);
+  box-shadow: 0 8px 24px rgba(26, 95, 84, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-form::before,
+.leaflet-geosearch-bar .hyperion-map-search-form::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.4;
+  border-color: var(--color-hyperion-deep-sea);
+  transition: opacity 0.3s ease;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-form::before {
+  left: 1rem;
+  top: calc(50% - 0.45rem);
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 2px solid var(--color-hyperion-deep-sea);
+  border-radius: 9999px;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-form::after {
+  left: 1.4rem;
+  top: calc(50% + 0.18rem);
+  width: 0.5rem;
+  border-top: 2px solid var(--color-hyperion-deep-sea);
+  transform: rotate(45deg);
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-form:focus-within::before,
+.leaflet-geosearch-bar .hyperion-map-search-form:focus-within::after {
+  opacity: 1;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-input {
+  min-width: 100%;
+  width: 100%;
+  height: 3rem;
+  margin: 0;
+  padding: 0.75rem 2.75rem 0.75rem 2.9rem;
+  border: none;
+  border-radius: 1rem;
+  color: var(--color-hyperion-slate-grey);
+  background: transparent;
+  font-size: 0.95rem;
+  text-indent: 0;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-input::placeholder {
+  color: rgba(229, 231, 235, 0.8);
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-input:focus {
+  outline: none;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-reset {
+  position: absolute;
+  right: 0.5rem !important;
+  z-index: 3;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-hyperion-slate-grey);
+  font-size: 1rem;
+  line-height: 1;
+  background-color: transparent;
+  display: flex;
+  text-align: center;
+  width: 1rem;
+  height: 1rem;
+  top: calc(50% - 0.7rem) !important;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-reset:hover {
+  color: var(--color-hyperion-deep-sea);
+  background: rgba(168, 218, 220, 0.18);
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-results.active {
+  margin-top: 0.25rem;
+  padding: 0.35rem 0;
+  border: 1px solid var(--color-hyperion-fog-grey) !important;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(26, 95, 84, 0.12);
+}
+
+.leaflet-control-geosearch .results{
+  background-color: transparent;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-results.active::after {
+  display: none;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-results > .hyperion-map-search-item,
+.leaflet-geosearch-bar .hyperion-map-search-results > .hyperion-map-search-notfound {
+  margin: 0 0.35rem;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  color: var(--color-hyperion-slate-grey);
+  background-color: transparent !important;
+}
+
+.leaflet-geosearch-bar .hyperion-map-search-results > .active,
+.leaflet-geosearch-bar .hyperion-map-search-results > :hover {
+  background: rgba(168, 218, 220, 0.18);
+  border-color: transparent;
+}
+
+.leaflet-control-attribution{
+  display: none;
+}
+
 
 /* Fix contrast for Sonner descriptions when using dark brand backgrounds */
 [data-sonner-toast].hyperion-toast-success [data-description] {

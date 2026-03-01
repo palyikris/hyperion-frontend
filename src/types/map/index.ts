@@ -5,6 +5,11 @@ export interface MapMediaLog {
   timestamp: string;
 }
 
+export interface MapLogsResponse {
+  media_id: string;
+  history: MapMediaLog[];
+  total: number;
+}
 
 export interface MapItem {
   id: string;
@@ -16,7 +21,6 @@ export interface MapItem {
   altitude?: number;
   address?: string;
   image_url?: string;
-  history: MapMediaLog[];
 }
 
 export interface MapResponse {
