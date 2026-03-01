@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Statisztikák",
-      "subtitle": "Környezeti lábnyom és időbeli trendek",
+      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság és átlagos feldolgozási idő",
       "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
     },
     "environmental": {
@@ -259,6 +259,50 @@
       },
       "tooltip": {
         "detections": "{{count}} detektálás"
+      }
+    },
+    "aiFleet": {
+      "title": "AI flotta hatékonyság",
+      "cards": {
+        "reliability": "Flotta megbízhatóság",
+        "fleetWide": "Flotta szintű megbízhatóság",
+        "successes": "Összes siker",
+        "completedTasks": "Befejezett feladatok",
+        "failures": "Összes hiba",
+        "needsReview": "Felülvizsgálat szükséges"
+      },
+      "states": {
+        "error": "Nem sikerült betölteni az AI flotta hatékonyságát.",
+        "loading": "AI flotta hatékonyság betöltése...",
+        "empty": "Nincs elérhető AI flotta adat."
+      },
+      "tooltip": {
+        "reliability": "Megbízhatóság: {{value}}%",
+        "tasks": "Mai feladatok: {{value}}",
+        "successFailure": "Siker {{success}} / Hiba {{failure}}"
+      }
+    },
+    "meanTime": {
+      "title": "Átlagos feldolgozási idő",
+      "units": {
+        "seconds": "mp"
+      },
+      "cards": {
+        "overallAverage": "Átlag összesen",
+        "systemWide": "Rendszerszintű feldolgozási idő",
+        "workers": "Dolgozók",
+        "workersTracked": "Követett dolgozók",
+        "tasks": "Összes feladat",
+        "processedToday": "A grafikonban szereplő feladatok"
+      },
+      "states": {
+        "error": "Nem sikerült betölteni az átlagos feldolgozási időt.",
+        "loading": "Átlagos feldolgozási idő betöltése...",
+        "empty": "Nincs elérhető feldolgozási idő adat."
+      },
+      "tooltip": {
+        "seconds": "Átlag: {{value}} mp",
+        "tasks": "Feladatok: {{value}}"
       }
     }
   },

@@ -1,5 +1,7 @@
 import EnvironmentalFootprintChart from "../components/features/stats/EnvironmentalFootprintChart";
 import TemporalTrendsChart from "../components/features/stats/TemporalTrendsChart";
+import AIFleetEfficiencyChart from "../components/features/stats/AIFleetEfficiencyChart";
+import MeanTimeToProcessChart from "../components/features/stats/MeanTimeToProcessChart";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { Title } from "../components/shared/Title";
 import { useEnvironmentalFootprint } from "../hooks/stats/useEnvironmentalFootprint";
@@ -55,8 +57,12 @@ const StatsPage = () => {
         </header>
 
         <section className="mt-10 grid items-stretch gap-8 xl:grid-cols-2">
-          <EnvironmentalFootprintChart data={environmentalFootprintQuery.data} />
+          <EnvironmentalFootprintChart
+            data={environmentalFootprintQuery.data}
+          />
           <TemporalTrendsChart />
+          <AIFleetEfficiencyChart />
+          <MeanTimeToProcessChart />
         </section>
       </div>
     </div>

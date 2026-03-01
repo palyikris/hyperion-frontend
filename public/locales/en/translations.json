@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Stats",
-      "subtitle": "Environmental Footprint & Temporal Trends",
+      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency & Mean Time to Process",
       "loadError": "Failed to load stats charts."
     },
     "environmental": {
@@ -259,6 +259,50 @@
       },
       "tooltip": {
         "detections": "{{count}} detections"
+      }
+    },
+    "aiFleet": {
+      "title": "AI Fleet Efficiency",
+      "cards": {
+        "reliability": "Fleet Reliability",
+        "fleetWide": "Fleet-wide reliability",
+        "successes": "Total Successes",
+        "completedTasks": "Completed tasks",
+        "failures": "Total Failures",
+        "needsReview": "Needs review"
+      },
+      "states": {
+        "error": "Failed to load AI fleet efficiency.",
+        "loading": "Loading AI fleet efficiency...",
+        "empty": "No AI fleet data available."
+      },
+      "tooltip": {
+        "reliability": "Reliability: {{value}}%",
+        "tasks": "Tasks today: {{value}}",
+        "successFailure": "Success {{success}} / Failure {{failure}}"
+      }
+    },
+    "meanTime": {
+      "title": "Mean Time to Process",
+      "units": {
+        "seconds": "sec"
+      },
+      "cards": {
+        "overallAverage": "Overall Average",
+        "systemWide": "System-wide processing time",
+        "workers": "Workers",
+        "workersTracked": "Workers tracked",
+        "tasks": "Total Tasks",
+        "processedToday": "Tasks represented in chart"
+      },
+      "states": {
+        "error": "Failed to load mean time to process.",
+        "loading": "Loading mean time to process...",
+        "empty": "No mean-time data available."
+      },
+      "tooltip": {
+        "seconds": "Avg: {{value}} sec",
+        "tasks": "Tasks: {{value}}"
       }
     }
   },
