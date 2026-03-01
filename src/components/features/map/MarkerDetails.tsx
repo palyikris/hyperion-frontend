@@ -60,12 +60,16 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
             {item.image_url ? (
               <MarkerPreviewImage
                 src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`}
-                alt={item.filename ?? "Preview image"}
+                alt={
+                  item.filename ?? t("map.popup.preview_image", "Preview image")
+                }
               />
             ) : (
               <div className="flex flex-col items-center justify-center w-full h-32 text-hyperion-slate-grey/60">
                 <ImageIcon size={32} />
-                <span className="text-xs mt-2">No Image</span>
+                <span className="text-xs mt-2">
+                  {t("map.popup.no_image", "No Image")}
+                </span>
               </div>
             )}
           </button>
@@ -100,7 +104,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
             )}
             {!isLogsLoading && logs.length === 0 && (
               <div className="text-xs text-hyperion-slate-grey italic">
-                No logs available.
+                {t("map.popup.no_logs", "No logs available.")}
               </div>
             )}
             {logs.slice().map((log: MapMediaLog, i: number) => {

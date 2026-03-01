@@ -44,8 +44,8 @@ const MiniListPreview: React.FC<MiniListPreviewProps> = ({ items, flyTo }) => {
       <label className="text-[11px] font-black text-hyperion-slate-grey uppercase tracking-widest mb-3 block">
         {t("map.preview.latest_in_view", "Latest In View")}
       </label>
-      <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-        {items.slice(0, 2).map((item) => (
+      <div className="space-y-3">
+        {items.slice(0, 3).map((item) => (
           <div
             key={item.id}
             className="group relative flex gap-3 items-center p-2 rounded-2xl bg-white/80 border border-hyperion-fog-grey shadow-[rgba(26,95,84,0.08)_0px_4px_18px] hover:border-hyperion-sage-mint hover:bg-hyperion-soft-sky/30 transition-all duration-300 cursor-pointer"
@@ -65,7 +65,9 @@ const MiniListPreview: React.FC<MiniListPreviewProps> = ({ items, flyTo }) => {
                     ? `https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`
                     : undefined
                 }
-                alt={item.filename || "File preview"}
+                alt={
+                  item.filename || t("map.preview.file_preview", "File preview")
+                }
               />
             </div>
             <div className="flex flex-col min-w-0">

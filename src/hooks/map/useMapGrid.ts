@@ -12,7 +12,6 @@ type UseMapGridOptions = {
   items: MapItem[];
   zoom: number;
   bounds: ViewportBounds | null;
-  minDensityPercent?: number;
 };
 
 const getGridStepByZoom = (zoom: number) => {
@@ -43,7 +42,6 @@ export const useMapGrid = ({
   items,
   zoom,
   bounds,
-  minDensityPercent = 0,
 }: UseMapGridOptions): GridCell[] => {
   return useMemo(() => {
     if (!bounds) return [];
@@ -96,29 +94,25 @@ export const useMapGrid = ({
       }
     }
 
-    const minDensityRatio = Math.min(Math.max(minDensityPercent, 0), 100) / 100;
+    return Array.from(byCell.values()).map((cell) => {
+      const density = cell.count > 0 ? cell.density / cell.count : 0;
+      const confidence = cell.count > 0 ? cell.confidence / cell.count : 0;
 
-    return Array.from(byCell.values())
-      .map((cell) => {
-        const density = cell.count > 0 ? cell.density / cell.count : 0;
-        const confidence = cell.count > 0 ? cell.confidence / cell.count : 0;
-
-        let dominantLabel: string | null = null;
-        let dominantCount = 0;
-        for (const [label, count] of Object.entries(cell.labelDistribution)) {
-          if (count > dominantCount) {
-            dominantCount = count;
-            dominantLabel = label;
-          }
+      let dominantLabel: string | null = null;
+      let dominantCount = 0;
+      for (const [label, count] of Object.entries(cell.labelDistribution)) {
+        if (count > dominantCount) {
+          dominantCount = count;
+          dominantLabel = label;
         }
+      }
 
-        return {
-          ...cell,
-          density,
-          confidence,
-          dominantLabel,
-        };
-      })
-      .filter((cell) => cell.density >= minDensityRatio);
-  }, [items, zoom, bounds, minDensityPercent]);
+      return {
+        ...cell,
+        density,
+        confidence,
+        dominantLabel,
+      };
+    });
+  }, [items, zoom, bounds]);
 };

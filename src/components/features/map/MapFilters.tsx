@@ -24,8 +24,6 @@ type MapFiltersProps = {
   onCaptureBounds: () => void;
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
-  minGridDensity: number;
-  onMinGridDensityChange: (value: number) => void;
 };
 
 const MapFilters: React.FC<MapFiltersProps> = ({
@@ -38,24 +36,16 @@ const MapFilters: React.FC<MapFiltersProps> = ({
   onCaptureBounds,
   viewMode,
   onViewModeChange,
-  minGridDensity,
-  onMinGridDensityChange,
 }) => {
   const { t } = useTranslation();
+  const isGridMode = viewMode === "grid";
 
-  const {
-    handleSubmit,
-    getValues,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<MapFiltersFormData>({
-    resolver: zodResolver(mapFilterSchema),
-    defaultValues: filters,
-    mode: "onChange",
-  });
-
-  console.error(errors);
+  const { handleSubmit, getValues, setValue, control } =
+    useForm<MapFiltersFormData>({
+      resolver: zodResolver(mapFilterSchema),
+      defaultValues: filters,
+      mode: "onChange",
+    });
 
   React.useEffect(() => {
     setValue("min_confidence", filters.min_confidence);
@@ -70,6 +60,10 @@ const MapFilters: React.FC<MapFiltersProps> = ({
     field: "min_confidence" | "has_trash",
     value: number | boolean | undefined,
   ) => {
+    if (field === "has_trash" && isGridMode) {
+      return;
+    }
+
     if (field === "min_confidence") {
       setValue("min_confidence", value as number, {
         shouldDirty: true,
@@ -97,6 +91,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
     control,
     name: "has_trash",
   });
+  const effectiveHasTrashValue = isGridMode ? true : hasTrashValue;
 
   const handleClearRegion = () => {
     setValue("min_lat", undefined);
@@ -257,10 +252,11 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                     type="button"
                     theme="danger"
                     className={`px-4 text-xs w-full transition-all ${
-                      hasTrashValue === true
-                        ? "ring-2 ring-hyperion-cream/90"
+                      effectiveHasTrashValue === true
+                        ? "ring-2 ring-hyperion-muted-gold/90"
                         : "opacity-70"
                     }`}
+                    disabled={isGridMode}
                   />
                   <Button
                     text={t("map.filters.clean", "CLEAN")}
@@ -268,30 +264,40 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                     type="button"
                     theme="info"
                     className={`px-4 text-xs w-full transition-all ${
-                      hasTrashValue === false
+                      effectiveHasTrashValue === false
                         ? "ring-2 ring-hyperion-deep-sea/50"
                         : "opacity-70"
                     }`}
+                    disabled={isGridMode}
                   />
                   <button
                     type="button"
                     onClick={() =>
                       handleFilterFieldChange("has_trash", undefined)
                     }
+                    disabled={isGridMode}
                     aria-label={t(
                       "map.filters.clear_status",
                       "Clear status filter",
                     )}
                     title={t("map.filters.clear_status", "Clear status filter")}
                     className={`h-11 w-11 rounded-xl border flex items-center justify-center transition-all ${
-                      hasTrashValue === undefined
+                      effectiveHasTrashValue === undefined
                         ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"
                         : "bg-hyperion-cream text-hyperion-deep-sea border-hyperion-fog-grey hover:bg-hyperion-fog-grey/50"
-                    }`}
+                    } ${isGridMode ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <X size={16} />
                   </button>
                 </div>
+                {isGridMode && (
+                  <p className="text-[9px] font-semibold text-hyperion-burnt-orange">
+                    {t(
+                      "map.filters.has_trash_locked_grid",
+                      "Analysis Grid always filters to HAS TRASH.",
+                    )}
+                  </p>
+                )}
 
                 <div className="space-y-3">
                   <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
@@ -331,30 +337,6 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                     >
                       {t("map.filters.analysis_grid", "Analysis Grid")}
                     </button>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
-                    {t("map.filters.grid_density", "Grid Density Threshold")}
-                  </label>
-                  <input
-                    type="range"
-                    className="w-full h-1.5 bg-hyperion-fog-grey rounded-lg appearance-none cursor-pointer accent-hyperion-burnt-orange transition-all"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={minGridDensity}
-                    onChange={(event) =>
-                      onMinGridDensityChange(Number(event.target.value))
-                    }
-                  />
-                  <div className="flex justify-between text-[10px] font-bold text-hyperion-deep-sea px-1">
-                    <span>{t("map.filters.zero_percent", "0%")}</span>
-                    <span className="bg-hyperion-burnt-orange/15 px-2 py-0.5 rounded-full text-[9px]">
-                      {t("map.filters.min", "Min")}: {minGridDensity}%
-                    </span>
-                    <span>{t("map.filters.hundred_percent", "100%")}</span>
                   </div>
                 </div>
               </div>

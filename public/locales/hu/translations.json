@@ -1,5 +1,6 @@
 {
   "map": {
+    "show_filters": "Szűrők megjelenítése",
     "go_to_my_location": "Ugrás a helyzetemre",
     "search_label": "Cím vagy város keresése...",
     "clear_search_label": "Keresés törlése",
@@ -16,23 +17,44 @@
       "spatial": "Térbeli szűrők",
       "detection_quality": "Detektálási minőség",
       "min": "Min.",
+      "zero_percent": "0%",
+      "hundred_percent": "100%",
       "has_trash": "SZEMÉT VAN",
+      "has_trash_locked_grid": "Az Elemző rács mindig a SZEMÉT VAN értékre szűr.",
       "clean": "TISZTA",
+      "clear_status": "Állapotszűrő törlése",
       "clear": "Törlés",
       "update_selection": "Kijelölés frissítése",
       "sync_view": "Szinkronizálás a nézettel",
+      "view_mode": "Nézet mód",
+      "markers": "Jelölők",
+      "heatmap": "Hőtérkép",
+      "analysis_grid": "Elemző rács",
       "area_locked": "Terület zárolva",
       "area_locked_desc": "Az adatok szűrése a jelenlegi térkép határain belül történik."
     },
     "preview": {
-      "latest_in_view": "Legutóbbiak a nézetben"
+      "latest_in_view": "Legutóbbiak a nézetben",
+      "file_preview": "Fájl előnézet"
     },
     "popup": {
       "unnamed_report": "Névtelen jelentés",
       "location_pending": "Helyszín folyamatban...",
+      "preview_image": "Előnézeti kép",
+      "no_image": "Nincs kép",
+      "no_logs": "Nincs elérhető napló.",
       "logs": "Napló",
       "default_worker": "Helios-01",
       "open_lab_view": "Labor nézet megnyitása"
+    },
+    "grid": {
+      "analysis": "Rácselemzés",
+      "cell": "Cella",
+      "total_hits": "Találatok száma",
+      "trash_density": "Szemét sűrűség",
+      "avg_confidence": "Átlagos AI bizalom",
+      "dominant_label": "Domináns címke",
+      "no_label": "N/A"
     }
   },
   "login": {

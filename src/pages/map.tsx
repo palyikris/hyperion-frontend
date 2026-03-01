@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -256,7 +262,6 @@ export const MapPage: React.FC = () => {
 
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("markers");
-  const [minGridDensity, setMinGridDensity] = useState(0);
   const [viewportState, setViewportState] = useState<ViewportState | null>(
     null,
   );
@@ -270,7 +275,7 @@ export const MapPage: React.FC = () => {
     () => storedViewport?.zoom ?? DEFAULT_MAP_ZOOM,
   );
   const debouncedFilters = useDebounce(filters, 350);
-  const debouncedViewport = useDebounce(viewportState, 300);
+  const debouncedViewport = useDebounce(viewportState, 150);
   const { data, isLoading } = useMapData(debouncedFilters);
 
   const heatmapPoints = useMemo(
@@ -290,7 +295,6 @@ export const MapPage: React.FC = () => {
     items: data?.items ?? [],
     zoom: debouncedViewport?.zoom ?? 12,
     bounds: debouncedViewport?.bounds ?? null,
-    minDensityPercent: minGridDensity,
   });
 
   const maxGridCount = useMemo(
@@ -300,6 +304,16 @@ export const MapPage: React.FC = () => {
 
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
+    if (mode === "grid") {
+      setFilters((prev) =>
+        prev.has_trash === true
+          ? prev
+          : {
+              ...prev,
+              has_trash: true,
+            },
+      );
+    }
     setShowLayerTransition(true);
 
     if (transitionTimerRef.current !== null) {
@@ -320,14 +334,14 @@ export const MapPage: React.FC = () => {
     };
   }, []);
 
-  const handleViewportChange = (state: ViewportState) => {
+  const handleViewportChange = useCallback((state: ViewportState) => {
     setViewportState(state);
     storeMapViewport({
       lat: state.center.lat,
       lng: state.center.lng,
       zoom: state.zoom,
     });
-  };
+  }, []);
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -343,8 +357,6 @@ export const MapPage: React.FC = () => {
       });
     }
   };
-
-  console.log("Map filters:", filters);
 
   const handleCaptureBounds = () => {
     if (!mapRef.current) return;
@@ -443,7 +455,16 @@ export const MapPage: React.FC = () => {
 
       <MapFilters
         filters={filters}
-        onFiltersChange={setFilters}
+        onFiltersChange={(nextFilters) =>
+          setFilters(
+            viewMode === "grid"
+              ? {
+                  ...nextFilters,
+                  has_trash: true,
+                }
+              : nextFilters,
+          )
+        }
         items={data?.items}
         flyTo={flyTo}
         showFilters={showFilters}
@@ -451,8 +472,6 @@ export const MapPage: React.FC = () => {
         onCaptureBounds={handleCaptureBounds}
         viewMode={viewMode}
         onViewModeChange={handleViewModeChange}
-        minGridDensity={minGridDensity}
-        onMinGridDensityChange={setMinGridDensity}
       />
 
       <ConfirmModal

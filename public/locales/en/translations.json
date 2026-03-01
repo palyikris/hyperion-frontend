@@ -1,5 +1,6 @@
 {
   "map": {
+    "show_filters": "Show filters",
     "go_to_my_location": "Go to my location",
     "search_label": "Search address or city...",
     "clear_search_label": "Clear search",
@@ -16,23 +17,44 @@
       "spatial": "Spatial Filters",
       "detection_quality": "Detection Quality",
       "min": "Min",
+      "zero_percent": "0%",
+      "hundred_percent": "100%",
       "has_trash": "HAS TRASH",
+      "has_trash_locked_grid": "Analysis Grid always filters to HAS TRASH.",
       "clean": "CLEAN",
+      "clear_status": "Clear status filter",
       "clear": "Clear",
       "update_selection": "Update Selection",
       "sync_view": "Sync with Viewport",
+      "view_mode": "View Mode",
+      "markers": "Markers",
+      "heatmap": "Heatmap",
+      "analysis_grid": "Analysis Grid",
       "area_locked": "Area Locked",
       "area_locked_desc": "Filtering data within current map boundaries."
     },
     "preview": {
-      "latest_in_view": "Latest In View"
+      "latest_in_view": "Latest In View",
+      "file_preview": "File preview"
     },
     "popup": {
       "unnamed_report": "Unnamed Report",
       "location_pending": "Location Pending...",
+      "preview_image": "Preview image",
+      "no_image": "No Image",
+      "no_logs": "No logs available.",
       "logs": "Logs",
       "default_worker": "Helios-01",
       "open_lab_view": "Open Lab View"
+    },
+    "grid": {
+      "analysis": "Grid Analysis",
+      "cell": "Cell",
+      "total_hits": "Total hits",
+      "trash_density": "Trash density",
+      "avg_confidence": "Average AI confidence",
+      "dominant_label": "Dominant label",
+      "no_label": "N/A"
     }
   },
   "login": {

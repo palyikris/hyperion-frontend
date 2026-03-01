@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { MapItem } from "../../../types/map";
 import MarkerDetails from "./MarkerDetails";
 
@@ -14,6 +15,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
   onClose,
   onImageZoom,
 }) => {
+  const { t } = useTranslation();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,17 +60,18 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
           {/* Title and meta */}
           <div className="flex flex-col gap-1 border-b border-hyperion-sage-mint/20 pb-4">
             <h2 className="text-2xl font-extrabold text-hyperion-deep-sea leading-tight truncate">
-              {item.filename || "Unnamed Report"}
+              {item.filename || t("map.popup.unnamed_report", "Unnamed Report")}
             </h2>
             <div className="flex items-center gap-2 text-hyperion-slate-grey text-sm">
               <span className="inline-flex items-center gap-1 bg-hyperion-sage-mint/20 px-2 py-0.5 rounded-full font-semibold">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" fill="#8FCACA" />
                 </svg>
-                {item.worker_name || "Helios-01"}
+                {item.worker_name || t("map.popup.default_worker", "Helios-01")}
               </span>
               <span className="italic text-xs">
-                {item.address || "Location Pending..."}
+                {item.address ||
+                  t("map.popup.location_pending", "Location Pending...")}
               </span>
             </div>
           </div>
