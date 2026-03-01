@@ -5,17 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Rectangle,
-  Popup,
-  useMapEvents,
-} from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
 import { useMapData } from "../hooks/map/useMapData";
 import type { MapItem } from "../types/map";
@@ -25,15 +16,17 @@ import LoadingScreen from "../components/shared/LoadingScreen";
 import MapFilters from "../components/features/map/MapFilters";
 import { MarkerSidebar } from "../components/features/map";
 import MapSearch from "../components/features/map/MapSearch";
-import { MapPinned, Filter as FilterIcon } from "lucide-react";
+import { MapPinned } from "lucide-react";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
 import { useDebounce } from "../hooks/useDebounce";
 import ImageModal from "../components/features/upload/ImageModal";
 import { useMapGrid } from "../hooks/map/useMapGrid";
-import GridPopup from "../components/features/map/GridPopup";
-import HeatmapLayer from "../components/features/map/HeatmapLayer";
+import MapFloatingControls from "../components/features/map/MapFloatingControls";
+import MapLayerRenderer from "../components/features/map/MapLayerRenderer";
+import MapRegionOverlay from "../components/features/map/MapRegionOverlay";
+import MapLayerTransitionOverlay from "../components/features/map/MapLayerTransitionOverlay";
 
 interface Cluster {
   getChildCount: () => number;
@@ -64,6 +57,7 @@ type ViewportState = {
 const MAP_VIEWPORT_STORAGE_KEY = "hyperion.map.viewport";
 const DEFAULT_MAP_CENTER: [number, number] = [47.4979, 19.0402];
 const DEFAULT_MAP_ZOOM = 12;
+const MARKER_FOCUS_ZOOM = 18;
 
 const isValidViewportNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
@@ -323,7 +317,7 @@ export const MapPage: React.FC = () => {
     transitionTimerRef.current = window.setTimeout(() => {
       setShowLayerTransition(false);
       transitionTimerRef.current = null;
-    }, 260);
+    }, 400);
   };
 
   useEffect(() => {
@@ -352,7 +346,7 @@ export const MapPage: React.FC = () => {
 
   const flyTo = (lat: number, lng: number) => {
     if (mapRef.current) {
-      mapRef.current.flyTo([lat, lng], mapRef.current.getZoom(), {
+      mapRef.current.flyTo([lat, lng], MARKER_FOCUS_ZOOM, {
         duration: 1.2,
       });
     }
@@ -423,35 +417,14 @@ export const MapPage: React.FC = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden">
-      {/* Control Buttons Container */}
-      <div className="absolute z-1000 right-6 bottom-6 flex flex-col gap-4">
-        <AnimatePresence>
-          {!showFilters && (
-            <motion.button
-              key="show-filters-btn"
-              initial={{ opacity: 0, scale: 0.7, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.7, y: 10 }}
-              onClick={() => setShowFilters(true)}
-              className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
-              title={t("map.show_filters", "Show filters")}
-            >
-              <FilterIcon className="text-hyperion-cream w-5 h-5" />
-            </motion.button>
-          )}
-        </AnimatePresence>
-
-        <button
-          onClick={handleGoToMyLocation}
-          className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
-          title={t("map.go_to_my_location", "Go to my location")}
-          disabled={locating}
-        >
-          <MapPinned
-            className={`text-hyperion-cream w-5 h-5 ${locating ? "animate-pulse" : ""}`}
-          />
-        </button>
-      </div>
+      <MapFloatingControls
+        showFilters={showFilters}
+        onShowFilters={() => setShowFilters(true)}
+        onGoToMyLocation={handleGoToMyLocation}
+        locating={locating}
+        showFiltersLabel={t("map.show_filters", "Show filters")}
+        goToMyLocationLabel={t("map.go_to_my_location", "Go to my location")}
+      />
 
       <MapFilters
         filters={filters}
@@ -500,55 +473,17 @@ export const MapPage: React.FC = () => {
         <MapSearch />
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
-        {viewMode === "markers" ? (
-          <MarkerClusterGroup iconCreateFunction={createClusterCustomIcon}>
-            {data?.items.map((item) => (
-              <Marker
-                key={item.id}
-                position={[item.lat, item.lng]}
-                icon={createMapIcon(item.status, item.has_trash)}
-                eventHandlers={{
-                  click: () => setSelectedItem(item),
-                }}
-              />
-            ))}
-          </MarkerClusterGroup>
-        ) : viewMode === "heatmap" ? (
-          <HeatmapLayer points={heatmapPoints} />
-        ) : (
-          <>
-            {gridCells.map((cell) => {
-              const cellIntensity = cell.density;
-              const fillColor = mixHexColors(
-                "#8FCACA",
-                "#D97B5A",
-                cellIntensity,
-              );
-              const normalizedCount = cell.count / maxGridCount;
-              const fillOpacity = 0.14 + normalizedCount * 0.5;
-
-              return (
-                <Rectangle
-                  key={cell.id}
-                  bounds={[
-                    [cell.bounds.south, cell.bounds.west],
-                    [cell.bounds.north, cell.bounds.east],
-                  ]}
-                  pathOptions={{
-                    color: fillColor,
-                    fillColor,
-                    fillOpacity,
-                    weight: 1,
-                  }}
-                >
-                  <Popup>
-                    <GridPopup cell={cell} />
-                  </Popup>
-                </Rectangle>
-              );
-            })}
-          </>
-        )}
+        <MapLayerRenderer
+          viewMode={viewMode}
+          items={data?.items ?? []}
+          heatmapPoints={heatmapPoints}
+          gridCells={gridCells}
+          maxGridCount={maxGridCount}
+          createClusterCustomIcon={createClusterCustomIcon}
+          createMapIcon={createMapIcon}
+          mixHexColors={mixHexColors}
+          onMarkerClick={setSelectedItem}
+        />
 
         {userLocation && (
           <Marker
@@ -556,33 +491,13 @@ export const MapPage: React.FC = () => {
             icon={createUserLocationIcon()}
           ></Marker>
         )}
-        {/* Area Locked Rectangle Overlay */}
-        {filters.min_lat !== undefined &&
-          filters.max_lat !== undefined &&
-          filters.min_lng !== undefined &&
-          filters.max_lng !== undefined && (
-            <Rectangle
-              bounds={[
-                [filters.min_lat, filters.min_lng],
-                [filters.max_lat, filters.max_lng],
-              ]}
-              pathOptions={{ color: "#C9A66B", weight: 2, fillOpacity: 0.1 }}
-            />
-          )}
+        <MapRegionOverlay filters={filters} />
       </MapContainer>
 
-      <AnimatePresence>
-        {showLayerTransition && (
-          <motion.div
-            key={`transition-${viewMode}`}
-            initial={{ opacity: 0.14 }}
-            animate={{ opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.26, ease: "easeOut" }}
-            className="pointer-events-none absolute inset-0 z-850 bg-hyperion-cream"
-          />
-        )}
-      </AnimatePresence>
+      <MapLayerTransitionOverlay
+        showLayerTransition={showLayerTransition}
+        viewMode={viewMode}
+      />
 
       {/* Sidebar for marker details */}
       {selectedItem && (
