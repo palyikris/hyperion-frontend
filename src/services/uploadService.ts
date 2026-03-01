@@ -1,5 +1,5 @@
 import { api } from "../api/axiosInstance";
-import type { GalleryItem } from "../types/upload";
+import type { RecentMediaItem } from "../types/upload";
 import imageCompression from "browser-image-compression";
 import { toastService } from "./toastService";
 import i18n from "i18next";
@@ -63,7 +63,7 @@ export const uploadService = {
     return data;
   },
   getRecentGallery: async (): Promise<{
-    items: GalleryItem[];
+    items: RecentMediaItem[];
     total: number;
   }> => {
     const { data } = await api.get("/upload/recents");

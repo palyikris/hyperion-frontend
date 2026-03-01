@@ -1,12 +1,14 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { GalleryItem, WSStatusUpdate } from "../../types/upload";
+import { toastService } from "../../services/toastService";
 
 export const useUploadSocket = () => {
   const queryClient = useQueryClient();
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number>(0);
   const reconnectAttempts = useRef(0);
+  const [liveFailureAnnouncement, setLiveFailureAnnouncement] = useState("");
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
@@ -21,6 +23,10 @@ export const useUploadSocket = () => {
                 ? {
                     ...item,
                     status: update.status,
+                    failed_reason:
+                      update.status === "FAILED"
+                        ? (update.failed_reason ?? item.failed_reason)
+                        : undefined,
                     image_url: update.image_url ?? item.image_url,
                   }
                 : item,
@@ -44,6 +50,10 @@ export const useUploadSocket = () => {
                     ? {
                         ...item,
                         status: update.status,
+                        failed_reason:
+                          update.status === "FAILED"
+                            ? (update.failed_reason ?? item.failed_reason)
+                            : undefined,
                         image_url: update.image_url ?? item.image_url,
                         assigned_worker: update.worker ?? item.assigned_worker,
                         address: update.address ?? item.address,
@@ -54,6 +64,12 @@ export const useUploadSocket = () => {
             },
           );
         });
+
+      if (update.status === "FAILED") {
+        const reason = update.failed_reason?.trim() || "Processing failed.";
+        toastService.error("Media processing failed", reason);
+        setLiveFailureAnnouncement(`Media processing failed: ${reason}`);
+      }
 
       if (update.status === "READY" || update.status === "FAILED") {
         queryClient.invalidateQueries({
@@ -121,4 +137,6 @@ export const useUploadSocket = () => {
       }
     };
   }, [connect]);
+
+  return { liveFailureAnnouncement };
 };

@@ -18,6 +18,7 @@ interface GalleryCardProps {
   title: string;
   imageUrl: string;
   status: CardStatus;
+  failed_reason?: string;
   gpsCoordinates: string;
   address?: string;
   timestamp: string;
@@ -76,6 +77,7 @@ const GalleryCard = ({
   title,
   imageUrl,
   status,
+  failed_reason,
   address,
   timestamp,
   metadataInfo,
@@ -197,6 +199,7 @@ const GalleryCard = ({
           isDeleting={isDeleting}
           worker_name={worker_name}
           address={address}
+          failed_reason={failed_reason}
         />
       </ScrollReveal>
     </>

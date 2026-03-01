@@ -1,6 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { History, ChevronRight, Image as ImageIcon } from "lucide-react";
+import {
+  AlertTriangle,
+  History,
+  ChevronRight,
+  Image as ImageIcon,
+} from "lucide-react";
 import { useMapLogs } from "../../../hooks/map/useMapLogs";
 import type { MapItem, MapMediaLog } from "../../../types/map";
 
@@ -76,6 +81,20 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
         </div>
         {/* Header Data */}
         {/* Optionally, add more meta here if needed */}
+
+        {item.status === "FAILED" && item.failed_reason && (
+          <section className="rounded-2xl border border-hyperion-burnt-orange/35 bg-hyperion-burnt-orange/10 p-4 shadow-sm">
+            <div className="mb-2 flex items-center gap-2 text-hyperion-burnt-orange">
+              <AlertTriangle size={16} />
+              <span className="text-xs font-bold uppercase tracking-widest">
+                {t("map.popup.error_details", "Error Details")}
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed text-hyperion-burnt-orange">
+              {item.failed_reason}
+            </p>
+          </section>
+        )}
 
         {/* Status Timeline (Horizontal/Compact) */}
         <section className="bg-white/70 rounded-2xl border border-hyperion-sage-mint/30 p-5 flex flex-col min-h-0 shadow-sm">

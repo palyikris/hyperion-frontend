@@ -23,6 +23,7 @@ export interface MapItem {
   id: string;
   filename?: string;
   status: string;
+  failed_reason?: string;
   worker_name?: string;
   lat: number;
   lng: number;

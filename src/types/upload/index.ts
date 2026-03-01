@@ -11,14 +11,19 @@ export interface VaultResponse {
   page: number;
   page_size: number;
   total_pages: number;
-  items: GalleryItem[];
+  items: VaultItem[];
 }
+
+export type VaultItem = GalleryItem;
+
+export type RecentMediaItem = GalleryItem;
 
 export type GalleryItem = {
   id: string;
   filename: string;
   image_url: string;
   status: CardStatus;
+  failed_reason?: string;
   gpsCoordinates?: string;
   timestamp: string;
   metadata: GalleryItemMetadata;
@@ -53,6 +58,7 @@ export interface WSStatusUpdate {
   type: "MEDIA_STATUS_UPDATE";
   media_id: string;
   status: CardStatus;
+  failed_reason?: string;
   image_url?: string;
   worker?: string;
   timestamp: string;

@@ -1,7 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Trash2 } from "lucide-react";
 import type { MapItem } from "../../../types/map";
+import { useDeleteVaultItem } from "../../../hooks/vault/useDeleteVaultItem";
+import ConfirmModal from "../../shared/ConfirmModal";
 import MarkerDetails from "./MarkerDetails";
 
 interface MarkerSidebarProps {
@@ -17,9 +20,13 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
 }) => {
   const { t } = useTranslation();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const deleteMutation = useDeleteVaultItem();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
+      if (isDeleteModalOpen) return;
+
       if (
         sidebarRef.current &&
         !sidebarRef.current.contains(e.target as Node)
@@ -29,10 +36,37 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [onClose]);
+  }, [onClose, isDeleteModalOpen]);
+
+  const handleConfirmDelete = () => {
+    if (!item.id || deleteMutation.isPending) return;
+
+    deleteMutation.mutate(item.id, {
+      onSuccess: () => {
+        onClose();
+      },
+      onSettled: () => {
+        setIsDeleteModalOpen(false);
+      },
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-2000">
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        title={t("upload.deleteSingleTitle", "Delete Item")}
+        description={t(
+          "upload.deleteSingleDescription",
+          "Are you sure you want to delete this item? This action cannot be undone.",
+        )}
+        icon={<Trash2 className="w-6 h-6 text-hyperion-burnt-orange" />}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setIsDeleteModalOpen(false)}
+        confirmText={t("upload.deleteConfirm", "Delete")}
+        cancelText={t("upload.cancel", "Cancel")}
+        isDangerous
+      />
       {/* Sidebar */}
       <motion.aside
         ref={sidebarRef}
@@ -59,9 +93,21 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
         <div className="relative flex-1 overflow-y-auto px-6 pb-8 pt-4 flex flex-col gap-8 z-10">
           {/* Title and meta */}
           <div className="flex flex-col gap-1 border-b border-hyperion-sage-mint/20 pb-4">
-            <h2 className="text-2xl font-extrabold text-hyperion-deep-sea leading-tight truncate">
-              {item.filename || t("map.popup.unnamed_report", "Unnamed Report")}
-            </h2>
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="text-2xl font-extrabold text-hyperion-deep-sea leading-tight truncate">
+                {item.filename ||
+                  t("map.popup.unnamed_report", "Unnamed Report")}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(true)}
+                disabled={deleteMutation.isPending}
+                className="shrink-0 inline-flex items-center justify-center p-2 rounded-full bg-hyperion-burnt-orange/90 hover:bg-hyperion-burnt-orange disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                aria-label={t("upload.deleteConfirm", "Delete")}
+              >
+                <Trash2 className="w-5 h-5 text-hyperion-cream" />
+              </button>
+            </div>
             <div className="flex items-center gap-2 text-hyperion-slate-grey text-sm">
               <span className="inline-flex items-center gap-1 bg-hyperion-sage-mint/20 px-2 py-0.5 rounded-full font-semibold">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24">

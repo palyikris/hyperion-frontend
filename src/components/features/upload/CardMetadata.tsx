@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
 import type { CardStatus } from "../../../types/upload";
-import { Calendar, FileText, MapPin, User2 } from "lucide-react";
+import { AlertTriangle, Calendar, FileText, MapPin, User2 } from "lucide-react";
 
 type CardMetadataProps = {
   title: string;
   timestamp: string;
   metadataInfo: string;
   status: CardStatus;
+  failed_reason?: string;
   isDeleting?: boolean;
   worker_name?: string;
   address?: string;
@@ -17,6 +18,7 @@ const CardMetadata = ({
   timestamp,
   metadataInfo,
   status,
+  failed_reason,
   isDeleting,
   worker_name,
   address,
@@ -65,6 +67,21 @@ const CardMetadata = ({
           <div className="flex items-center gap-2 text-xs font-medium text-hyperion-slate-grey/60">
             <User2 className="w-4 h-4" />
             {worker_name}
+          </div>
+        )}
+
+        {status === "FAILED" && failed_reason && (
+          <div
+            className="rounded-lg border border-hyperion-burnt-orange/35 bg-hyperion-burnt-orange/10 p-2.5"
+            aria-live="polite"
+          >
+            <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-hyperion-burnt-orange">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <span>{t("upload.card.errorDetails", "Error details")}</span>
+            </div>
+            <p className="text-xs leading-snug text-hyperion-burnt-orange">
+              {failed_reason}
+            </p>
           </div>
         )}
       </div>

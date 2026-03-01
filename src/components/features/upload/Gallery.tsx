@@ -29,6 +29,7 @@ const Gallery = ({ items, onCardZoom, showInfo }: GalleryProps) => {
           worker_name={item.assigned_worker}
           technical_metadata={item.technical_metadata}
           address={item.address}
+          failed_reason={item.failed_reason}
           showInfo={showInfo}
         />
       ))}

@@ -12,6 +12,8 @@ export const useDeleteVaultItem = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vault"] });
       queryClient.invalidateQueries({ queryKey: ["upload", "recent-gallery"] });
+      queryClient.invalidateQueries({ queryKey: ["map-data"] });
+      queryClient.invalidateQueries({ queryKey: ["map-logs"] });
       toastService.success(
         t("vault.toast.deleteSuccessTitle"),
         t("vault.toast.deleteSuccessMessage"),
