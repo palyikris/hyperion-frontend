@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Statisztikák",
-      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő és hotspot sűrűség",
+      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő, hotspot sűrűség és hulladékösszetétel",
       "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
     },
     "environmental": {
@@ -324,7 +324,27 @@
         "loading": "Hotspot sűrűség betöltése...",
         "empty": "Nincs elérhető hotspot adat."
       }
-    }
+    },
+    "trash": {
+      "title": "Hulladékösszetétel",
+      "cards": {
+        "totalItems": "Összes elem",
+        "detectedPieces": "Detektált darabok",
+        "topCategory": "Legfőbb kategória",
+        "none": "N/A",
+        "largestShare": "Legnagyobb összetételi arány",
+        "categories": "Kategóriák",
+        "distinctLabels": "Egyedi címkék"
+      },
+      "states": {
+        "error": "Nem sikerült betölteni a hulladékösszetételt.",
+        "loading": "Hulladékösszetétel betöltése...",
+        "empty": "Nincs elérhető hulladékösszetétel adat."
+      },
+      "tooltip": {
+        "count": "Darab: {{value}}",
+        "share": "Arány: {{value}}%"
+      }
     }
   },
   "common": {

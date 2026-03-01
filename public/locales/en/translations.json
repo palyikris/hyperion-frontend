@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Stats",
-      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency, Mean Time to Process & Hotspot Density",
+      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency, Mean Time to Process, Hotspot Density & Trash Composition",
       "loadError": "Failed to load stats charts."
     },
     "environmental": {
@@ -323,6 +323,27 @@
         "error": "Failed to load hotspot density.",
         "loading": "Loading hotspot density...",
         "empty": "No hotspot data available."
+      }
+    },
+    "trash": {
+      "title": "Trash Composition",
+      "cards": {
+        "totalItems": "Total Items",
+        "detectedPieces": "Detected pieces",
+        "topCategory": "Top Category",
+        "none": "N/A",
+        "largestShare": "Largest composition share",
+        "categories": "Categories",
+        "distinctLabels": "Distinct labels"
+      },
+      "states": {
+        "error": "Failed to load trash composition.",
+        "loading": "Loading trash composition...",
+        "empty": "No trash composition data available."
+      },
+      "tooltip": {
+        "count": "Count: {{value}}",
+        "share": "Share: {{value}}%"
       }
     }
   },

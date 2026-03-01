@@ -52,6 +52,11 @@ interface TemporalTrendsApiResponse {
   trends?: TemporalTrend[];
 }
 
+interface TrashCompositionApiResponse {
+  items?: TrashComposition[];
+  trash_composition?: TrashComposition[];
+}
+
 interface StatsSummaryApiResponse {
   trash_composition: TrashComposition[];
   environmental_footprint: EnvironmentalFootprintApiResponse;
@@ -97,9 +102,24 @@ const mapMeanTimeToProcess = (
 };
 
 export const statsService = {
-  getTrashComposition: async () => {
-    const { data } = await api.get<TrashComposition[]>("/stats/trash-composition");
-    return data;
+  getTrashComposition: async (): Promise<TrashComposition[]> => {
+    const { data } = await api.get<
+      TrashComposition[] | TrashCompositionApiResponse
+    >("/stats/trash-composition");
+
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (Array.isArray(data.items)) {
+      return data.items;
+    }
+
+    if (Array.isArray(data.trash_composition)) {
+      return data.trash_composition;
+    }
+
+    return [];
   },
 
   getEnvironmentalFootprint: async (): Promise<EnvironmentalFootprint> => {
@@ -122,9 +142,12 @@ export const statsService = {
   },
 
   getTemporalTrends: async (days: number): Promise<TemporalTrend[]> => {
-    const { data } = await api.get<TemporalTrend[] | TemporalTrendsApiResponse>("/stats/temporal-trends", {
-      params: { days },
-    });
+    const { data } = await api.get<TemporalTrend[] | TemporalTrendsApiResponse>(
+      "/stats/temporal-trends",
+      {
+        params: { days },
+      },
+    );
 
     if (Array.isArray(data)) {
       return data;
@@ -176,7 +199,8 @@ export const statsService = {
       meanTimeToProcess: mapMeanTimeToProcess(data.mean_time_to_process),
       hotspotDensity: {
         hotspotCount: data.hotspot_density.hotspot_count,
-        highConfidenceMediaCount: data.hotspot_density.high_confidence_media_count,
+        highConfidenceMediaCount:
+          data.hotspot_density.high_confidence_media_count,
       },
       daysWindow: data.days_window,
     };
