@@ -17,10 +17,10 @@ const MapLayerTransitionOverlay: React.FC<MapLayerTransitionOverlayProps> = ({
       {showLayerTransition && (
         <motion.div
           key={`transition-${viewMode}`}
-          initial={{ opacity: 0.32 }}
-          animate={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.32 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
           className="pointer-events-none absolute inset-0 z-1100 bg-hyperion-cream"
         >
           <div className="absolute inset-0 flex items-center justify-center">

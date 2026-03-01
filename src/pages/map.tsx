@@ -6,12 +6,11 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 import { useMapData } from "../hooks/map/useMapData";
 import type { MapItem } from "../types/map";
-import L, { Map as LeafletMap } from "leaflet";
-import { renderToStaticMarkup } from "react-dom/server";
+import { Map as LeafletMap } from "leaflet";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import MapFilters from "../components/features/map/MapFilters";
 import { MarkerSidebar } from "../components/features/map";
@@ -27,228 +26,21 @@ import MapFloatingControls from "../components/features/map/MapFloatingControls"
 import MapLayerRenderer from "../components/features/map/MapLayerRenderer";
 import MapRegionOverlay from "../components/features/map/MapRegionOverlay";
 import MapLayerTransitionOverlay from "../components/features/map/MapLayerTransitionOverlay";
-
-interface Cluster {
-  getChildCount: () => number;
-}
+import { getStoredMapViewport } from "../utils/map/mapViewport";
+import type { ViewportState } from "../components/features/map/MapViewportEvents";
+import { areMapFiltersEqual } from "../utils/map/mapFilters";
+import {
+  createClusterCustomIcon,
+  createMapIcon,
+  createUserLocationIcon,
+} from "../utils/map/mapIcons";
+import MapViewportEvents from "../components/features/map/MapViewportEvents";
+import { mixHexColors } from "../utils/map/mapColors";
 
 type ViewMode = "markers" | "heatmap" | "grid";
-
-type PersistedMapViewport = {
-  lat: number;
-  lng: number;
-  zoom: number;
-};
-
-type ViewportState = {
-  zoom: number;
-  center: {
-    lat: number;
-    lng: number;
-  };
-  bounds: {
-    south: number;
-    west: number;
-    north: number;
-    east: number;
-  };
-};
-
-const MAP_VIEWPORT_STORAGE_KEY = "hyperion.map.viewport";
 const DEFAULT_MAP_CENTER: [number, number] = [47.4979, 19.0402];
 const DEFAULT_MAP_ZOOM = 12;
 const MARKER_FOCUS_ZOOM = 18;
-
-const isValidViewportNumber = (value: unknown): value is number =>
-  typeof value === "number" && Number.isFinite(value);
-
-const getStoredMapViewport = (): PersistedMapViewport | null => {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const raw = window.localStorage.getItem(MAP_VIEWPORT_STORAGE_KEY);
-    if (!raw) return null;
-
-    const parsed = JSON.parse(raw) as Partial<PersistedMapViewport>;
-
-    if (
-      !isValidViewportNumber(parsed.lat) ||
-      !isValidViewportNumber(parsed.lng) ||
-      !isValidViewportNumber(parsed.zoom)
-    ) {
-      return null;
-    }
-
-    const lat = parsed.lat;
-    const lng = parsed.lng;
-    const zoom = parsed.zoom;
-
-    if (
-      lat < -90 ||
-      lat > 90 ||
-      lng < -180 ||
-      lng > 180 ||
-      zoom < 0 ||
-      zoom > 22
-    ) {
-      return null;
-    }
-
-    return {
-      lat,
-      lng,
-      zoom,
-    };
-  } catch {
-    return null;
-  }
-};
-
-const storeMapViewport = ({ lat, lng, zoom }: PersistedMapViewport) => {
-  if (typeof window === "undefined") return;
-
-  try {
-    window.localStorage.setItem(
-      MAP_VIEWPORT_STORAGE_KEY,
-      JSON.stringify({ lat, lng, zoom }),
-    );
-  } catch {
-    return;
-  }
-};
-
-const createClusterCustomIcon = (cluster: Cluster) => {
-  const count = cluster.getChildCount();
-  let size: "small" | "medium" | "large" = "small";
-  if (count >= 100) size = "large";
-  else if (count >= 10) size = "medium";
-  return L.divIcon({
-    html: `<div class="custom-cluster-icon ${size}"><span>${count}</span></div>`,
-    className: `custom-cluster custom-cluster-${size}`,
-    iconSize: [40, 40],
-  });
-};
-
-const createMapIcon = (_status: string, hasTrash: boolean) => {
-  const color = hasTrash ? "#D97B5A" : "#8FCACA";
-  const html = renderToStaticMarkup(
-    <div className="relative flex items-center justify-center">
-      <div
-        className="absolute w-8 h-8 rounded-full animate-ping opacity-20"
-        style={{ backgroundColor: color }}
-      />
-      <div
-        className="relative z-10 w-4 h-4 rounded-full border-2 border-white shadow-md"
-        style={{ backgroundColor: color }}
-      />
-    </div>,
-  );
-  return L.divIcon({
-    html,
-    className: "custom-pin",
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-  });
-};
-
-const createUserLocationIcon = () => {
-  const color = "#1A5F54";
-  const html = renderToStaticMarkup(
-    <div className="relative flex items-center justify-center">
-      <div
-        className="absolute w-8 h-8 rounded-full animate-ping opacity-20"
-        style={{ backgroundColor: color }}
-      />
-      <div
-        className="relative z-10 w-4 h-4 rounded-full border-2 border-hyperion-cream shadow-md"
-        style={{ backgroundColor: color }}
-      />
-    </div>,
-  );
-  return L.divIcon({
-    html,
-    className: "custom-user-location-pin",
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-  });
-};
-
-const parseHexColor = (hex: string) => {
-  const cleanHex = hex.replace("#", "");
-  const bigint = Number.parseInt(cleanHex, 16);
-  return {
-    r: (bigint >> 16) & 255,
-    g: (bigint >> 8) & 255,
-    b: bigint & 255,
-  };
-};
-
-const mixHexColors = (startHex: string, endHex: string, ratio: number) => {
-  const clamped = Math.min(Math.max(ratio, 0), 1);
-  const start = parseHexColor(startHex);
-  const end = parseHexColor(endHex);
-
-  const r = Math.round(start.r + (end.r - start.r) * clamped);
-  const g = Math.round(start.g + (end.g - start.g) * clamped);
-  const b = Math.round(start.b + (end.b - start.b) * clamped);
-
-  return `rgb(${r}, ${g}, ${b})`;
-};
-
-const areMapFiltersEqual = (
-  first: MapFiltersFormData,
-  second: MapFiltersFormData,
-) =>
-  first.has_trash === second.has_trash &&
-  first.min_confidence === second.min_confidence &&
-  first.min_lat === second.min_lat &&
-  first.max_lat === second.max_lat &&
-  first.min_lng === second.min_lng &&
-  first.max_lng === second.max_lng;
-
-const MapViewportEvents: React.FC<{
-  onViewportChange: (state: ViewportState) => void;
-}> = ({ onViewportChange }) => {
-  const map = useMapEvents({
-    moveend: () => {
-      const bounds = map.getBounds();
-      const center = map.getCenter();
-      onViewportChange({
-        zoom: map.getZoom(),
-        center: {
-          lat: center.lat,
-          lng: center.lng,
-        },
-        bounds: {
-          south: bounds.getSouth(),
-          west: bounds.getWest(),
-          north: bounds.getNorth(),
-          east: bounds.getEast(),
-        },
-      });
-    },
-  });
-
-  useEffect(() => {
-    const bounds = map.getBounds();
-    const center = map.getCenter();
-    onViewportChange({
-      zoom: map.getZoom(),
-      center: {
-        lat: center.lat,
-        lng: center.lng,
-      },
-      bounds: {
-        south: bounds.getSouth(),
-        west: bounds.getWest(),
-        north: bounds.getNorth(),
-        east: bounds.getEast(),
-      },
-    });
-  }, [map, onViewportChange]);
-
-  return null;
-};
 
 export const MapPage: React.FC = () => {
   const { t } = useTranslation();
@@ -280,9 +72,39 @@ export const MapPage: React.FC = () => {
   );
   const debouncedFilters = useDebounce(filters, 350);
   const debouncedViewport = useDebounce(viewportState, 150);
-  const { data, isLoading } = useMapData(debouncedFilters, {
-    onSettled: () => setShowLayerTransition(false),
-  });
+  const { data, isLoading, isFetching, isError, dataUpdatedAt } =
+    useMapData(debouncedFilters);
+  const [lastTransitionDataUpdatedAt, setLastTransitionDataUpdatedAt] =
+    useState(0);
+
+  useEffect(() => {
+    if (!showLayerTransition) return;
+
+    if (isError && !isFetching) {
+      window.requestAnimationFrame(() => {
+        setShowLayerTransition(false);
+      });
+      return;
+    }
+
+    const hasNewDataForTransition =
+      dataUpdatedAt > 0 && dataUpdatedAt !== lastTransitionDataUpdatedAt;
+
+    if (!isFetching && hasNewDataForTransition) {
+      const frameId = window.requestAnimationFrame(() => {
+        setLastTransitionDataUpdatedAt(dataUpdatedAt);
+        setShowLayerTransition(false);
+      });
+
+      return () => window.cancelAnimationFrame(frameId);
+    }
+  }, [
+    showLayerTransition,
+    isFetching,
+    isError,
+    dataUpdatedAt,
+    lastTransitionDataUpdatedAt,
+  ]);
 
   const setFiltersWithTransition = useCallback(
     (nextFilters: MapFiltersFormData) => {
@@ -331,11 +153,6 @@ export const MapPage: React.FC = () => {
 
   const handleViewportChange = useCallback((state: ViewportState) => {
     setViewportState(state);
-    storeMapViewport({
-      lat: state.center.lat,
-      lng: state.center.lng,
-      zoom: state.zoom,
-    });
   }, []);
 
   const [userLocation, setUserLocation] = useState<{
