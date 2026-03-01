@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Statisztikák",
-      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság és átlagos feldolgozási idő",
+      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő és hotspot sűrűség",
       "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
     },
     "environmental": {
@@ -304,6 +304,27 @@
         "seconds": "Átlag: {{value}} mp",
         "tasks": "Feladatok: {{value}}"
       }
+    },
+    "hotspot": {
+      "title": "Hotspot sűrűség",
+      "cards": {
+        "hotspots": "Hotspotok",
+        "detectedClusters": "Detektált klaszterek",
+        "highConfidence": "Magas megbízhatóság",
+        "verifiedMedia": "Ellenőrzött média",
+        "confidenceShare": "Megbízhatósági arány",
+        "ratioInsight": "Magas megbízhatóság / hotspot arány"
+      },
+      "chart": {
+        "hotspots": "Hotspotok",
+        "highConfidence": "Magas megbízhatóság"
+      },
+      "states": {
+        "error": "Nem sikerült betölteni a hotspot sűrűséget.",
+        "loading": "Hotspot sűrűség betöltése...",
+        "empty": "Nincs elérhető hotspot adat."
+      }
+    }
     }
   },
   "common": {

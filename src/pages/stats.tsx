@@ -2,6 +2,7 @@ import EnvironmentalFootprintChart from "../components/features/stats/Environmen
 import TemporalTrendsChart from "../components/features/stats/TemporalTrendsChart";
 import AIFleetEfficiencyChart from "../components/features/stats/AIFleetEfficiencyChart";
 import MeanTimeToProcessChart from "../components/features/stats/MeanTimeToProcessChart";
+import HotspotDensityChart from "../components/features/stats/HotspotDensityChart";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { Title } from "../components/shared/Title";
 import { useEnvironmentalFootprint } from "../hooks/stats/useEnvironmentalFootprint";
@@ -63,6 +64,9 @@ const StatsPage = () => {
           <TemporalTrendsChart />
           <AIFleetEfficiencyChart />
           <MeanTimeToProcessChart />
+          <div className="xl:col-span-2">
+            <HotspotDensityChart />
+          </div>
         </section>
       </div>
     </div>

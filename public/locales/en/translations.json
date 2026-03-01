@@ -218,7 +218,7 @@
   "stats": {
     "page": {
       "title": "Stats",
-      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency & Mean Time to Process",
+      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency, Mean Time to Process & Hotspot Density",
       "loadError": "Failed to load stats charts."
     },
     "environmental": {
@@ -303,6 +303,26 @@
       "tooltip": {
         "seconds": "Avg: {{value}} sec",
         "tasks": "Tasks: {{value}}"
+      }
+    },
+    "hotspot": {
+      "title": "Hotspot Density",
+      "cards": {
+        "hotspots": "Hotspots",
+        "detectedClusters": "Detected clusters",
+        "highConfidence": "High Confidence",
+        "verifiedMedia": "Verified media",
+        "confidenceShare": "Confidence Share",
+        "ratioInsight": "High-confidence to hotspot ratio"
+      },
+      "chart": {
+        "hotspots": "Hotspots",
+        "highConfidence": "High Confidence"
+      },
+      "states": {
+        "error": "Failed to load hotspot density.",
+        "loading": "Loading hotspot density...",
+        "empty": "No hotspot data available."
       }
     }
   },
