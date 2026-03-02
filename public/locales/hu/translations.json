@@ -228,13 +228,26 @@
       "exportCsv": "CSV exportálása",
       "exportPdf": "PDF exportálása"
     },
+    "csv": {
+      "headers": {
+        "metric": "Metrika",
+        "value": "Érték"
+      },
+      "rows": {
+        "totalAreaSqm": "Összterület (m²)",
+        "totalDetections": "Összes detektálás",
+        "fleetHealthPercent": "Flotta állapot (%)",
+        "hotspotCount": "Hotspotok száma",
+        "meanTimeToProcessSeconds": "Átlagos feldolgozási idő (másodperc)"
+      }
+    },
     "info": {
-      "environmental": "Az érintett területet és az észlelt hulladékeseményeket egyesítve mutatja a küldetésszintű ökológiai terhelést.",
-      "trash": "Az osztályozott hulladékkategóriák megoszlása, hogy láthatóvá váljanak a domináns szennyezési minták.",
-      "hotspot": "A magas megbízhatóságú észlelések koncentrációját és az aktivitási zónák térbeli intenzitását méri.",
-      "temporal": "Az észlelések időbeli alakulását követi az erősödés, a szezonalitás és a beavatkozások hatásának feltárására.",
-      "fleet": "Összesíti az autonóm ügynökök megbízhatóságát, áteresztőképességét és siker-hiba arányát.",
-      "mttp": "A bemenettől a feldolgozás befejezéséig mért medián késleltetést mutatja a dolgozói optimalizáláshoz."
+      "environmental": "Az érintett területet és az észlelt hulladékeseményeket egyesítve mutatja a küldetésszintű ökológiai terhelést. Használd ezt az összes operatív hatás megértéséhez és a tisztítási erőfeszítések priorizálásához a legmagasabb ökológiai terhet jelentő területeken.",
+      "trash": "Az osztályozott hulladékkategóriák megoszlása, hogy láthatóvá váljanak a domináns szennyezési minták. Azonosítsd a régiódban leggyakoribb hulladéktípusokat a gyűjtési és helyreállítási stratégiák megfelelő kialakítása érdekében.",
+      "hotspot": "A magas megbízhatóságú észlelések koncentrációját és az aktivitási zónák térbeli intenzitását méri. Keress meg és összpontosítsd az erőforrásokat azokban a területeken, ahol a hulladék koncentrációja a legmagasabb a maximális működési hatékonyság érdekében.",
+      "temporal": "Az észlelések időbeli alakulását követi az erősödés, a szezonalitás és a beavatkozások hatásának feltárására. Figyelemmel kísérje, hogy a tisztítási erőfeszítéseid működnek-e, és észleld a szezonális mintákat a célzott beavatkozások megtervezéséhez.",
+      "fleet": "Összesíti az autonóm ügynökök megbízhatóságát, áteresztőképességét és siker-hiba arányát. Biztosítsd, hogy az AI flottád jól teljesít, és azonosítsd az olyan aláteljesítő dolgozókat, akik karbantartásra vagy újraképzésre szorulnak.",
+      "mttp": "A bemenettől a feldolgozás befejezéséig mért medián késleltetést mutatja a dolgozói optimalizáláshoz. Azonosítsd a rendszeredben a szűk keresztmetszeteket, és optimalizáld a dolgozók elosztását a válaszkészség javítása érdekében."
     },
     "environmental": {
       "title": "Környezeti lábnyom",
@@ -357,6 +370,12 @@
       "chart": {
         "hotspots": "Hotspotok",
         "highConfidence": "Magas megbízhatóság"
+      },
+      "info": {
+        "title": "Független metrika nézet",
+        "clusterDefinition": "A ~100 m-es rácsra illesztett, magas megbízhatóságú detektálásokból képzett, elkülönülő földrajzi klaszterek.",
+        "mediaDefinition": "Összes médiaelem, ahol a megbízhatóság ≥ 80%, és érvényes geolokáció áll rendelkezésre.",
+        "line2": "Ezek független KPI-k: a klaszterek zónákat jeleznek, a média pedig a bizonyítékok mennyiségét mutatja."
       },
       "states": {
         "error": "Nem sikerült betölteni a hotspot sűrűséget.",

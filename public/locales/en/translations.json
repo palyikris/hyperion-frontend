@@ -228,13 +228,26 @@
       "exportCsv": "Export CSV",
       "exportPdf": "Export PDF"
     },
+    "csv": {
+      "headers": {
+        "metric": "Metric",
+        "value": "Value"
+      },
+      "rows": {
+        "totalAreaSqm": "Total area (m²)",
+        "totalDetections": "Total detections",
+        "fleetHealthPercent": "Fleet health (%)",
+        "hotspotCount": "Hotspot count",
+        "meanTimeToProcessSeconds": "Mean time to process (seconds)"
+      }
+    },
     "info": {
-      "environmental": "Combines mapped impact area and detected waste events to show mission-level ecological load.",
-      "trash": "Distribution of classified waste categories to reveal dominant pollutant patterns.",
-      "hotspot": "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
-      "temporal": "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect.",
-      "fleet": "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
-      "mttp": "Shows median operational latency from input to completed processing for worker optimization."
+      "environmental": "Combines mapped impact area and detected waste events to show mission-level ecological load. Use this to understand your total operational impact and prioritize cleanup efforts in areas with the highest ecological burden.",
+      "trash": "Distribution of classified waste categories to reveal dominant pollutant patterns. Identify the types of waste most prevalent in your region to tailor collection and remediation strategies accordingly.",
+      "hotspot": "Measures concentration of high-confidence detections and spatial intensity of activity zones. Locate and focus deployment resources where waste concentration is highest for maximum operational efficiency.",
+      "temporal": "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect. Monitor whether your cleanup efforts are working and detect seasonal patterns to plan targeted interventions.",
+      "fleet": "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents. Ensure your AI fleet is performing well and identify underperforming workers that need maintenance or retraining.",
+      "mttp": "Shows median operational latency from input to completed processing for worker optimization. Identify bottlenecks in your system and optimize worker allocation to improve responsiveness."
     },
     "environmental": {
       "title": "Environmental Footprint",
@@ -357,6 +370,12 @@
       "chart": {
         "hotspots": "Hotspots",
         "highConfidence": "High Confidence"
+      },
+      "info": {
+        "title": "Independent Metric View",
+        "clusterDefinition": "Distinct geographic clusters derived from ~100m grid-snapped high-confidence detections.",
+        "mediaDefinition": "Total media items with confidence ≥ 80% and valid geolocation.",
+        "line2": "These values are independent KPIs: clusters indicate zones, media indicates evidence volume."
       },
       "states": {
         "error": "Failed to load hotspot density.",

@@ -84,3 +84,9 @@ export interface StatsResponse {
     duplicateBlockedCount: number;
   };
 }
+
+export interface FunFact {
+  title: string;
+  fact: string;
+  icon: string;
+}

@@ -401,7 +401,7 @@ const TemporalTrendsChart = () => {
                 }}
                 isAnimationActive={isChartInView}
                 animationBegin={400}
-                animationDuration={1100}
+                animationDuration={1500}
                 animationEasing="ease-in-out"
               />
             </AreaChart>

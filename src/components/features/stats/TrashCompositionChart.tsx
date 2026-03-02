@@ -120,7 +120,7 @@ const TrashCompositionChart = () => {
       </div>
 
       <motion.div
-        className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        className="relative mt-8 h-116 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}

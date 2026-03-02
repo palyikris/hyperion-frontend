@@ -3,6 +3,7 @@ import type {
   AIFleetEfficiency,
   AIFleetWorkerEfficiency,
   EnvironmentalFootprint,
+  FunFact,
   HotspotDensity,
   MeanTimeToProcess,
   ProcessingTime,
@@ -232,5 +233,20 @@ export const statsService = {
       },
       daysWindow: data.days_window,
     };
+  },
+
+  getFunFacts: async (
+    lang: "en" | "hu" = "en",
+    limit: number = 5,
+  ): Promise<{
+    facts: FunFact[];
+  }> => {
+    const { data } = await api.get<{
+      facts: FunFact[];
+    }>("/stats/fun-facts", {
+      params: { lang, limit },
+    });
+
+    return data;
   },
 };
