@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
@@ -87,7 +87,31 @@ const AIFleetEfficiencyChart = () => {
   const { t } = useTranslation();
   const aiFleetEfficiencyQuery = useAIFleetEfficiency();
   const [sortMode, setSortMode] = useState<SortMode>("mostActive");
+  const [isChartInView, setIsChartInView] = useState(false);
   const tooltipTrigger = useTouchTooltipTrigger();
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChartInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
 
   const workers = aiFleetEfficiencyQuery.data?.workers ?? [];
   const hasData = workers.length > 0;
@@ -242,6 +266,7 @@ const AIFleetEfficiencyChart = () => {
       </div>
 
       <motion.div
+        ref={chartRef}
         className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -263,6 +288,7 @@ const AIFleetEfficiencyChart = () => {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
+              key={isChartInView ? "visible" : "hidden"}
               data={sortedData}
               margin={{ top: 14, right: 20, left: 4, bottom: 8 }}
             >
@@ -318,8 +344,9 @@ const AIFleetEfficiencyChart = () => {
                 dataKey="reliabilityScore"
                 radius={[14, 14, 6, 6]}
                 fill="var(--color-hyperion-sage-mint)"
-                animationBegin={180}
-                animationDuration={1500}
+                isAnimationActive={isChartInView}
+                animationBegin={350}
+                animationDuration={800}
                 animationEasing="ease-in-out"
               >
                 {sortedData.map((entry) => (

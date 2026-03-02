@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
@@ -76,6 +77,30 @@ const HotspotDensityChart = () => {
   const { t } = useTranslation();
   const hotspotDensityQuery = useHotspotDensity();
   const tooltipTrigger = useTouchTooltipTrigger();
+  const [isChartInView, setIsChartInView] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChartInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
 
   const hotspotCount = hotspotDensityQuery.data?.hotspotCount ?? 0;
   const highConfidenceMediaCount =
@@ -165,6 +190,7 @@ const HotspotDensityChart = () => {
       </div>
 
       <motion.div
+        ref={chartRef}
         className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -233,6 +259,7 @@ const HotspotDensityChart = () => {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
+              key={isChartInView ? "visible" : "hidden"}
               data={chartData}
               margin={{ top: 12, right: 20, left: 4, bottom: 8 }}
             >
@@ -261,7 +288,8 @@ const HotspotDensityChart = () => {
                 dataKey="remainingCount"
                 stackId="density"
                 radius={[14, 14, 6, 6]}
-                animationBegin={180}
+                isAnimationActive={isChartInView}
+                animationBegin={300}
                 animationDuration={1500}
                 animationEasing="ease-in-out"
               >
@@ -277,7 +305,8 @@ const HotspotDensityChart = () => {
                 dataKey="highConfidenceMediaCount"
                 stackId="density"
                 radius={[14, 14, 0, 0]}
-                animationBegin={260}
+                isAnimationActive={isChartInView}
+                animationBegin={500}
                 animationDuration={1500}
                 animationEasing="ease-in-out"
               >

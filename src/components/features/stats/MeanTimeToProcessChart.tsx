@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
@@ -89,6 +90,30 @@ const MeanTimeToProcessChart = () => {
   const { t } = useTranslation();
   const meanTimeQuery = useMeanTimeToProcess();
   const tooltipTrigger = useTouchTooltipTrigger();
+  const [isChartInView, setIsChartInView] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChartInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
 
   const byWorker = meanTimeQuery.data?.byWorker ?? [];
   const hasData = byWorker.length > 0;
@@ -198,6 +223,7 @@ const MeanTimeToProcessChart = () => {
       </div>
 
       <motion.div
+        ref={chartRef}
         className="relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         style={{ height: chartHeight }}
         initial={{ opacity: 0, y: 18 }}
@@ -220,6 +246,7 @@ const MeanTimeToProcessChart = () => {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
+              key={isChartInView ? "visible" : "hidden"}
               data={chartData}
               layout="vertical"
               margin={{ top: 36, right: 28, left: 12, bottom: 8 }}
@@ -266,7 +293,8 @@ const MeanTimeToProcessChart = () => {
               <Bar
                 dataKey="avgProcessingSeconds"
                 radius={[6, 14, 14, 6]}
-                animationBegin={180}
+                isAnimationActive={isChartInView}
+                animationBegin={300}
                 animationDuration={1500}
                 animationEasing="ease-in-out"
               >

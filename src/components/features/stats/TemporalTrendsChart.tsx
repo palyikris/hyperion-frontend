@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -93,9 +93,33 @@ const TemporalTrendsChart = () => {
   const { t } = useTranslation();
   const [selectedRange, setSelectedRange] = useState<RangeOption>("month");
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
+  const [isChartInView, setIsChartInView] = useState(false);
   const tooltipTrigger = useTouchTooltipTrigger();
+  const chartRef = useRef<HTMLDivElement>(null);
   const selectedDays = RANGE_TO_DAYS[selectedRange];
   const temporalTrendsQuery = useTemporalTrends(selectedDays);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChartInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
 
   const safeData = Array.isArray(temporalTrendsQuery.data)
     ? temporalTrendsQuery.data
@@ -231,6 +255,7 @@ const TemporalTrendsChart = () => {
       </div>
 
       <motion.div
+        ref={chartRef}
         className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -252,6 +277,7 @@ const TemporalTrendsChart = () => {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
+              key={isChartInView ? "visible" : "hidden"}
               data={chartData}
               margin={{ top: 12, right: 20, left: 4, bottom: 8 }}
               onMouseMove={(state) => {
@@ -373,7 +399,8 @@ const TemporalTrendsChart = () => {
                   fill: "var(--color-hyperion-burnt-orange)",
                   strokeWidth: 0,
                 }}
-                animationBegin={200}
+                isAnimationActive={isChartInView}
+                animationBegin={400}
                 animationDuration={1100}
                 animationEasing="ease-in-out"
               />

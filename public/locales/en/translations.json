@@ -240,21 +240,21 @@
       "title": "Environmental Footprint",
       "cards": {
         "impactMasterCard": "Impact Master Card",
-        "totalArea": "Total Area (m2)",
-        "sqmImpacted": "m2 impacted",
+        "totalArea": "Total Area (m²)",
+        "sqmImpacted": "m² impacted",
         "totalDetections": "Total Detections",
         "eventsIdentified": "Events identified",
         "areaPerDetection": "Area / Detection",
         "impactIntensity": "Impact intensity"
       },
       "chart": {
-        "areaMetric": "Area (m2)",
+        "areaMetric": "Area (m²)",
         "detectionsMetric": "Detections"
       },
       "tooltip": {
         "metric": "Metric",
         "value": "Value",
-        "sqmPerEvent": "{{value}} m2/event"
+        "sqmPerEvent": "{{value}} m²/event"
       }
     },
     "temporal": {

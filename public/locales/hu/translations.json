@@ -240,21 +240,21 @@
       "title": "Környezeti lábnyom",
       "cards": {
         "impactMasterCard": "Hatás összesítő kártya",
-        "totalArea": "Összterület (m2)",
-        "sqmImpacted": "Érintett m2",
+        "totalArea": "Összterület (m²)",
+        "sqmImpacted": "Érintett m²",
         "totalDetections": "Összes detektálás",
         "eventsIdentified": "Azonosított események",
         "areaPerDetection": "Terület / detektálás",
         "impactIntensity": "Hatás intenzitása"
       },
       "chart": {
-        "areaMetric": "Terület (m2)",
+        "areaMetric": "Terület (m²)",
         "detectionsMetric": "Detektálások"
       },
       "tooltip": {
         "metric": "Metrika",
         "value": "Érték",
-        "sqmPerEvent": "{{value}} m2/esemény"
+        "sqmPerEvent": "{{value}} m²/esemény"
       }
     },
     "temporal": {

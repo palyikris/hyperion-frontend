@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { EnvironmentalFootprint } from "../../../types/stats";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -40,7 +40,7 @@ const formatTooltipValue = (
     return `${value.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    })} m2`;
+    })} m²`;
   }
 
   return value.toLocaleString();
@@ -89,6 +89,30 @@ const EnvironmentalFootprintChart = ({
 }: EnvironmentalFootprintChartProps) => {
   const { t } = useTranslation();
   const tooltipTrigger = useTouchTooltipTrigger();
+  const [isChartInView, setIsChartInView] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsChartInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+
+    if (chartRef.current) {
+      observer.observe(chartRef.current);
+    }
+
+    return () => {
+      if (chartRef.current) {
+        observer.unobserve(chartRef.current);
+      }
+    };
+  }, []);
 
   const averageImpact =
     data.totalDetections > 0 ? data.totalAreaSqm / data.totalDetections : 0;
@@ -229,7 +253,7 @@ const EnvironmentalFootprintChart = ({
                 <RollingNumber
                   value={Math.round(averageImpact * 100) / 100}
                   className="mt-1 block text-3xl font-light text-hyperion-forest"
-                  postfix=" m2"
+                  postfix=" m²"
                 />
                 <p className="text-xs text-hyperion-slate-grey/70">
                   {t("stats.environmental.cards.impactIntensity")}
@@ -240,6 +264,7 @@ const EnvironmentalFootprintChart = ({
         </div>
 
         <motion.div
+          ref={chartRef}
           className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-3"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -248,6 +273,7 @@ const EnvironmentalFootprintChart = ({
         >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
+              key={isChartInView ? "visible" : "hidden"}
               data={chartData}
               layout="vertical"
               margin={{ top: 12, right: 112, left: 12, bottom: 8 }}
@@ -284,7 +310,10 @@ const EnvironmentalFootprintChart = ({
                 dataKey="normalizedValue"
                 radius={[8, 8, 8, 8]}
                 maxBarSize={34}
-                isAnimationActive={false}
+                isAnimationActive={isChartInView}
+                animationBegin={400}
+                animationDuration={800}
+                animationEasing="ease-out"
               >
                 {chartData.map((entry) => (
                   <Cell
