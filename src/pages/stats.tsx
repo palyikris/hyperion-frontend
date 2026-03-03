@@ -14,6 +14,8 @@ import { useStatsSummary } from "../hooks/stats/useStatsSummary";
 import { useTranslation } from "react-i18next";
 import { useFunFacts } from "../hooks/stats/useFunFacts";
 import FunFactBox from "../components/features/stats/FunFactBox";
+import { useExportCleanupManifest } from "../hooks/stats/useExportCleanupManifest";
+import { useExportCleanupManifestPdf } from "../hooks/stats/useExportCleanupManifestPdf";
 
 const StatsPage = () => {
   const { t, i18n } = useTranslation();
@@ -24,54 +26,21 @@ const StatsPage = () => {
     i18n.language as "en" | "hu" | undefined,
     4,
   );
+  const exportCleanupManifestMutation = useExportCleanupManifest();
+  const exportPdfMutation = useExportCleanupManifestPdf();
 
-  const onExportCsv = () => {
-    const summary = summaryQuery.data;
-    if (!summary) {
-      return;
-    }
-
-    const csvRows = [
-      [t("stats.csv.headers.metric"), t("stats.csv.headers.value")],
-      [
-        t("stats.csv.rows.totalAreaSqm"),
-        String(summary.environmentalFootprint.totalAreaSqm),
-      ],
-      [
-        t("stats.csv.rows.totalDetections"),
-        String(summary.environmentalFootprint.totalDetections),
-      ],
-      [
-        t("stats.csv.rows.fleetHealthPercent"),
-        String(
-          Math.round(summary.aiFleetEfficiency.fleetReliabilityScore * 100),
-        ),
-      ],
-      [
-        t("stats.csv.rows.hotspotCount"),
-        String(summary.hotspotDensity.hotspotCount),
-      ],
-      [
-        t("stats.csv.rows.meanTimeToProcessSeconds"),
-        String(summary.meanTimeToProcess.overallAvgSeconds),
-      ],
-    ];
-
-    const blob = new Blob([csvRows.map((row) => row.join(",")).join("\n")], {
-      type: "text/csv;charset=utf-8",
+  const onExportManifest = () => {
+    exportCleanupManifestMutation.mutate({
+      days: dateRangeDays,
+      language: i18n.language as "hu" | "en",
     });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `hyperion-stats-${dateRangeDays}d.csv`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    URL.revokeObjectURL(url);
   };
 
   const onExportPdf = () => {
-    window.print();
+    exportPdfMutation.mutate({
+      days: dateRangeDays,
+      language: i18n.language as "hu" | "en",
+    });
   };
 
   const onRefreshData = () => {
@@ -116,15 +85,26 @@ const StatsPage = () => {
             />
 
             <Button
-              text={t("stats.command.exportCsv", "Export CSV")}
-              onClick={onExportCsv}
-              disabled={!summaryQuery.data}
+              text={
+                exportCleanupManifestMutation.isPending
+                  ? `${t("stats.command.exportManifest", "Export Manifest")}...`
+                  : t("stats.command.exportManifest", "Export Manifest")
+              }
+              onClick={onExportManifest}
+              disabled={
+                !summaryQuery.data || exportCleanupManifestMutation.isPending
+              }
               theme="info"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
             />
             <Button
-              text={t("stats.command.exportPdf", "Export PDF")}
+              text={
+                exportPdfMutation.isPending
+                  ? `${t("stats.command.exportPdf", "Export PDF")}...`
+                  : t("stats.command.exportPdf", "Export PDF")
+              }
               onClick={onExportPdf}
+              disabled={!summaryQuery.data || exportPdfMutation.isPending}
               theme="primary"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
             />

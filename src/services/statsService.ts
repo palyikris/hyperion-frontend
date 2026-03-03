@@ -1,4 +1,5 @@
 import { api } from "../api/axiosInstance";
+import type { AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 import type {
   AIFleetEfficiency,
   AIFleetWorkerEfficiency,
@@ -11,6 +12,72 @@ import type {
   TemporalTrend,
   TrashComposition,
 } from "../types/stats";
+
+type LanguageCode = "en" | "hu";
+
+interface CleanupManifestExportResult {
+  blob: Blob;
+  filename: string;
+}
+
+const getFilenameFromContentDisposition = (
+  contentDisposition?: string,
+): string | null => {
+  if (!contentDisposition) {
+    return null;
+  }
+
+  const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
+
+  const basicMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+  if (basicMatch?.[1]) {
+    return basicMatch[1];
+  }
+
+  return null;
+};
+
+const getResponseHeader = (
+  headers: RawAxiosResponseHeaders | AxiosResponseHeaders,
+  headerName: string,
+): string | undefined => {
+  const axiosHeaders = headers as AxiosResponseHeaders;
+  if (typeof axiosHeaders.get === "function") {
+    const value = axiosHeaders.get(headerName);
+    if (typeof value === "string") {
+      return value;
+    }
+  }
+
+  const rawValue =
+    headers[headerName] ??
+    headers[headerName.toLowerCase()] ??
+    headers[headerName.toUpperCase()];
+
+  return typeof rawValue === "string" ? rawValue : undefined;
+};
+
+const resolveManifestFilename = (
+  headers: RawAxiosResponseHeaders | AxiosResponseHeaders,
+  days: number,
+): string => {
+  const reportFilename = getResponseHeader(headers, "x-report-filename");
+  if (reportFilename) {
+    return reportFilename;
+  }
+
+  const contentDisposition = getResponseHeader(headers, "content-disposition");
+  const parsedFileName = getFilenameFromContentDisposition(contentDisposition);
+
+  if (parsedFileName) {
+    return parsedFileName;
+  }
+
+  return `hyperion-cleanup-manifest-${days}d.xlsx`;
+};
 
 interface EnvironmentalFootprintApiResponse {
   total_area_sqm: number;
@@ -248,5 +315,45 @@ export const statsService = {
     });
 
     return data;
+  },
+
+  exportCleanupManifest: async (
+    days = 30,
+    language: LanguageCode = "en",
+  ): Promise<CleanupManifestExportResult> => {
+    const response = await api.get<Blob>("/stats/reports/manifest", {
+      params: { days, language },
+      responseType: "blob",
+    });
+
+    return {
+      blob: response.data,
+      filename: resolveManifestFilename(response.headers, days),
+    };
+  },
+
+  exportCleanupManifestPdf: async (
+    days = 30,
+    language: LanguageCode = "en",
+  ): Promise<CleanupManifestExportResult> => {
+    console.log(
+      `Requesting PDF report with params: days=${days}, language=${language}`,
+    );
+
+    const response = await api.get<Blob>("/stats/reports/pdf", {
+      params: { days, language },
+      responseType: "blob",
+    });
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const fallbackFilename = `hyperion-stats-report-${timestamp}.pdf`;
+    const filename =
+      getResponseHeader(response.headers, "x-report-filename") ||
+      fallbackFilename;
+
+    return {
+      blob: response.data,
+      filename,
+    };
   },
 };

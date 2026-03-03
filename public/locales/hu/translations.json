@@ -226,7 +226,18 @@
       "lastUpdated": "Utoljára frissítve",
       "refresh": "Adatok frissítése",
       "exportCsv": "CSV exportálása",
-      "exportPdf": "PDF exportálása"
+      "exportPdf": "PDF exportálása",
+      "exportManifest": "Manifeszt exportálása"
+    },
+    "toast": {
+      "exportManifestSuccessTitle": "Manifeszt exportálva",
+      "exportManifestSuccessMessage": "A tisztítási manifeszt Excel fájl letöltve.",
+      "exportManifestErrorTitle": "Export sikertelen",
+      "exportManifestErrorMessage": "Nem sikerült exportálni a tisztítási manifesztet. Próbáld újra.",
+      "exportPdfSuccessTitle": "PDF exportálva",
+      "exportPdfSuccessMessage": "A statisztikai jelentés PDF-je letöltve.",
+      "exportPdfErrorTitle": "Export sikertelen",
+      "exportPdfErrorMessage": "Nem sikerült exportálni a PDF jelentést. Próbáld újra."
     },
     "csv": {
       "headers": {

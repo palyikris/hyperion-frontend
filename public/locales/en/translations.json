@@ -226,7 +226,18 @@
       "lastUpdated": "Last Updated",
       "refresh": "Refresh Data",
       "exportCsv": "Export CSV",
-      "exportPdf": "Export PDF"
+      "exportPdf": "Export PDF",
+      "exportManifest": "Export Manifest"
+    },
+    "toast": {
+      "exportManifestSuccessTitle": "Manifest exported",
+      "exportManifestSuccessMessage": "Cleanup manifest Excel file has been downloaded.",
+      "exportManifestErrorTitle": "Export failed",
+      "exportManifestErrorMessage": "Unable to export cleanup manifest. Please try again.",
+      "exportPdfSuccessTitle": "PDF exported",
+      "exportPdfSuccessMessage": "Stats report PDF has been downloaded.",
+      "exportPdfErrorTitle": "Export failed",
+      "exportPdfErrorMessage": "Unable to export PDF report. Please try again."
     },
     "csv": {
       "headers": {
