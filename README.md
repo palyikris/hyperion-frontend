@@ -12,10 +12,10 @@ Implemented:
 - Upload (`/upload`)
 - Vault (`/vault`)
 - Settings (`/settings`)
+- Stats (`/stats`)
 
 Placeholders:
 
-- Stats (`/stats`)
 - Lab (`/lab/:id`)
 
 ## Features
@@ -33,6 +33,12 @@ Placeholders:
 - Client-side image compression before upload (`browser-image-compression`)
 - Live upload/vault status refresh via WebSocket updates
 - Vault search, status filter, sort direction, pagination, delete one, and delete all
+- Stats analytics with:
+  - environmental footprint, hotspot density, mean time to process, temporal trends, trash composition, AI fleet efficiency
+  - temporal trend ranges (`7`, `30`, `90` days)
+  - summary refresh action
+  - localized fun facts (`en`/`hu`)
+  - cleanup manifest export (`.xlsx`) and PDF report export (`.pdf`)
 - i18n with English/Hungarian translations from `public/locales`
 
 ## Tech stack
@@ -46,6 +52,8 @@ Placeholders:
 - Tailwind CSS 4
 - Axios
 - Leaflet + React Leaflet + clustering + heat layer
+- Recharts
+- Motion (`motion`)
 - Sonner
 
 ## Prerequisites
@@ -111,6 +119,24 @@ The frontend uses `withCredentials: true` in Axios, so backend CORS must allow c
 - `DELETE /vault/:id`
 - `DELETE /vault/all`
 
+### Stats
+
+- `GET /stats/summary`
+  - Query params used by frontend: `days`
+- `GET /stats/environmental-footprint`
+- `GET /stats/trash-composition`
+- `GET /stats/ai-fleet-efficiency`
+- `GET /stats/mean-time-to-process`
+- `GET /stats/hotspot-density`
+- `GET /stats/temporal-trends`
+  - Query params used by frontend: `days`
+- `GET /stats/fun-facts`
+  - Query params used by frontend: `lang`, `limit`
+- `GET /stats/reports/manifest` (binary export)
+  - Query params used by frontend: `days`, `language`
+- `GET /stats/reports/pdf` (binary export)
+  - Query params used by frontend: `days`, `language`
+
 ## Routes
 
 - `/` → redirects to `/dashboard`
@@ -121,7 +147,7 @@ The frontend uses `withCredentials: true` in Axios, so backend CORS must allow c
 - `/upload` (protected)
 - `/vault` (protected)
 - `/settings` (protected)
-- `/stats` (protected placeholder)
+- `/stats` (protected)
 - `/lab/:id` (protected placeholder)
 
 ## Scripts
