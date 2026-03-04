@@ -156,7 +156,7 @@ const StatsPage = () => {
                 "stats.info.hotspot",
                 "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
               )}
-              className="col-span-12 lg:col-span-6 h-[450px]"
+              className="col-span-12 xl:col-span-6 h-[450px]"
             >
               <HotspotDensityChart />
             </StatsBentoCard>
@@ -168,7 +168,7 @@ const StatsPage = () => {
                 "stats.info.mttp",
                 "Shows median operational latency from input to completed processing for worker optimization.",
               )}
-              className="col-span-12 lg:col-span-6 h-[450px]"
+              className="col-span-12 xl:col-span-6 h-[450px]"
             >
               <MeanTimeToProcessChart />
             </StatsBentoCard>
@@ -215,7 +215,7 @@ const StatsPage = () => {
                 "stats.info.trash",
                 "Distribution of classified waste categories to reveal dominant pollutant patterns.",
               )}
-              className="col-span-12 lg:col-span-6 h-[450px]"
+              className="col-span-12 xl:col-span-6 h-[450px]"
             >
               <TrashCompositionChart />
             </StatsBentoCard>
@@ -227,7 +227,7 @@ const StatsPage = () => {
                 "stats.info.fleet",
                 "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
               )}
-              className="col-span-12 lg:col-span-6 h-[450px]"
+              className="col-span-12 xl:col-span-6 h-[450px]"
             >
               <AIFleetEfficiencyChart />
             </StatsBentoCard>
