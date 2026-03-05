@@ -148,7 +148,7 @@ const StatsPage = () => {
           )}
 
           {/* Hotspot & Mean Time to Process */}
-          <div className="grid grid-cols-12 gap-6 mb-80 mt-16">
+          <div className="grid grid-cols-12 gap-6 mb-50 xl:mb-80 mt-16">
             <StatsBentoCard
               id="chart-hotspot"
               title={t("stats.hotspot.title", "Hotspot Density")}
@@ -156,7 +156,7 @@ const StatsPage = () => {
                 "stats.info.hotspot",
                 "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
               )}
-              className="col-span-12 xl:col-span-6 h-[450px]"
+              className="col-span-12 mb-70 xl:mb-0 xl:col-span-6 h-[450px]"
             >
               <HotspotDensityChart />
             </StatsBentoCard>
@@ -207,7 +207,7 @@ const StatsPage = () => {
           )}
 
           {/* Trash Composition & Fleet Efficiency */}
-          <div className="grid grid-cols-12 gap-6 mb-60 mt-16">
+          <div className="grid grid-cols-12 gap-6 mb-50 mt-16">
             <StatsBentoCard
               id="chart-trash"
               title={t("stats.trash.title", "Trash Composition")}
@@ -215,7 +215,7 @@ const StatsPage = () => {
                 "stats.info.trash",
                 "Distribution of classified waste categories to reveal dominant pollutant patterns.",
               )}
-              className="col-span-12 xl:col-span-6 h-[450px]"
+              className="col-span-12 mb-55 xl:mb-0 xl:col-span-6 h-[450px]"
             >
               <TrashCompositionChart />
             </StatsBentoCard>
