@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useMapLogs } from "../../../hooks/map/useMapLogs";
 import type { MapItem, MapMediaLog } from "../../../types/map";
+import { useNavigate } from "react-router-dom";
 
 type MarkerDetailsProps = {
   item: MapItem;
@@ -48,6 +49,11 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
   const { t } = useTranslation();
   const { data: logsData, isLoading: isLogsLoading } = useMapLogs(item.id);
   const logs = logsData?.history ?? [];
+  const navigate = useNavigate();
+
+  const handleLabNav = () => {
+    navigate(`/lab/${item.id}`);
+  };
 
   return (
     <>
@@ -80,8 +86,6 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
           </button>
         </div>
         {/* Header Data */}
-        {/* Optionally, add more meta here if needed */}
-
         {item.status === "FAILED" && item.failed_reason && (
           <section className="rounded-2xl border border-hyperion-burnt-orange/35 bg-hyperion-burnt-orange/10 p-4 shadow-sm">
             <div className="mb-2 flex items-center gap-2 text-hyperion-burnt-orange">
@@ -173,8 +177,10 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
           </div>
         </section>
 
-        {/* Quick Action Footer */}
-        <button className="mt-6 w-full py-3 bg-hyperion-deep-sea hover:bg-hyperion-forest-depth text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 group/btn shadow-md">
+        <button
+          className="mt-6 w-full py-3 bg-hyperion-deep-sea hover:bg-hyperion-forest-depth text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 group/btn shadow-md"
+          onClick={handleLabNav}
+        >
           {t("map.popup.open_lab_view", "Open Lab View")}
           <ChevronRight
             size={14}

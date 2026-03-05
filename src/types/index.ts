@@ -19,3 +19,10 @@ export interface MediaItem {
   created_at: string;
   detections: Detection[];
 }
+
+export type {
+  MediaResponse,
+  MediaPatchRequest,
+  DetectionInput,
+  Detection as MediaDetection,
+} from "./media";

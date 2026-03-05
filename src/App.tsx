@@ -10,6 +10,7 @@ import UploadPage from "./pages/upload";
 import VaultPage from "./pages/vault";
 import { MapPage } from "./pages/map";
 import StatsPage from "./pages/stats";
+import LabPage from "./pages/lab";
 
 const AppRouter = () => {
   return (
@@ -31,7 +32,7 @@ const AppRouter = () => {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/stats" element={<StatsPage />} />
             <Route path="/map" element={<MapPage />} />
-            <Route path="/lab/:id" element={<>lab</>} />
+            <Route path="/lab/:id" element={<LabPage />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/vault" element={<VaultPage />} />
             <Route path="/settings" element={<SettingsPage />} />

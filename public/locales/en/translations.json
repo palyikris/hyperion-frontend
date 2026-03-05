@@ -553,5 +553,17 @@
       "cancelled": "Upload cancelled",
       "unknown": "Unknown"
     }
+  },
+  "media": {
+    "toast": {
+      "updateSuccess": "Media updated successfully",
+      "updateError": "Failed to update media"
+    }
+  },
+  "lab": {
+    "page": {
+      "title": "Image lab",
+      "subtitle": "View and edit media details"
+    }
   }
 }

@@ -25,9 +25,13 @@ const ConfirmModal = ({
   cancelText = "Cancel",
   isDangerous = false,
 }: ConfirmModalProps) => {
+
+  const [loading, setLoading] = React.useState(false);
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
+      setLoading(false);
     }
   };
 
@@ -140,14 +144,17 @@ const ConfirmModal = ({
                   {cancelText}
                 </button>
                 <button
-                  onClick={onConfirm}
+                  onClick={() => {
+                    setLoading(true);
+                    onConfirm();
+                  }}
                   className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-colors ${
                     isDangerous
                       ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
                       : "bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90"
                   }`}
                 >
-                  {confirmText}
+                  {loading ? confirmText + "..." : confirmText}
                 </button>
               </motion.div>
             </motion.div>

@@ -553,5 +553,17 @@
       "cancelled": "Feltöltés megszakítva",
       "unknown": "Ismeretlen"
     }
+  },
+  "media": {
+    "toast": {
+      "updateSuccess": "Médiaelem sikeresen frissítve",
+      "updateError": "A médiaelem frissítése sikertelen"
+    }
+  },
+  "lab": {
+    "page": {
+      "title": "Képlabor",
+      "subtitle": "Média részletek megtekintése és szerkesztése"
+    }
   }
 }
