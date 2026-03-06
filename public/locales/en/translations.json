@@ -563,7 +563,25 @@
   "lab": {
     "page": {
       "title": "Image lab",
-      "subtitle": "View and edit media details"
+      "subtitle": "View and edit media details",
+      "location": "Location",
+      "edit_location_manually": "Edit location manually",
+      "location_missing": "No location metadata is available for this media yet."
+    },
+    "form": {
+      "latitudeLabel": "Latitude",
+      "latitudePlaceholder": "Enter latitude...",
+      "longitudeLabel": "Longitude",
+      "longitudePlaceholder": "Enter longitude...",
+      "altitudeLabel": "Altitude",
+      "altitudePlaceholder": "Enter altitude...",
+      "save": "Save metadata",
+      "reset": "Reset"
+    },
+    "validation": {
+      "latitudeRange": "Latitude must be between -90 and 90",
+      "longitudeRange": "Longitude must be between -180 and 180",
+      "altitudeRange": "Altitude must be between 0 and 3000"
     }
   }
 }

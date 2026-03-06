@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mediaService } from "../../services/mediaService";
-import type { MediaPatchRequest } from "../../types/media";
+import type { MediaPatchRequest } from "../../types/lab";
 import { toastService } from "../../services/toastService";
 import i18n from "i18next";
 

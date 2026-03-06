@@ -1,27 +1,112 @@
 import { useTranslation } from "react-i18next";
 import { Title } from "../components/shared/Title";
 import { useParams } from "react-router-dom";
-import { useGetMedia } from "../hooks/media/useGetMedia";
+import { useGetMedia } from "../hooks/lab/useGetMedia";
 import LoadingScreen from "../components/shared/LoadingScreen";
-// import { useState } from 'react';
+import MiniMap from "../components/features/lab/MiniMap";
+import LocationForm from "../components/features/lab/LocationForm";
+import { useEffect, useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createLabMetadataSchema,
+  type LabMetadataFormData,
+} from "../schemas/lab/media";
+import { useUpdateMedia } from "../hooks/lab/useUpdateMedia";
+import type { MediaPatchRequest } from "../types/lab";
+import Divider from "../components/shared/Divider";
+import { getFullResUrl } from "../utils/imageUtils";
 
 const LabPage = () => {
-
   const { t } = useTranslation();
   const { id } = useParams();
-  console.log("Lab ID:", id);
-
   const { data, isPending } = useGetMedia(id);
+  const updateMediaMutation = useUpdateMedia();
+  const metadataSchema = useMemo(() => createLabMetadataSchema(t), [t]);
 
-  // const [originalData, setOriginalData] = useState(data);
-  // const [draftData, setDraftData] = useState(data);
-  
+  const {
+    control,
+    register,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
+  } = useForm<LabMetadataFormData>({
+    resolver: zodResolver(metadataSchema),
+    mode: "onBlur",
+    defaultValues: {
+      lat: data?.lat,
+      lng: data?.lng,
+      altitude: data?.altitude,
+    },
+  });
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    reset({
+      lat: data.lat,
+      lng: data.lng,
+      altitude: data.altitude,
+    });
+  }, [data, reset]);
+
+  const draftLat = useWatch({ control, name: "lat" });
+  const draftLng = useWatch({ control, name: "lng" });
+  const hasDraftCoordinates =
+    typeof draftLat === "number" &&
+    Number.isFinite(draftLat) &&
+    typeof draftLng === "number" &&
+    Number.isFinite(draftLng);
+
+  const hasCoordinates =
+    hasDraftCoordinates ||
+    (typeof data?.lat === "number" && typeof data?.lng === "number");
+  const mapLatitude = hasDraftCoordinates ? draftLat : data?.lat;
+  const mapLongitude = hasDraftCoordinates ? draftLng : data?.lng;
+
+  const hfBaseUrl =
+    "https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main";
+
+  const imageUrl = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+    return getFullResUrl(data.hf_path);
+  }, [data]);
+
+  const onSubmit = async (formData: LabMetadataFormData) => {
+    if (!id) {
+      return;
+    }
+
+    const patchData: MediaPatchRequest = {};
+
+    if (dirtyFields.lat) {
+      patchData.lat = formData.lat;
+    }
+    if (dirtyFields.lng) {
+      patchData.lng = formData.lng;
+    }
+    if (dirtyFields.altitude) {
+      patchData.altitude = formData.altitude;
+    }
+
+    if (Object.keys(patchData).length === 0) {
+      return;
+    }
+
+    await updateMediaMutation.mutateAsync({
+      mediaId: id,
+      patchData,
+    });
+  };
+
   if (isPending) {
     return <LoadingScreen />;
   }
-
-  console.log("Media Data:", data);
-
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
@@ -55,11 +140,79 @@ const LabPage = () => {
           </p>
         </header>
 
-        <div className="mt-12 space-y-10">
+        <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
+          <div className="col-span-12 xl:col-span-8 rounded-lg bg-white/80 p-6 shadow-lg">
+            <div className="h-120 w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
+              <img
+                src={`${hfBaseUrl}/${imageUrl}`}
+                alt="Main media image full res"
+              />
+            </div>
+          </div>
+          <div className="col-span-12 xl:col-span-4 rounded-lg bg-white/80 p-6 shadow-lg">
+            {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
+              {t("lab.page.location", "Location")}
+            </h2> */}
+
+            <div className="">
+              {hasCoordinates ? (
+                <MiniMap
+                  key={`${data?.id ?? "unknown"}-${mapLatitude}-${mapLongitude}`}
+                  lat={mapLatitude as number}
+                  lng={mapLongitude as number}
+                  onPositionChange={(lat, lng) => {
+                    if (lat !== draftLat) {
+                      setValue("lat", lat, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }
+                    if (lng !== draftLng) {
+                      setValue("lng", lng, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }
+                  }}
+                />
+              ) : (
+                <div className="rounded-2xl border border-hyperion-fog-grey bg-hyperion-cream/70 p-6 text-sm text-hyperion-slate-grey/80">
+                  {t(
+                    "lab.page.location_missing",
+                    "No location metadata is available for this media yet.",
+                  )}
+                </div>
+              )}
+            </div>
+
+            <Divider
+              label={t("lab.page.edit_location_manually")}
+              bgColorClassName="bg-white"
+              className="my-6"
+            ></Divider>
+
+            <LocationForm
+              id={id}
+              register={register}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              errors={errors}
+              isDirty={isDirty}
+              isSubmitting={isSubmitting}
+              isUpdatePending={updateMediaMutation.isPending}
+              onReset={() =>
+                reset({
+                  lat: data?.lat,
+                  lng: data?.lng,
+                  altitude: data?.altitude,
+                })
+              }
+            />
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default LabPage;

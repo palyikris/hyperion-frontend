@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import Gallery from "../components/features/upload/Gallery";
-import ImageModal from "../components/features/upload/ImageModal";
+import ImageModal from "../components/shared/ImageModal";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import VaultHeader from "../components/features/vault/VaultHeader";
 import VaultFilters from "../components/features/vault/VaultFilters";

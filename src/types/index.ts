@@ -25,4 +25,4 @@ export type {
   MediaPatchRequest,
   DetectionInput,
   Detection as MediaDetection,
-} from "./media";
+} from "./lab";

@@ -20,7 +20,7 @@ import ConfirmModal from "../components/shared/ConfirmModal";
 import { toastService } from "../services/toastService";
 import type { MapFiltersFormData } from "../schemas/map/filters";
 import { useDebounce } from "../hooks/useDebounce";
-import ImageModal from "../components/features/upload/ImageModal";
+import ImageModal from "../components/shared/ImageModal";
 import { useMapGrid } from "../hooks/map/useMapGrid";
 import MapFloatingControls from "../components/features/map/MapFloatingControls";
 import MapLayerRenderer from "../components/features/map/MapLayerRenderer";

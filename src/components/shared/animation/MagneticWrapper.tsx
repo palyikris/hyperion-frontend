@@ -4,9 +4,13 @@ import { useRef } from "react";
 
 type MagneticWrapperProps = {
   children: ReactNode;
+  disabled?: boolean;
 };
 
-export const MagneticWrapper = ({ children }: MagneticWrapperProps) => {
+export const MagneticWrapper = ({
+  children,
+  disabled = false,
+}: MagneticWrapperProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -26,7 +30,7 @@ export const MagneticWrapper = ({ children }: MagneticWrapperProps) => {
     // strength of the pull (0.02 = 2% of distance)
     x.set((clientX - centerX) * 0.02);
     y.set((clientY - centerY) * 0.02);
-  };;
+  };
 
   const reset = () => {
     x.set(0);
@@ -36,8 +40,8 @@ export const MagneticWrapper = ({ children }: MagneticWrapperProps) => {
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={reset}
+      onMouseMove={disabled ? undefined : handleMouseMove}
+      onMouseLeave={disabled ? undefined : reset}
       style={{ x: springX, y: springY }}
     >
       {children}

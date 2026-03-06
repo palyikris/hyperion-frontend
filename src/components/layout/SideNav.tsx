@@ -77,7 +77,7 @@ const SideNav = () => {
       )}
 
       <aside
-        className={`group/sidebar fixed left-0 top-0 h-full bg-hyperion-deep-sea wavy-edge z-50 flex flex-col items-start py-8 shadow-2xl transition-all duration-300 ease-in-out overflow-hidden
+        className={`group/sidebar fixed left-0 top-0 h-full bg-hyperion-deep-sea wavy-edge z-100000 flex flex-col items-start py-8 shadow-2xl transition-all duration-300 ease-in-out overflow-hidden
           w-64 md:absolute md:w-20 md:hover:w-64
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
         style={wavyStyle}

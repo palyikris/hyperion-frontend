@@ -1,5 +1,5 @@
 import { api } from "../api/axiosInstance";
-import type { MediaResponse, MediaPatchRequest } from "../types/media";
+import type { MediaResponse, MediaPatchRequest } from "../types/lab";
 
 export const mediaService = {
   getMedia: async (mediaId: string): Promise<MediaResponse> => {

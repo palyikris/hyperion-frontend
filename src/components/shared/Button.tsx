@@ -30,27 +30,38 @@ export const Button = ({
   };
 
   const themeClass = themeClasses[theme];
+  const hoverClassName = disabled
+    ? "cursor-default"
+    : "hover:shadow-xl hover:shadow-hyperion-deep-sea/30 hover:-translate-y-1";
 
   const baseClassName =
-    "w-full font-bold py-4 shadow-lg shadow-hyperion-deep-sea/20 hover:shadow-xl hover:shadow-hyperion-deep-sea/30 transition-all duration-500 transform active:scale-[0.97] hover:-translate-y-1 flex items-center justify-center space-x-3 group disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none";
-  const combinedClassName = `${baseClassName} ${themeClass} ${className}`;
+    "w-full font-bold py-4 shadow-lg shadow-hyperion-deep-sea/20 transition-all duration-500 transform active:scale-[0.97] flex items-center justify-center space-x-3 group disabled:opacity-60 disabled:transform-none";
+  const combinedClassName = `${baseClassName} ${hoverClassName} ${themeClass} ${className}`;
 
   return (
-    <MagneticWrapper>
+    <MagneticWrapper disabled={disabled}>
       <button
         className={combinedClassName}
         style={{
           borderRadius: "28px 44px 30px 48px / 40px 28px 46px 32px",
           transition: "all 0.5s ease, border-radius 0.5s ease",
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderRadius =
-            "48px 30px 44px 28px / 32px 46px 28px 40px";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderRadius =
-            "28px 44px 30px 48px / 40px 28px 46px 32px";
-        }}
+        onMouseEnter={
+          disabled
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.borderRadius =
+                  "48px 30px 44px 28px / 32px 46px 28px 40px";
+              }
+        }
+        onMouseLeave={
+          disabled
+            ? undefined
+            : (e) => {
+                e.currentTarget.style.borderRadius =
+                  "28px 44px 30px 48px / 40px 28px 46px 32px";
+              }
+        }
         type={type}
         disabled={disabled}
         onClick={onClick}

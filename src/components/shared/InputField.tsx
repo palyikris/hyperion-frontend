@@ -13,6 +13,7 @@ type InputFieldProps = {
   error?: string;
   isCancellable?: boolean;
   onClear?: () => void;
+  className?: string;
 };
 
 export const InputField = ({
@@ -26,6 +27,7 @@ export const InputField = ({
   error,
   isCancellable,
   onClear,
+  className,
 }: InputFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
@@ -33,7 +35,7 @@ export const InputField = ({
   const errorId = error ? `${id}-error` : undefined;
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       <div className="mb-2 ml-2 flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between">
         <label
           className="block text-xs font-bold text-hyperion-slate-grey/60 uppercase tracking-widest"

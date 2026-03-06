@@ -563,7 +563,25 @@
   "lab": {
     "page": {
       "title": "Képlabor",
-      "subtitle": "Média részletek megtekintése és szerkesztése"
+      "subtitle": "Média részletek megtekintése és szerkesztése",
+      "location": "Helyszín",
+      "edit_location_manually": "Helyszín kézi szerkesztése",
+      "location_missing": "Ehhez a médiaelemhez még nincs helyadat."
+    },
+    "form": {
+      "latitudeLabel": "Szélesség",
+      "latitudePlaceholder": "Adj meg szélességet...",
+      "longitudeLabel": "Hosszúság",
+      "longitudePlaceholder": "Adj meg hosszúságot...",
+      "altitudeLabel": "Magasság",
+      "altitudePlaceholder": "Adj meg magasságot...",
+      "save": "Metaadatok mentése",
+      "reset": "Visszaállítás"
+    },
+    "validation": {
+      "latitudeRange": "A szélesség -90 és 90 között lehet",
+      "longitudeRange": "A hosszúság -180 és 180 között lehet",
+      "altitudeRange": "A magasság 0 és 3000 között lehet"
     }
   }
 }

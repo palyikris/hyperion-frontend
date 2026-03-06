@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Gallery from "../components/features/upload/Gallery";
-import ImageModal from "../components/features/upload/ImageModal";
+import ImageModal from "../components/shared/ImageModal";
 import UploadDropZone from "../components/features/upload/UploadDropZone";
 import Divider from "../components/shared/Divider";
 import { Title } from "../components/shared/Title";

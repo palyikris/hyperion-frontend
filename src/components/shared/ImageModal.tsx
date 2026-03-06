@@ -6,9 +6,9 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { DecryptText } from "../../shared/animation/DecryptText";
 import { useTranslation } from "react-i18next";
-import { getFullResUrl } from "../../../utils/imageUtils";
+import { getFullResUrl } from "../../utils/imageUtils";
+import { DecryptText } from "./animation/DecryptText";
 
 interface ImageModalProps {
   open: boolean;
