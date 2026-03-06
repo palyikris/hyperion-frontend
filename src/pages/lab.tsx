@@ -141,15 +141,16 @@ const LabPage = () => {
         </header>
 
         <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
-          <div className="col-span-12 xl:col-span-8 rounded-lg bg-white/80 p-6 shadow-lg">
-            <div className="h-120 w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
+          <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
+            <div className="h-auto w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
               <img
                 src={`${hfBaseUrl}/${imageUrl}`}
                 alt="Main media image full res"
+                className="w-full h-auto"
               />
             </div>
           </div>
-          <div className="col-span-12 xl:col-span-4 rounded-lg bg-white/80 p-6 shadow-lg">
+          <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
             {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
               {t("lab.page.location", "Location")}
             </h2> */}
