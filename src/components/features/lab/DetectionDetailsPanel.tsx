@@ -1,4 +1,5 @@
 import { X, Tag, Percent, Move, Maximize } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Detection } from "../../../types/lab";
 import { InputField } from "../../shared/InputField";
 import Divider from "../../shared/Divider";
@@ -12,19 +13,20 @@ const DetectionDetailsPanel = ({
   detection,
   onClose,
 }: DetectionDetailsPanelProps) => {
+  const { t } = useTranslation();
   const confidencePercent = (detection.confidence * 100).toFixed(1);
 
   return (
     <div className="border-t border-hyperion-fog-grey bg-linear-to-br from-white/90 to-hyperion-cream/50 p-4">
       <div className="mb-3 flex items-start justify-between">
         <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-hyperion-deep-sea/80">
-          Detection Details
+          {t("lab.detections.panel.title", "Detection details")}
         </h4>
         <button
           type="button"
           onClick={onClose}
           className="rounded-md p-1 text-hyperion-deep-sea/60 transition-colors hover:bg-hyperion-deep-sea/10 hover:text-hyperion-deep-sea"
-          aria-label="Close details"
+          aria-label={t("lab.detections.panel.close", "Close details")}
         >
           <X className="h-4 w-4" />
         </button>
@@ -33,7 +35,7 @@ const DetectionDetailsPanel = ({
       <div className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
           <InputField
-            label="Label"
+            label={t("lab.detections.panel.label", "Label")}
             icon={Tag}
             type="text"
             id={`label-${detection.id}`}
@@ -47,7 +49,7 @@ const DetectionDetailsPanel = ({
 
           {/* Confidence */}
           <InputField
-            label="Confidence"
+            label={t("lab.detections.panel.confidence", "Confidence")}
             icon={Percent}
             type="text"
             id={`confidence-${detection.id}`}
@@ -61,7 +63,7 @@ const DetectionDetailsPanel = ({
           {/* Area */}
           {detection.area_sqm !== undefined && (
             <InputField
-              label="Estimated Area (m²)"
+              label={t("lab.detections.panel.area", "Estimated area (m2)")}
               icon={Maximize}
               type="text"
               id={`area-${detection.id}`}
@@ -75,7 +77,10 @@ const DetectionDetailsPanel = ({
         </div>
 
         <Divider
-          label="Bounding Box (relative to image dimensions)"
+          label={t(
+            "lab.detections.panel.boundingBoxTitle",
+            "Bounding box (relative to image dimensions)",
+          )}
           bgColorClassName="bg-white"
           className="mb-0 py-4"
         ></Divider>
@@ -84,7 +89,7 @@ const DetectionDetailsPanel = ({
         <div>
           <div className="grid grid-cols-2 gap-2">
             <InputField
-              label="X"
+              label={t("lab.detections.panel.x", "X")}
               icon={Move}
               type="text"
               id={`bbox-x-${detection.id}`}
@@ -95,7 +100,7 @@ const DetectionDetailsPanel = ({
               }}
             />
             <InputField
-              label="Y"
+              label={t("lab.detections.panel.y", "Y")}
               icon={Move}
               type="text"
               id={`bbox-y-${detection.id}`}
@@ -106,7 +111,7 @@ const DetectionDetailsPanel = ({
               }}
             />
             <InputField
-              label="Width"
+              label={t("lab.detections.panel.width", "Width")}
               icon={Move}
               type="text"
               id={`bbox-w-${detection.id}`}
@@ -117,7 +122,7 @@ const DetectionDetailsPanel = ({
               }}
             />
             <InputField
-              label="Height"
+              label={t("lab.detections.panel.height", "Height")}
               icon={Move}
               type="text"
               id={`bbox-h-${detection.id}`}

@@ -132,6 +132,7 @@ const LabPage = () => {
 
         <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
           <DetectionsDisplay
+            mediaId={id}
             hfPath={data?.hf_path}
             detections={data?.detections || []}
           />

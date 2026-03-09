@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type ConfidenceFilterProps = {
   confidenceThreshold: number;
   filteredCount: number;
@@ -11,6 +13,8 @@ const ConfidenceFilter = ({
   totalCount,
   onChange,
 }: ConfidenceFilterProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="border-t border-hyperion-fog-grey bg-white/70 px-4 py-3">
       <div className="flex items-center justify-between gap-4">
@@ -18,7 +22,7 @@ const ConfidenceFilter = ({
           htmlFor="confidence-slider"
           className="text-xs font-semibold uppercase tracking-[0.2em] text-hyperion-deep-sea/80"
         >
-          Min Confidence
+          {t("lab.detections.confidence.min", "Min confidence")}
         </label>
         <span className="text-sm font-medium text-hyperion-deep-sea">
           {confidenceThreshold}%
@@ -37,7 +41,11 @@ const ConfidenceFilter = ({
       <div className="mt-1 flex justify-between text-xs text-hyperion-slate-grey/60">
         <span>0%</span>
         <span className="text-hyperion-deep-sea/70">
-          {filteredCount} / {totalCount} detections
+          {t("lab.detections.confidence.count", {
+            filtered: filteredCount,
+            total: totalCount,
+            defaultValue: "{{filtered}} / {{total}} detections",
+          })}
         </span>
         <span>100%</span>
       </div>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useZoomPan } from "../../../hooks/lab/useZoomPan";
 
 type ZoomableContainerProps = {
@@ -8,6 +9,7 @@ type ZoomableContainerProps = {
 };
 
 const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({
@@ -68,8 +70,8 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
           onClick={controls.zoomIn}
           disabled={state.scale >= 5}
           className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
-          title="Zoom in"
-          aria-label="Zoom in"
+          title={t("lab.zoom.in", "Zoom in")}
+          aria-label={t("lab.zoom.in", "Zoom in")}
         >
           <ZoomIn className="h-4 w-4" />
         </button>
@@ -78,8 +80,8 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
           onClick={controls.zoomOut}
           disabled={state.scale <= 1}
           className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
-          title="Zoom out"
-          aria-label="Zoom out"
+          title={t("lab.zoom.out", "Zoom out")}
+          aria-label={t("lab.zoom.out", "Zoom out")}
         >
           <ZoomOut className="h-4 w-4" />
         </button>
@@ -88,8 +90,8 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
             type="button"
             onClick={controls.reset}
             className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white"
-            title="Reset zoom"
-            aria-label="Reset zoom"
+            title={t("lab.zoom.reset", "Reset zoom")}
+            aria-label={t("lab.zoom.reset", "Reset zoom")}
           >
             <Maximize2 className="h-4 w-4" />
           </button>

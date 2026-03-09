@@ -578,6 +578,49 @@
       "save": "Save metadata",
       "reset": "Reset"
     },
+    "detections": {
+      "confidence": {
+        "min": "Min confidence",
+        "count": "{{filtered}} / {{total}} detections"
+      },
+      "panel": {
+        "title": "Detection details",
+        "close": "Close details",
+        "label": "Label",
+        "confidence": "Confidence",
+        "area": "Estimated area (m2)",
+        "boundingBoxTitle": "Bounding box (relative to image dimensions)",
+        "x": "X",
+        "y": "Y",
+        "width": "Width",
+        "height": "Height"
+      },
+      "visibility": {
+        "title": "Detections",
+        "showAll": "Show all",
+        "showNone": "Show none",
+        "empty": "No detections found.",
+        "hideDetection": "Hide detection",
+        "showDetection": "Show detection",
+        "showOnlyThis": "Show only this detection",
+        "showOnlyLabel": "Show only {{label}}"
+      },
+      "loading": {
+        "logoAlt": "Hyperion logo",
+        "imageIncoming": "The image is on its way..."
+      },
+      "error": {
+        "loadImage": "Failed to load image"
+      },
+      "image": {
+        "mainAlt": "Main media image full resolution"
+      }
+    },
+    "zoom": {
+      "in": "Zoom in",
+      "out": "Zoom out",
+      "reset": "Reset zoom"
+    },
     "validation": {
       "latitudeRange": "Latitude must be between -90 and 90",
       "longitudeRange": "Longitude must be between -180 and 180",

@@ -578,6 +578,49 @@
       "save": "Metaadatok mentése",
       "reset": "Visszaállítás"
     },
+    "detections": {
+      "confidence": {
+        "min": "Min. megbízhatóság",
+        "count": "{{filtered}} / {{total}} találat"
+      },
+      "panel": {
+        "title": "Találat részletei",
+        "close": "Részletek bezárása",
+        "label": "Címke",
+        "confidence": "Megbízhatóság",
+        "area": "Becsült terület (m2)",
+        "boundingBoxTitle": "Befoglaló doboz (a kép méretéhez viszonyítva)",
+        "x": "X",
+        "y": "Y",
+        "width": "Szélesség",
+        "height": "Magasság"
+      },
+      "visibility": {
+        "title": "Találatok",
+        "showAll": "Összes mutatása",
+        "showNone": "Mind elrejtése",
+        "empty": "Nincs találat.",
+        "hideDetection": "Találat elrejtése",
+        "showDetection": "Találat megjelenítése",
+        "showOnlyThis": "Csak ez a találat",
+        "showOnlyLabel": "Csak ez: {{label}}"
+      },
+      "loading": {
+        "logoAlt": "Hyperion logó",
+        "imageIncoming": "A kép úton van..."
+      },
+      "error": {
+        "loadImage": "A kép betöltése sikertelen"
+      },
+      "image": {
+        "mainAlt": "Fő média kép teljes felbontásban"
+      }
+    },
+    "zoom": {
+      "in": "Nagyítás",
+      "out": "Kicsinyítés",
+      "reset": "Nagyítás visszaállítása"
+    },
     "validation": {
       "latitudeRange": "A szélesség -90 és 90 között lehet",
       "longitudeRange": "A hosszúság -180 és 180 között lehet",
