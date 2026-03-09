@@ -1,3 +1,5 @@
+import type { Detection } from "../lab";
+
 export interface MapMediaLog {
   action: string;
   message: string;
@@ -9,14 +11,6 @@ export interface MapLogsResponse {
   media_id: string;
   history: MapMediaLog[];
   total: number;
-}
-
-export interface Detection {
-  id?: string;
-  label: string;
-  confidence: number;
-  bbox?: number[] | null;
-  area_sqm?: number;
 }
 
 export interface MapItem {
@@ -57,7 +51,6 @@ export interface GridCell {
   labelDistribution: Record<string, number>;
   items: MapItem[];
 }
-
 
 export interface MapFilters {
   min_lat?: number;

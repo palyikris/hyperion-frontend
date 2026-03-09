@@ -1,13 +1,6 @@
-export type ProcessingStatus = "pending" | "processing" | "success" | "failed";
+import type { Detection } from "./lab";
 
-export interface Detection {
-  id: number;
-  label: string;
-  confidence: number;
-  bbox: { x: number; y: number; w: number; h: number };
-  is_manual: boolean;
-  area_sqm?: number;
-}
+export type ProcessingStatus = "pending" | "processing" | "success" | "failed";
 
 export interface MediaItem {
   id: number;

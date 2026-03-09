@@ -15,7 +15,7 @@ import {
 import { useUpdateMedia } from "../hooks/lab/useUpdateMedia";
 import type { MediaPatchRequest } from "../types/lab";
 import Divider from "../components/shared/Divider";
-import { getFullResUrl } from "../utils/imageUtils";
+import DetectionsDisplay from "../components/features/lab/DetectionsDisplay";
 
 const LabPage = () => {
   const { t } = useTranslation();
@@ -66,16 +66,6 @@ const LabPage = () => {
     (typeof data?.lat === "number" && typeof data?.lng === "number");
   const mapLatitude = hasDraftCoordinates ? draftLat : data?.lat;
   const mapLongitude = hasDraftCoordinates ? draftLng : data?.lng;
-
-  const hfBaseUrl =
-    "https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main";
-
-  const imageUrl = useMemo(() => {
-    if (!data) {
-      return undefined;
-    }
-    return getFullResUrl(data.hf_path);
-  }, [data]);
 
   const onSubmit = async (formData: LabMetadataFormData) => {
     if (!id) {
@@ -141,15 +131,10 @@ const LabPage = () => {
         </header>
 
         <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
-          <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
-            <div className="h-auto w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
-              <img
-                src={`${hfBaseUrl}/${imageUrl}`}
-                alt="Main media image full res"
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
+          <DetectionsDisplay
+            hfPath={data?.hf_path}
+            detections={data?.detections || []}
+          />
           <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
             {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
               {t("lab.page.location", "Location")}
