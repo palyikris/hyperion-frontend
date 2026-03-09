@@ -3,10 +3,26 @@ import { getFullResUrl } from "../../../utils/imageUtils";
 import type { Detection } from "../../../types/lab";
 import DetectionsStage from "./DetectionsStage";
 import DetectionsVisibilityToggler from "./DetectionsVisibilityToggler";
+import DetectionDetailsPanel from "./DetectionDetailsPanel";
+import ZoomableContainer from "./ZoomableContainer";
+import ConfidenceFilter from "./ConfidenceFilter";
 
 type DetectionsDisplayProps = {
   hfPath?: string;
   detections: Detection[];
+};
+
+type NormalizedBBox = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+type KeyedDetection = {
+  key: string;
+  detection: Detection;
+  originalIndex: number;
 };
 
 const hfBaseUrl =
@@ -15,11 +31,48 @@ const hfBaseUrl =
 const DetectionsDisplay = ({ hfPath, detections }: DetectionsDisplayProps) => {
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [hiddenDetections, setHiddenDetections] = useState<Record<string, boolean>>({});
+  const [hiddenDetections, setHiddenDetections] = useState<
+    Record<string, boolean>
+  >({});
+  const [bboxOverrides, setBboxOverrides] = useState<
+    Record<string, NormalizedBBox>
+  >({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [confidenceThreshold, setConfidenceThreshold] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  const keyedDetections = useMemo<KeyedDetection[]>(() => {
+    return detections.map((det, originalIndex) => {
+      const key = `${det.id}-${originalIndex}`;
+      const override = bboxOverrides[key];
+      return {
+        key,
+        originalIndex,
+        detection: override ? { ...det, bbox: override } : det,
+      };
+    });
+  }, [detections, bboxOverrides]);
+
+  // Filter detections by confidence threshold
+  const filteredDetections = useMemo<KeyedDetection[]>(() => {
+    return keyedDetections.filter(
+      ({ detection }) => detection.confidence >= confidenceThreshold / 100,
+    );
+  }, [keyedDetections, confidenceThreshold]);
+
+  // Get the selected detection object
+  const selectedDetection = useMemo(() => {
+    if (!selectedId) return null;
+    const selected = keyedDetections.find((item) => item.key === selectedId);
+    return selected
+      ? {
+          detection: selected.detection,
+          index: selected.originalIndex,
+        }
+      : null;
+  }, [selectedId, keyedDetections]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -39,8 +92,8 @@ const DetectionsDisplay = ({ hfPath, detections }: DetectionsDisplayProps) => {
 
   const isImageTransparent = useMemo(() => {
     // Detections are visible by default unless explicitly hidden.
-    return detections.some((det, index) => !hiddenDetections[`${det.id}-${index}`]);
-  }, [detections, hiddenDetections]);
+    return filteredDetections.some((item) => !hiddenDetections[item.key]);
+  }, [filteredDetections, hiddenDetections]);
 
   if (!hfPath) {
     return null;
@@ -54,8 +107,8 @@ const DetectionsDisplay = ({ hfPath, detections }: DetectionsDisplayProps) => {
 
   const showNone = () => {
     const next: Record<string, boolean> = {};
-    detections.forEach((det, index) => {
-      next[`${det.id}-${index}`] = true;
+    filteredDetections.forEach((item) => {
+      next[item.key] = true;
     });
     setHiddenDetections(next);
   };
@@ -70,15 +123,12 @@ const DetectionsDisplay = ({ hfPath, detections }: DetectionsDisplayProps) => {
   const isolateDetection = (key: string) => {
     const next: Record<string, boolean> = {};
 
-    detections.forEach((det, index) => {
-      const detKey = `${det.id}-${index}`;
-      next[detKey] = detKey !== key;
+    filteredDetections.forEach((item) => {
+      next[item.key] = item.key !== key;
     });
 
     setHiddenDetections(next);
   };
-
-  console.log(selectedId)
 
   return (
     <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
@@ -104,38 +154,66 @@ const DetectionsDisplay = ({ hfPath, detections }: DetectionsDisplayProps) => {
           </div>
         )}
 
-        {/* Image */}
-        <div className="w-full relative" ref={containerRef}>
-          <img
-            src={`${hfBaseUrl}/${imageUrl}`}
-            alt="Main media image full res"
-            className="h-auto w-full transition-opacity duration-500"
-            style={{ opacity: isImageLoading ? 0 : isImageTransparent ? 0.4 : 1 }}
-            onLoad={() => setIsImageLoading(false)}
-            onError={() => {
-              setIsImageLoading(false);
-              setHasError(true);
-            }}
-          />
-          <DetectionsStage
-            detections={detections}
-            hiddenDetections={hiddenDetections}
-            dimensions={dimensions}
-            isImageLoading={isImageLoading}
-            hasError={hasError}
-            selectedId={selectedId}
-            onSelectDetection={(id) => setSelectedId(id)}
-          />
-        </div>
+        {/* Image with Zoom & Pan */}
+        <ZoomableContainer>
+          <div className="w-full relative" ref={containerRef}>
+            <img
+              src={`${hfBaseUrl}/${imageUrl}`}
+              alt="Main media image full res"
+              className="h-auto w-full transition-opacity duration-500"
+              style={{
+                opacity: isImageLoading ? 0 : isImageTransparent ? 0.4 : 1,
+              }}
+              onLoad={() => setIsImageLoading(false)}
+              onError={() => {
+                setIsImageLoading(false);
+                setHasError(true);
+              }}
+            />
+            <DetectionsStage
+              detections={filteredDetections.map((item) => item.detection)}
+              detectionKeys={filteredDetections.map((item) => item.key)}
+              hiddenDetections={hiddenDetections}
+              dimensions={dimensions}
+              isImageLoading={isImageLoading}
+              hasError={hasError}
+              selectedId={selectedId}
+              onSelectDetection={(id) => setSelectedId(id)}
+              onUpdateDetectionBBox={(id, bbox) => {
+                setBboxOverrides((prev) => ({
+                  ...prev,
+                  [id]: bbox,
+                }));
+              }}
+            />
+          </div>
+        </ZoomableContainer>
+
+        <ConfidenceFilter
+          confidenceThreshold={confidenceThreshold}
+          filteredCount={filteredDetections.length}
+          totalCount={detections.length}
+          onChange={setConfidenceThreshold}
+        />
 
         <DetectionsVisibilityToggler
-          detections={detections}
+          detections={filteredDetections.map((item) => item.detection)}
+          detectionKeys={filteredDetections.map((item) => item.key)}
           hiddenDetections={hiddenDetections}
+          selectedId={selectedId}
           onShowAll={showAll}
           onShowNone={showNone}
           onToggleDetection={toggleDetection}
           onIsolateDetection={isolateDetection}
         />
+
+        {/* Detection Details Panel */}
+        {selectedDetection && (
+          <DetectionDetailsPanel
+            detection={selectedDetection.detection}
+            onClose={() => setSelectedId(null)}
+          />
+        )}
       </div>
     </div>
   );

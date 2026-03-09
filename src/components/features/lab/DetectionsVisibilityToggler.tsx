@@ -3,7 +3,9 @@ import type { Detection } from "../../../types/lab";
 
 type DetectionsVisibilityTogglerProps = {
   detections: Detection[];
+  detectionKeys?: string[];
   hiddenDetections: Record<string, boolean>;
+  selectedId: string | null;
   onShowAll: () => void;
   onShowNone: () => void;
   onToggleDetection: (key: string) => void;
@@ -12,7 +14,9 @@ type DetectionsVisibilityTogglerProps = {
 
 const DetectionsVisibilityToggler = ({
   detections,
+  detectionKeys,
   hiddenDetections,
+  selectedId,
   onShowAll,
   onShowNone,
   onToggleDetection,
@@ -44,12 +48,15 @@ const DetectionsVisibilityToggler = ({
 
       <div className="flex flex-wrap gap-2">
         {detections.length === 0 && (
-          <p className="text-sm text-hyperion-deep-sea/70">No detections found.</p>
+          <p className="text-sm text-hyperion-deep-sea/70">
+            No detections found.
+          </p>
         )}
 
         {detections.map((det, index) => {
-          const key = `${det.id}-${index}`;
+          const key = detectionKeys?.[index] ?? `${det.id}-${index}`;
           const isVisible = !hiddenDetections[key];
+          const isSelected = selectedId === key;
 
           return (
             <div key={key} className="inline-flex items-center gap-1">
@@ -57,14 +64,22 @@ const DetectionsVisibilityToggler = ({
                 type="button"
                 onClick={() => onToggleDetection(key)}
                 className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  isVisible
-                    ? "border-hyperion-deep-sea/35 bg-hyperion-deep-sea/10 text-hyperion-deep-sea"
-                    : "border-hyperion-fog-grey bg-white text-hyperion-deep-sea/60"
+                  isSelected
+                    ? "border-hyperion-burnt-orange bg-hyperion-burnt-orange/20 text-hyperion-deep-sea ring-2 ring-hyperion-burnt-orange/50"
+                    : isVisible
+                      ? "border-hyperion-deep-sea/35 bg-hyperion-deep-sea/10 text-hyperion-deep-sea"
+                      : "border-hyperion-fog-grey bg-white text-hyperion-deep-sea/60"
                 }`}
                 title={isVisible ? "Hide detection" : "Show detection"}
               >
-                {isVisible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-                <span>{det.label}</span>
+                {isVisible ? (
+                  <Eye className="h-3.5 w-3.5" />
+                ) : (
+                  <EyeOff className="h-3.5 w-3.5" />
+                )}
+                <span>
+                  {det.label} - {Math.round(det.confidence * 100)}%
+                </span>
               </button>
               <button
                 type="button"
