@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { DecryptText } from "../../shared/animation/DecryptText";
 import { RollingNumber } from "../../shared/animation/RollingNumber";
+import { Blob, blobShapes } from "../../shared/decoration";
 
 type SystemHealthSnapshotProps = {
   data: SystemHealthResponse;
@@ -61,13 +62,17 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
         className="relative flex flex-col gap-8 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px] lg:flex-row lg:items-center"
         style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
       >
-        <div
-          className="pointer-events-none absolute -top-16 right-10 h-24 w-40 bg-hyperion-soft-sky/70"
-          style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
+        <Blob
+          color="bg-hyperion-soft-sky/70"
+          size="h-24 w-40"
+          position="-top-16 right-10"
+          shape={blobShapes.organic26}
         />
-        <div
-          className="pointer-events-none absolute -bottom-12 left-6 h-32 w-32 bg-hyperion-sage-mint/60"
-          style={{ borderRadius: "50% 50% 62% 38% / 46% 54% 46% 54%" }}
+        <Blob
+          color="bg-hyperion-sage-mint/60"
+          size="h-32 w-32"
+          position="-bottom-12 left-6"
+          shape={blobShapes.organic27}
         />
 
         <div className="flex items-center gap-6">

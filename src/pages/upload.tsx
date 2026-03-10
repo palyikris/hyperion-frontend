@@ -7,6 +7,7 @@ import { Title } from "../components/shared/Title";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { useRecentGallery } from "../hooks/upload/useRecentGallery";
 import { useState } from "react";
+import { PageAtmosphere } from "../components/shared/decoration";
 
 const UploadPage = () => {
   const { t } = useTranslation();
@@ -34,28 +35,7 @@ const UploadPage = () => {
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className="absolute -top-32 left-10 h-80 w-96 bg-hyperion-soft-sky/80"
-          style={{ borderRadius: "72% 28% 51% 49% / 42% 58% 42% 58%" }}
-        />
-        <div
-          className="absolute bottom-20 right-12 h-64 w-80 bg-hyperion-cool-aqua/70"
-          style={{ borderRadius: "42% 58% 71% 29% / 58% 44% 56% 42%" }}
-        />
-        <div
-          className="absolute top-40 right-32 h-32 w-56 bg-hyperion-burnt-orange/35"
-          style={{ borderRadius: "38% 62% 58% 42% / 71% 39% 61% 29%" }}
-        />
-        <div
-          className="absolute bottom-32 left-32 h-20 w-44 bg-hyperion-sage-mint/55"
-          style={{ borderRadius: "64% 36% 42% 58% / 58% 71% 29% 42%" }}
-        />
-        <div
-          className="absolute top-16 right-20 h-24 w-40 bg-hyperion-forest/35"
-          style={{ borderRadius: "71% 29% 64% 36% / 39% 58% 42% 61%" }}
-        />
-      </div>
+      <PageAtmosphere variant="upload" />
 
       <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10 space-y-12">
         <header className="flex flex-col items-start gap-4">

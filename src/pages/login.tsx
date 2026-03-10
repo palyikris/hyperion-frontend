@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { LoginForm } from "../components/features/auth/LoginForm";
 import { Title } from "../components/shared/Title";
 import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
+import { Blob, blobShapes } from "../components/shared/decoration";
 
 export const LoginPage = () => {
   const { t } = useTranslation();
@@ -73,12 +74,12 @@ export const LoginPage = () => {
               boxShadow: "rgba(26,95,84, 0.3) 0px 1px 4px",
             }}
           >
-            <div
-              className="absolute -z-1 top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-hyperion-deep-sea/5"
-              style={{
-                borderRadius: "73% 27% 70% 30% / 36% 69% 31% 64% ",
-              }}
-            ></div>
+            <Blob
+              color="bg-hyperion-deep-sea/5"
+              size="w-2/3 h-2/3"
+              position="-z-1 top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2"
+              shape={blobShapes.organic23}
+            />
             <LoginForm />
           </ScrollReveal>
         </div>

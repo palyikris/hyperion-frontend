@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { RollingNumber } from "../../shared/animation/RollingNumber";
 import { DecryptText } from "../../shared/animation/DecryptText";
+import { Blob, blobShapes } from "../../shared/decoration";
 
 type AIWorkerStatusProps = {
   data: AIWorkersResponse;
@@ -52,13 +53,17 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
           className="relative flex flex-col justify-between overflow-hidden border border-hyperion-forest/40 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
         >
-          <div
-            className="pointer-events-none absolute -bottom-10 right-6 h-24 w-28 bg-hyperion-soft-sky/70"
-            style={{ borderRadius: "58% 42% 36% 64% / 48% 62% 38% 52%" }}
+          <Blob
+            color="bg-hyperion-soft-sky/70"
+            size="h-24 w-28"
+            position="-bottom-10 right-6"
+            shape={blobShapes.organic24}
           />
-          <div
-            className="pointer-events-none absolute right-10 top-8 h-14 w-24 bg-hyperion-deep-sea/25"
-            style={{ borderRadius: "60% 40% 52% 48% / 46% 54% 46% 54%" }}
+          <Blob
+            color="bg-hyperion-deep-sea/25"
+            size="h-14 w-24"
+            position="right-10 top-8"
+            shape={blobShapes.organic25}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.aiWorkers.activeFleet")}

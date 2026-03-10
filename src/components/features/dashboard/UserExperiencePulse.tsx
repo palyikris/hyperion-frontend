@@ -2,6 +2,7 @@ import type { UXResponse } from "../../../types/dashboard/dashboard";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { RollingNumber } from "../../shared/animation/RollingNumber";
+import { Blob, blobShapes } from "../../shared/decoration";
 
 type UserExperiencePulseProps = {
   data: UXResponse;
@@ -114,9 +115,11 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-forest/35 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
         >
-          <div
-            className="pointer-events-none absolute -top-12 left-6 h-20 w-24 bg-hyperion-soft-sky/70"
-            style={{ borderRadius: "62% 38% 70% 30% / 44% 56% 44% 56%" }}
+          <Blob
+            color="bg-hyperion-soft-sky/70"
+            size="h-20 w-24"
+            position="-top-12 left-6"
+            shape={blobShapes.organic26}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.userExperience.activeNow")}
@@ -130,9 +133,11 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-burnt-orange/40 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
         >
-          <div
-            className="pointer-events-none absolute -bottom-16 right-4 h-24 w-28 bg-hyperion-burnt-orange/35"
-            style={{ borderRadius: "56% 44% 62% 38% / 46% 62% 38% 54%" }}
+          <Blob
+            color="bg-hyperion-burnt-orange/35"
+            size="h-24 w-28"
+            position="-bottom-16 right-4"
+            shape={blobShapes.organic28}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.userExperience.avgResponseTime")}
@@ -152,9 +157,11 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           className="relative flex h-full flex-col overflow-hidden border border-hyperion-deep-sea/30 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px] lg:col-span-2"
           style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
         >
-          <div
-            className="pointer-events-none absolute -top-10 right-10 h-16 w-20 bg-hyperion-deep-sea/25"
-            style={{ borderRadius: "64% 36% 54% 46% / 54% 46% 54% 46%" }}
+          <Blob
+            color="bg-hyperion-deep-sea/25"
+            size="h-16 w-20"
+            position="-top-10 right-10"
+            shape={blobShapes.organic29}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.userExperience.activeTrend")}
@@ -200,13 +207,17 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
           className="relative flex h-full flex-col overflow-hidden border border-hyperion-sage-mint/45 bg-white/85 p-8 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "34px 60px 44px 72px / 48px 32px 62px 40px" }}
         >
-          <div
-            className="pointer-events-none absolute -top-10 right-10 h-16 w-20 bg-hyperion-sage-mint/55"
-            style={{ borderRadius: "64% 36% 54% 46% / 54% 46% 54% 46%" }}
+          <Blob
+            color="bg-hyperion-sage-mint/55"
+            size="h-16 w-20"
+            position="-top-10 right-10"
+            shape={blobShapes.organic29}
           />
-          <div
-            className="pointer-events-none absolute -bottom-12 left-6 h-24 w-28 bg-hyperion-soft-sky/50"
-            style={{ borderRadius: "58% 42% 36% 64% / 48% 62% 38% 52%" }}
+          <Blob
+            color="bg-hyperion-soft-sky/50"
+            size="h-24 w-28"
+            position="-bottom-12 left-6"
+            shape={blobShapes.organic24}
           />
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
             {t("dashboard.userExperience.dailyActivity")}

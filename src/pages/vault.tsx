@@ -13,6 +13,7 @@ import { useDeleteAllVault } from "../hooks/vault/useDeleteAllVault";
 import type { CardStatus } from "../types/upload";
 import Divider from "../components/shared/Divider";
 import { useTranslation } from "react-i18next";
+import { PageAtmosphere } from "../components/shared/decoration";
 
 const VaultPage = () => {
   // Filter State
@@ -91,28 +92,7 @@ const VaultPage = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className="absolute top-10 left-12 h-80 w-96 bg-hyperion-burnt-orange/20"
-          style={{ borderRadius: "72% 28% 48% 52% / 52% 48% 52% 48%" }}
-        />
-        <div
-          className="absolute top-1/3 right-10 h-64 w-80 bg-hyperion-cool-aqua/50"
-          style={{ borderRadius: "34% 66% 72% 28% / 62% 32% 68% 38%" }}
-        />
-        <div
-          className="absolute bottom-32 left-1/4 h-56 w-56 bg-hyperion-soft-sky/45"
-          style={{ borderRadius: "56% 44% 34% 66% / 44% 56% 44% 56%" }}
-        />
-        <div
-          className="absolute top-2/3 right-1/3 h-40 w-48 bg-hyperion-sage-mint/65"
-          style={{ borderRadius: "80% 20% 65% 35% / 35% 65% 35% 65%" }}
-        />
-        <div
-          className="absolute -bottom-8 right-20 h-72 w-64 bg-hyperion-forest/40"
-          style={{ borderRadius: "48% 52% 44% 56% / 56% 44% 56% 44%" }}
-        />
-      </div>
+      <PageAtmosphere variant="vault" />
       <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
         <header className="flex flex-col items-start gap-4">
           <div className="w-full flex justify-between items-start">
