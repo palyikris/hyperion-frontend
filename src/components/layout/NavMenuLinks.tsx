@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { mainNavLinks } from "./navLinks";
+import { toastService } from "../../services/toastService";
 
 interface NavMenuLinksProps {
   isOpen: boolean;
@@ -19,6 +21,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [visibleLinksCount, setVisibleLinksCount] = useState(() => {
     if (typeof window === "undefined") return 4;
     const width = window.innerWidth;
@@ -58,7 +61,20 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
         <a
           key={link.labelKey}
           href={link.href}
-          onClick={onClose}
+          onClick={(event) => {
+            event.preventDefault();
+            onClose();
+            navigate(link.href);
+
+            if (link.labelKey === "nav.main.lab") {
+              setTimeout(() => {
+                toastService.info(
+                  t("nav.toast.labRedirectTitle"),
+                  t("nav.toast.labRedirectMessage"),
+                );
+              }, 500);
+            }
+          }}
           onMouseEnter={() => onHover(link.labelKey)}
           className={`relative flex items-center gap-4 p-3 rounded-xl transition-all w-full group/item
           ${

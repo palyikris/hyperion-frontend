@@ -109,6 +109,10 @@
     },
     "utility": {
       "settings": "Beállítások"
+    },
+    "toast": {
+      "labRedirectTitle": "Ne lepődj meg!",
+      "labRedirectMessage": "A tárolóba navigáltunk, először válassz ki egy médiát, majd kattints a 'Keresés ikon' gombra."
     }
   },
   "loading": {

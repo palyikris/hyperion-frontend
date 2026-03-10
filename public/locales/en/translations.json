@@ -109,6 +109,10 @@
     },
     "utility": {
       "settings": "Settings"
+    },
+    "toast": {
+      "labRedirectTitle": "Don't be surprised!",
+      "labRedirectMessage": "We navigated you to the vault, first select a media item and then click the 'Search icon' button."
     }
   },
   "loading": {

@@ -32,7 +32,7 @@ export const mainNavLinks: NavLink[] = [
   },
   {
     labelKey: "nav.main.lab",
-    href: "/lab",
+    href: "/vault",
     icon: FlaskConical,
   },
   {
