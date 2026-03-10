@@ -49,7 +49,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
 
   const navLinksWithActive = mainNavLinks.map((link) => ({
     ...link,
-    isActive: link.href === pathData,
+    isActive: pathData.startsWith(link.href),
   }));
 
   return (
@@ -64,7 +64,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
           onClick={(event) => {
             event.preventDefault();
             onClose();
-            navigate(link.href);
+            navigate(link.href !== "/lab" ? link.href : "/vault");
 
             if (link.labelKey === "nav.main.lab") {
               setTimeout(() => {
