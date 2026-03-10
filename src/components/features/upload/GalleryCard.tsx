@@ -109,13 +109,6 @@ const GalleryCard = ({
     });
   };
 
-  const handleClick = () => {
-    if (isProcessing || isDeleting) return;
-    // Only navigate if not processing or deleting, and only if not clicking the zoom icon
-    // (Zoom icon will have its own handler)
-    // Default card click does nothing now (or could open zoom if desired)
-  };
-
   // Handler for search/zoom icon: navigate to /lab/:id
   const handleSearchIconClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -136,7 +129,7 @@ const GalleryCard = ({
         isDangerous
       />
       <ScrollReveal
-        className={`relative ${isProcessing || isDeleting ? "" : "group"} bg-white border ${config.borderColor} ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-pointer"}`}
+        className={`relative ${isProcessing || isDeleting ? "" : "group"} bg-white border ${config.borderColor} ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-default"}`}
         style={{
           borderRadius: initialRadius,
           boxShadow: "0 10px 24px rgba(8, 36, 33, 0.08)",
@@ -156,11 +149,11 @@ const GalleryCard = ({
                 boxShadow: "0 18px 44px rgba(8, 36, 33, 0.16)",
               }
         }
-        onClick={handleClick}
         delay={index * 0.02}
       >
         {status === "READY" && initialShowInfo && (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               setShowInfo(true);

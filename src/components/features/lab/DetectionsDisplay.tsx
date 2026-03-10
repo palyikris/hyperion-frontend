@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Save, RotateCcw } from "lucide-react";
-import { getFullResUrl } from "../../../utils/imageUtils";
+import { getFullResUrl, getMediaAssetUrl } from "../../../utils/imageUtils";
 import type { Detection, MediaPatchRequest } from "../../../types/lab";
 import DetectionsStage from "./DetectionsStage";
 import DetectionsVisibilityToggler from "./DetectionsVisibilityToggler";
@@ -30,10 +30,11 @@ type KeyedDetection = {
   originalIndex: number;
 };
 
-const hfBaseUrl =
-  "https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main";
-
-const DetectionsDisplay = ({ mediaId, hfPath, detections }: DetectionsDisplayProps) => {
+const DetectionsDisplay = ({
+  mediaId,
+  hfPath,
+  detections,
+}: DetectionsDisplayProps) => {
   const { t } = useTranslation();
   const updateMediaMutation = useUpdateMedia();
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -116,7 +117,7 @@ const DetectionsDisplay = ({ mediaId, hfPath, detections }: DetectionsDisplayPro
     const updatedDetections = detections.map((det, index) => {
       const key = `${det.id}-${index}`;
       const override = bboxOverrides[key];
-      
+
       return {
         label: det.label,
         bbox: override || det.bbox,
@@ -208,7 +209,7 @@ const DetectionsDisplay = ({ mediaId, hfPath, detections }: DetectionsDisplayPro
         <ZoomableContainer>
           <div className="w-full relative" ref={containerRef}>
             <img
-              src={`${hfBaseUrl}/${imageUrl}`}
+              src={getMediaAssetUrl(imageUrl)}
               alt={t(
                 "lab.detections.image.mainAlt",
                 "Main media image full resolution",
@@ -273,10 +274,15 @@ const DetectionsDisplay = ({ mediaId, hfPath, detections }: DetectionsDisplayPro
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <Button
           type="button"
-          text={t("lab.form.save", "Save metadata") + (updateMediaMutation.isPending ? "..." : "")}
+          text={
+            t("lab.form.save", "Save metadata") +
+            (updateMediaMutation.isPending ? "..." : "")
+          }
           icon={<Save className="h-4 w-4 text-white" />}
           className="px-6"
-          disabled={!mediaId || !hasDirtyDetections || updateMediaMutation.isPending}
+          disabled={
+            !mediaId || !hasDirtyDetections || updateMediaMutation.isPending
+          }
           onClick={handleSaveDetections}
         />
         <Button

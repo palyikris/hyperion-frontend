@@ -2,19 +2,15 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
+import { getStoredUser } from "./utils/authStorage";
 
 const getStoredUserLanguage = (): string | undefined => {
   if (typeof window === "undefined") return undefined;
 
-  try {
-    const rawUser = localStorage.getItem("user");
-    if (!rawUser) return undefined;
-    const user = JSON.parse(rawUser) as { language?: unknown };
-    if (typeof user.language === "string" && user.language.trim()) {
-      return user.language.trim();
-    }
-  } catch {
-    return undefined;
+  const userLanguage = getStoredUser().language;
+
+  if (typeof userLanguage === "string" && userLanguage.trim()) {
+    return userLanguage.trim();
   }
 
   return undefined;

@@ -3,6 +3,7 @@ import StatusBadge from "./StatusBadge";
 import DeleteButton from "./DeleteButton";
 import ZoomButton from "./ZoomButton";
 import { useState } from "react";
+import { getMediaAssetUrl } from "../../../utils/imageUtils";
 
 type ImageSectionProps = {
   imageUrl: string;
@@ -37,14 +38,14 @@ const ImageSection = ({
       {hasImage ? (
         <img
           alt={title}
-          src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${imageUrl}`}
+          src={getMediaAssetUrl(imageUrl)}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             isProcessing ? "opacity-60" : "group-hover:scale-105"
           } ${onZoom ? "cursor-zoom-in" : ""}`}
           onLoad={() => setOpacity(1)}
           style={{ opacity }}
-          onClick={() => {
-            // Only trigger zoom if not clicking the search icon
+          onClick={(event) => {
+            event.stopPropagation();
             if (onZoom) onZoom();
           }}
         />

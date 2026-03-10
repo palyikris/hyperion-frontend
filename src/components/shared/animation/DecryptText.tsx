@@ -3,14 +3,31 @@ import { useState, useEffect, useRef } from "react";
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
 
-export const DecryptText = ({ text, className, style }: {
+export const DecryptText = ({
+  text,
+  className,
+  style,
+  as = "span",
+}: {
   text: string;
   className?: string;
   style?: React.CSSProperties;
+  as?: "span" | "div" | "p" | "h1" | "h2";
 }) => {
   const [displayText, setDisplayText] = useState(text);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+
+  const MotionTag =
+    as === "h1"
+      ? motion.h1
+      : as === "h2"
+        ? motion.h2
+        : as === "p"
+          ? motion.p
+          : as === "div"
+            ? motion.div
+            : motion.span;
 
   useEffect(() => {
     if (!isInView) return;
@@ -34,5 +51,9 @@ export const DecryptText = ({ text, className, style }: {
     return () => clearInterval(interval);
   }, [isInView, text]);
 
-  return <motion.h1 ref={ref} className={className} style={style}>{displayText}</motion.h1>;
+  return (
+    <MotionTag ref={ref} className={className} style={style}>
+      {displayText}
+    </MotionTag>
+  );
 };

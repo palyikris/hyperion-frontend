@@ -144,7 +144,7 @@ const LabPage = () => {
             <div className="">
               {hasCoordinates ? (
                 <MiniMap
-                  key={`${data?.id ?? "unknown"}-${mapLatitude}-${mapLongitude}`}
+                  key={data?.id ?? "unknown"}
                   lat={mapLatitude as number}
                   lng={mapLongitude as number}
                   onPositionChange={(lat, lng) => {

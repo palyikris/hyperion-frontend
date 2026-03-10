@@ -7,6 +7,7 @@ const ZoomButton = ({ onZoom, onSearchIconClick }: ZoomButtonProps) => {
   return (
     <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
       <button
+        type="button"
         onClick={(e) => {
           e.stopPropagation();
           if (onSearchIconClick) onSearchIconClick(e);

@@ -1,20 +1,20 @@
-
-
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { authService } from "../../services/authService";
 import { toastService } from "../../services/toastService";
-import {changeLanguage} from "i18next";
+import { changeLanguage } from "i18next";
+import { mergeStoredUser } from "../../utils/authStorage";
 
 export const useUpdateMe = () => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authService.updateMe,
     onSuccess: (data) => {
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      const updatedUser = { ...currentUser, ...data };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      const updatedUser = mergeStoredUser(data);
+      queryClient.setQueryData(["authUser"], updatedUser);
+
       if (data.language) {
         changeLanguage(data.language);
       }
@@ -31,4 +31,4 @@ export const useUpdateMe = () => {
       );
     },
   });
-}
+};

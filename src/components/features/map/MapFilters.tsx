@@ -43,7 +43,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
 }) => {
   const isGridMode = viewMode === "grid";
 
-  const { handleSubmit, getValues, setValue, control } =
+  const { handleSubmit, getValues, setValue, reset, control } =
     useForm<MapFiltersFormData>({
       resolver: zodResolver(mapFilterSchema),
       defaultValues: filters,
@@ -51,13 +51,8 @@ const MapFilters: React.FC<MapFiltersProps> = ({
     });
 
   React.useEffect(() => {
-    setValue("min_confidence", filters.min_confidence);
-    setValue("has_trash", filters.has_trash);
-    setValue("min_lat", filters.min_lat);
-    setValue("max_lat", filters.max_lat);
-    setValue("min_lng", filters.min_lng);
-    setValue("max_lng", filters.max_lng);
-  }, [filters, setValue]);
+    reset(filters);
+  }, [filters, reset]);
 
   const handleFilterFieldChange = (
     field: "min_confidence" | "has_trash",

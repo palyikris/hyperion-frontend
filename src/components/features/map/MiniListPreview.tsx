@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { MapItem } from "../../../types/map";
+import { getMediaAssetUrl } from "../../../utils/imageUtils";
 
 type MiniListPreviewProps = {
   items: MapItem[];
@@ -61,9 +62,7 @@ const MiniListPreview: React.FC<MiniListPreviewProps> = ({ items, flyTo }) => {
             <div className="w-10 h-10 rounded-xl bg-hyperion-fog-grey overflow-hidden shrink-0 shadow-inner">
               <MiniListImage
                 src={
-                  item.image_url
-                    ? `https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`
-                    : undefined
+                  item.image_url ? getMediaAssetUrl(item.image_url) : undefined
                 }
                 alt={
                   item.filename || t("map.preview.file_preview", "File preview")

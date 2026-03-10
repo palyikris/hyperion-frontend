@@ -118,25 +118,29 @@ const AIFleetEfficiencyChart = () => {
   const isLoading =
     aiFleetEfficiencyQuery.isPending || aiFleetEfficiencyQuery.isFetching;
 
-  const chartData = workers.map((worker) => {
-    const reliabilityPercent = Math.round(worker.reliabilityScore * 100);
-    const status: WorkerStatus =
-      reliabilityPercent >= 90
-        ? "healthy"
-        : reliabilityPercent >= 75
-          ? "warning"
-          : "critical";
+  const chartData = useMemo(
+    () =>
+      workers.map((worker) => {
+        const reliabilityPercent = Math.round(worker.reliabilityScore * 100);
+        const status: WorkerStatus =
+          reliabilityPercent >= 90
+            ? "healthy"
+            : reliabilityPercent >= 75
+              ? "warning"
+              : "critical";
 
-    return {
-      name: worker.name,
-      reliabilityScore: worker.reliabilityScore,
-      reliabilityPercent,
-      tasksProcessedToday: worker.tasksProcessedToday,
-      successCount: worker.successCount,
-      failureCount: worker.failureCount,
-      status,
-    };
-  });
+        return {
+          name: worker.name,
+          reliabilityScore: worker.reliabilityScore,
+          reliabilityPercent,
+          tasksProcessedToday: worker.tasksProcessedToday,
+          successCount: worker.successCount,
+          failureCount: worker.failureCount,
+          status,
+        };
+      }),
+    [workers],
+  );
 
   const sortedData = useMemo(() => {
     const cloned = [...chartData];

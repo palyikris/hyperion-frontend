@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, Languages, User, Download } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../shared/Button";
@@ -10,6 +10,7 @@ import {
   createSettingsSchema,
   type SettingsFormData,
 } from "../../../schemas/settings/settings";
+import { useMeAuth } from "../../../hooks/auth/useMeAuth";
 import { useUpdateMe } from "../../../hooks/auth/useUpdateMe";
 
 export const SettingsForm = () => {
@@ -20,7 +21,7 @@ export const SettingsForm = () => {
     [t, i18n.resolvedLanguage],
   );
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { data: user } = useMeAuth();
 
   const update = useUpdateMe();
   const isSubmitting = update.isPending;
@@ -28,15 +29,23 @@ export const SettingsForm = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     mode: "onBlur",
     defaultValues: {
-      full_name: user.full_name || "",
-      language: user.language || "en",
+      full_name: "",
+      language: "en",
     },
   });
+
+  useEffect(() => {
+    reset({
+      full_name: user?.full_name?.toString() ?? "",
+      language: user?.language?.toString() ?? "en",
+    });
+  }, [reset, user?.full_name, user?.language]);
 
   const onSubmit = (data: SettingsFormData) => {
     update.mutate(data);
@@ -74,7 +83,11 @@ export const SettingsForm = () => {
       <div className="pt-4 space-y-4">
         <Button
           type="submit"
-          text={isSubmitting ? `${t("settings.form.submit")}...` : t("settings.form.submit")}
+          text={
+            isSubmitting
+              ? `${t("settings.form.submit")}...`
+              : t("settings.form.submit")
+          }
           icon={<Download size={15} />}
           disabled={isSubmitting}
         />

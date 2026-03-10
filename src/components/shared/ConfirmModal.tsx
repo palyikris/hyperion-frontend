@@ -25,13 +25,17 @@ const ConfirmModal = ({
   cancelText = "Cancel",
   isDangerous = false,
 }: ConfirmModalProps) => {
-
   const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setLoading(false);
+    }
+  }, [isOpen]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
-      setLoading(false);
     }
   };
 
@@ -68,6 +72,7 @@ const ConfirmModal = ({
 
             {/* Close button */}
             <motion.button
+              type="button"
               onClick={onClose}
               className="absolute top-4 right-4 p-2 hover:bg-hyperion-fog-grey/20 rounded-full transition-colors"
               aria-label="Close modal"
@@ -138,12 +143,14 @@ const ConfirmModal = ({
                 transition={{ delay: 0.3, duration: 0.3 }}
               >
                 <button
+                  type="button"
                   onClick={onClose}
                   className="flex-1 px-4 py-3 rounded-xl border-2 border-hyperion-fog-grey text-hyperion-deep-sea font-semibold hover:bg-hyperion-fog-grey/30 transition-colors"
                 >
                   {cancelText}
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setLoading(true);
                     onConfirm();

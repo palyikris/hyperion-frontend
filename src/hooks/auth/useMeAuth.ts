@@ -1,16 +1,11 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api/axiosInstance";
+import { getStoredUser } from "../../utils/authStorage";
 
 export const useMeAuth = () => {
-  const storedUser = (() => {
-    try {
-      const raw = localStorage.getItem("user");
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  })();
+  const storedUser = getStoredUser();
+  const placeholderData =
+    Object.keys(storedUser).length > 0 ? storedUser : undefined;
 
   return useQuery({
     queryKey: ["authUser"],
@@ -23,8 +18,6 @@ export const useMeAuth = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    ...(storedUser
-      ? { initialData: storedUser, initialDataUpdatedAt: Date.now() }
-      : {}),
+    placeholderData,
   });
 };

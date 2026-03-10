@@ -534,6 +534,17 @@
         "processing": "Feldolgozás...",
         "clear": "Tiszta terület"
       },
+      "technical": {
+        "heading": "Technikai adatok",
+        "device": "Eszköz",
+        "software": "Szoftver",
+        "dateTaken": "Készítés ideje",
+        "location": "Helyszín",
+        "lat": "Szél.",
+        "lng": "Hossz.",
+        "unknown": "Ismeretlen",
+        "addressPending": "A cím lekérése folyamatban..."
+      },
       "gpsLabel": "GPS:",
       "metadataLabel": "Metaadat:",
       "deleting": "Törlés..."

@@ -31,8 +31,6 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
     const handleResize = () => {
       const width = window.innerWidth;
 
-      console.log("Window width:", width);
-
       if (width >= 1850) {
         setVisibleLinksCount(mainNavLinks.length);
       } else if (width >= 1000) {

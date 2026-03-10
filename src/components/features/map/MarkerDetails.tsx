@@ -9,6 +9,7 @@ import {
 import { useMapLogs } from "../../../hooks/map/useMapLogs";
 import type { MapItem, MapMediaLog } from "../../../types/map";
 import { useNavigate } from "react-router-dom";
+import { getMediaAssetUrl } from "../../../utils/imageUtils";
 
 type MarkerDetailsProps = {
   item: MapItem;
@@ -70,7 +71,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
           >
             {item.image_url ? (
               <MarkerPreviewImage
-                src={`https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main/${item.image_url}`}
+                src={getMediaAssetUrl(item.image_url)}
                 alt={
                   item.filename ?? t("map.popup.preview_image", "Preview image")
                 }

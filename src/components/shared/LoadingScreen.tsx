@@ -1,22 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const LoadingScreen = () => {
   const { t } = useTranslation();
   const [statusIndex, setStatusIndex] = useState(0);
-  const statusMessages = [
-    t("loading.status.countingCanopies"),
-    t("loading.status.lookingForTrash"),
-    t("loading.status.watchingFlowers"),
-    t("loading.status.protectingBeauties"),
-  ];
+  const statusMessages = useMemo(
+    () => [
+      t("loading.status.countingCanopies"),
+      t("loading.status.lookingForTrash"),
+      t("loading.status.watchingFlowers"),
+      t("loading.status.protectingBeauties"),
+    ],
+    [t],
+  );
+  const activeStatusMessage =
+    statusMessages[statusIndex % statusMessages.length] ?? statusMessages[0];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setStatusIndex((prev) => (prev + 1) % statusMessages.length);
     }, 1500);
     return () => clearInterval(interval);
-  }, []);
+  }, [statusMessages]);
 
   useEffect(() => {
     document.body.dataset.loadingScreen = "true";
@@ -44,8 +49,8 @@ const LoadingScreen = () => {
 
       <div className="bg-hyperion-deep-sea min-h-screen flex flex-col items-center justify-center overflow-hidden relative text-hyperion-cream">
         <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-32 w-[28rem] h-[28rem] rounded-full bg-hyperion-soft-sky/10 blur-3xl animate-shimmer" />
-          <div className="absolute -bottom-48 -right-24 w-[32rem] h-[32rem] rounded-full bg-hyperion-sage-mint/10 blur-3xl animate-shimmer" />
+          <div className="absolute -top-40 -left-32 w-md h-112 rounded-full bg-hyperion-soft-sky/10 blur-3xl animate-shimmer" />
+          <div className="absolute -bottom-48 -right-24 w-lg h-128 rounded-full bg-hyperion-sage-mint/10 blur-3xl animate-shimmer" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.08),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,0.06),transparent_35%),radial-gradient(circle_at_50%_80%,rgba(255,255,255,0.05),transparent_45%)]" />
         </div>
         <main className="relative flex flex-col items-center justify-center w-full max-w-2xl px-6 z-10">
@@ -84,7 +89,7 @@ const LoadingScreen = () => {
             </h1>
 
             <p className="text-xs sm:text-sm mb-8 tracking-[0.25em] h-5 text-hyperion-soft-sky transition-opacity duration-500">
-              {statusMessages[statusIndex]}...
+              {activeStatusMessage}...
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-8">
@@ -102,9 +107,9 @@ const LoadingScreen = () => {
               />
             </div>
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.35em] text-hyperion-cream/70">
-              <span className="h-[1px] w-10 bg-hyperion-cream/30" />
+              <span className="h-px w-10 bg-hyperion-cream/30" />
               {t("loading.contentSoon")}
-              <span className="h-[1px] w-10 bg-hyperion-cream/30" />
+              <span className="h-px w-10 bg-hyperion-cream/30" />
             </div>
           </section>
         </main>

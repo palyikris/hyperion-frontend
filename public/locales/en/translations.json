@@ -534,6 +534,17 @@
         "processing": "Processing...",
         "clear": "Clear Area"
       },
+      "technical": {
+        "heading": "Technical Specs",
+        "device": "Device",
+        "software": "Software",
+        "dateTaken": "Date Taken",
+        "location": "Location",
+        "lat": "Lat",
+        "lng": "Lng",
+        "unknown": "Unknown",
+        "addressPending": "Address retrieval in progress..."
+      },
       "gpsLabel": "GPS:",
       "metadataLabel": "Metadata:",
       "deleting": "Deleting..."

@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useMeAuth } from "../../hooks/auth/useMeAuth";
 
 interface NavProfileProps {
   isOpen: boolean;
@@ -8,8 +9,8 @@ interface NavProfileProps {
 
 const NavProfile: React.FC<NavProfileProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const name = user.full_name || t("nav.userFallback");
+  const { data: user } = useMeAuth();
+  const name = user?.full_name?.toString() || t("nav.userFallback");
 
   return (
     <div className="flex items-center gap-4 p-1 w-full border-t border-white/5 pt-4">

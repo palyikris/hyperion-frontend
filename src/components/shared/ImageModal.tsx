@@ -7,7 +7,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { getFullResUrl } from "../../utils/imageUtils";
+import { getFullResUrl, getMediaAssetUrl } from "../../utils/imageUtils";
 import { DecryptText } from "./animation/DecryptText";
 
 interface ImageModalProps {
@@ -24,11 +24,9 @@ const ImageModal: React.FC<ImageModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const hfBaseUrl =
-    "https://huggingface.co/datasets/palyikris/hyperion-media/resolve/main";
   const fullResImageUrl = getFullResUrl(imageUrl);
-  const thumbnailSrc = imageUrl ? `${hfBaseUrl}/${imageUrl}` : "";
-  const fullResSrc = fullResImageUrl ? `${hfBaseUrl}/${fullResImageUrl}` : "";
+  const thumbnailSrc = getMediaAssetUrl(imageUrl);
+  const fullResSrc = getMediaAssetUrl(fullResImageUrl);
   const shouldSwapToFullRes =
     Boolean(fullResImageUrl) && fullResImageUrl !== imageUrl;
   const [visionMode, setVisionMode] = useState<"standard" | "spectral">(
@@ -37,29 +35,51 @@ const ImageModal: React.FC<ImageModalProps> = ({
   const [altitude, setAltitude] = useState(124.0);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [fullResLoaded, setFullResLoaded] = useState(false);
+  const [viewportSize, setViewportSize] = useState({ width: 1, height: 1 });
 
-  // 1. GIMBAL PARALLAX LOGIC
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const springConfig = { damping: 25, stiffness: 150 };
   const hudX = useSpring(
-    useTransform(mouseX, [0, window.innerWidth], [-20, 20]),
+    useTransform(mouseX, [0, viewportSize.width], [-20, 20]),
     springConfig,
   );
   const hudY = useSpring(
-    useTransform(mouseY, [0, window.innerHeight], [-20, 20]),
+    useTransform(mouseY, [0, viewportSize.height], [-20, 20]),
     springConfig,
   );
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const updateViewportSize = () => {
+      setViewportSize({
+        width: window.innerWidth || 1,
+        height: window.innerHeight || 1,
+      });
+    };
+
+    updateViewportSize();
+    window.addEventListener("resize", updateViewportSize);
+
+    return () => window.removeEventListener("resize", updateViewportSize);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, open]);
 
   // Telemetry drift
   useEffect(() => {

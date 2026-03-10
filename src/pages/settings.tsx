@@ -2,10 +2,11 @@ import { SettingsForm } from "../components/features/settings/SettingsForm";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
 import { DecryptText } from "../components/shared/animation/DecryptText";
+import { useMeAuth } from "../hooks/auth/useMeAuth";
 
 const SettingsPage = () => {
   const { t } = useTranslation();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { data: user } = useMeAuth();
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-hyperion-cream flex items-center justify-center p-6">
@@ -39,7 +40,7 @@ const SettingsPage = () => {
                 {t("settings.page.currentOperator")}
               </h2>
               <p className="text-hyperion-slate-grey font-mono text-sm">
-                {user.email || ""}
+                {user?.email?.toString() || ""}
               </p>
             </div>
 

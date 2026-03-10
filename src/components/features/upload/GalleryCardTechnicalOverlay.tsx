@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Camera, Cpu, Calendar, MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import GalleryCardInfoRow from "./GalleryCardInfoRow";
 import type { GalleryItemTechnicalMetadata } from "../../../types/upload";
 
@@ -15,6 +16,8 @@ interface GalleryCardTechnicalOverlayProps {
 const GalleryCardTechnicalOverlay: React.FC<
   GalleryCardTechnicalOverlayProps
 > = ({ showInfo, setShowInfo, technical_metadata, address, borderRadius }) => {
+  const { t } = useTranslation();
+
   return (
     <AnimatePresence>
       {showInfo && technical_metadata && (
@@ -32,9 +35,10 @@ const GalleryCardTechnicalOverlay: React.FC<
         >
           <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-2">
             <h5 className="font-bold tracking-widest uppercase text-[10px]">
-              Technical Specs
+              {t("upload.card.technical.heading", "Technical Specs")}
             </h5>
             <button
+              type="button"
               onClick={() => setShowInfo(false)}
               className="hover:rotate-90 transition-transform"
             >
@@ -45,22 +49,28 @@ const GalleryCardTechnicalOverlay: React.FC<
           <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
             <GalleryCardInfoRow
               icon={<Camera size={16} />}
-              label="Device"
+              label={t("upload.card.technical.device", "Device")}
               value={
                 technical_metadata.make
                   ? `${technical_metadata.make} ${technical_metadata.model}`
-                  : "Unknown"
+                  : t("upload.card.technical.unknown", "Unknown")
               }
             />
             <GalleryCardInfoRow
               icon={<Cpu size={16} />}
-              label="Software"
-              value={technical_metadata.software as string}
+              label={t("upload.card.technical.software", "Software")}
+              value={
+                (technical_metadata.software as string) ||
+                t("upload.card.technical.unknown", "Unknown")
+              }
             />
             <GalleryCardInfoRow
               icon={<Calendar size={16} />}
-              label="Date Taken"
-              value={technical_metadata.date_taken as string}
+              label={t("upload.card.technical.dateTaken", "Date Taken")}
+              value={
+                (technical_metadata.date_taken as string) ||
+                t("upload.card.technical.unknown", "Unknown")
+              }
             />
 
             {technical_metadata.gps && (
@@ -68,20 +78,28 @@ const GalleryCardTechnicalOverlay: React.FC<
                 <div className="flex items-center gap-2 mb-3 text-hyperion-cool-aqua">
                   <MapPin size={16} />
                   <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Location
+                    {t("upload.card.technical.location", "Location")}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-[11px]">
                   <div>
-                    <span className="opacity-60 block">Lat</span>
+                    <span className="opacity-60 block">
+                      {t("upload.card.technical.lat", "Lat")}
+                    </span>
                     {technical_metadata.gps.lat}
                   </div>
                   <div>
-                    <span className="opacity-60 block">Lng</span>
+                    <span className="opacity-60 block">
+                      {t("upload.card.technical.lng", "Lng")}
+                    </span>
                     {technical_metadata.gps.lng}
                   </div>
                   <div className="col-span-2 mt-1 italic text-hyperion-cool-aqua/90 text-xs leading-snug">
-                    {address || "Address retrieval in progress..."}
+                    {address ||
+                      t(
+                        "upload.card.technical.addressPending",
+                        "Address retrieval in progress...",
+                      )}
                   </div>
                 </div>
               </div>
