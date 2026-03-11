@@ -1,6 +1,6 @@
-import { X, Tag, Percent, Move, Maximize, Save } from "lucide-react";
+import { X, Tag, Percent, Move, Maximize } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Detection } from "../../../types/lab";
 import { InputField } from "../../shared/InputField";
 import Divider from "../../shared/Divider";
@@ -10,35 +10,34 @@ import SearchableSelectField from "../../shared/SearchableSelectField";
 type DetectionDetailsPanelProps = {
   detection: Detection;
   onClose: () => void;
-  onSave?: (detection: Detection) => void;
+  onLabelChange?: (label: string) => void;
 };
 
 const DetectionDetailsPanel = ({
   detection,
   onClose,
-  onSave,
+  onLabelChange,
 }: DetectionDetailsPanelProps) => {
   const { t } = useTranslation();
   const [selectedLabel, setSelectedLabel] = useState(detection.label);
-  const [isModified, setIsModified] = useState(false);
+
+  useEffect(() => {
+    setSelectedLabel(detection.label);
+  }, [detection]);
   const confidencePercent = (detection.confidence * 100).toFixed(1);
 
-  const handleLabelChange = (value: string | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleLabelChange = (
+    value: string | React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    let newLabel = "";
     if (typeof value === "string") {
-      setSelectedLabel(value);
+      newLabel = value;
     } else {
-      setSelectedLabel(value.target.value);
+      newLabel = value.target.value;
     }
-    setIsModified(true);
-  };
-
-  const handleSave = () => {
-    if (onSave && isModified) {
-      onSave({
-        ...detection,
-        label: selectedLabel,
-      });
-      setIsModified(false);
+    setSelectedLabel(newLabel);
+    if (onLabelChange) {
+      onLabelChange(newLabel);
     }
   };
 
@@ -158,18 +157,7 @@ const DetectionDetailsPanel = ({
           </div>
         </div>
 
-        {/* Save Button */}
-        {isModified && (
-          <button
-            type="button"
-            onClick={handleSave}
-            className="mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90 text-hyperion-cream font-semibold py-2 px-4 transition-colors"
-            aria-label={t("lab.detections.panel.save", "Save changes")}
-          >
-            <Save className="h-4 w-4" />
-            {t("lab.detections.panel.save", "Save changes")}
-          </button>
-        )}
+        {/* No Save Button here, saving is handled by parent */}
       </div>
     </div>
   );

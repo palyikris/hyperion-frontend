@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { mainNavLinks, utilityLinks } from "../../layout/navLinks";
 import { MorphBox } from "../../shared/animation/MorphBox";
 import { useNavigate } from "react-router-dom";
+import { toastService } from "../../../services/toastService";
 
 const tileStyles =
   "group relative flex flex-col items-center justify-center gap-3 border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px] cursor-pointer";
@@ -54,6 +55,19 @@ const NavigatorSection = () => {
   const navigate = useNavigate();
 
   const handleClick = (href: string) => {
+    if (href === "/lab") {
+      navigate("/vault");
+      setTimeout(() => {
+        toastService.info(
+          t("nav.toast.labRedirectTitle"),
+          t("nav.toast.labRedirectMessage"),
+          5000,
+        );
+      }, 500);
+
+      return;
+    }
+
     navigate(href);
   };
 

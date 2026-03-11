@@ -1,4 +1,10 @@
 {
+  "searchableSelect": {
+    "select": "Válassz...",
+    "search": "Keresés...",
+    "noOptions": "Nincs találat",
+    "clear": "Kiválasztás törlése"
+  },
   "map": {
     "show_filters": "Szűrők megjelenítése",
     "go_to_my_location": "Ugrás a helyzetemre",

@@ -149,16 +149,6 @@ const DetectionsDisplay = ({
     setSelectedId(null);
   };
 
-  const handleSaveDetectionLabel = (detection: Detection) => {
-    if (!selectedDetection) return;
-
-    const key = `${selectedDetection.detection.id}-${selectedDetection.index}`;
-    setLabelOverrides((prev) => ({
-      ...prev,
-      [key]: detection.label,
-    }));
-  };
-
   if (!hfPath) {
     return null;
   }
@@ -282,7 +272,13 @@ const DetectionsDisplay = ({
           <DetectionDetailsPanel
             detection={selectedDetection.detection}
             onClose={() => setSelectedId(null)}
-            onSave={handleSaveDetectionLabel}
+            onLabelChange={(label) => {
+              const key = `${selectedDetection.detection.id}-${selectedDetection.index}`;
+              setLabelOverrides((prev) => ({
+                ...prev,
+                [key]: label,
+              }));
+            }}
           />
         )}
       </div>

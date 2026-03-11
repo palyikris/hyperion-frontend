@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 import { useState, useRef, useEffect } from "react";
 import { X, ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export type SelectOption = {
   label: string;
@@ -37,18 +38,16 @@ export const SearchableSelectField = ({
   const [search, setSearch] = useState("");
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
-  // Filter options based on search (always enabled)
   const filteredOptions = search.trim()
     ? options.filter((option) =>
-        option.label.toLowerCase().includes(search.trim().toLowerCase())
+        option.label.toLowerCase().includes(search.trim().toLowerCase()),
       )
     : options;
 
-  // Find selected option
   const selectedOption = options.find((o) => o.value === value);
 
-  // Close dropdown on outside click
   useEffect(() => {
     if (!open) return;
     const handleClick = (e: MouseEvent) => {
@@ -61,43 +60,6 @@ export const SearchableSelectField = ({
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    if (!open) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setFocusedIndex((prev) => {
-          if (filteredOptions.length === 0) return null;
-          if (prev === null) return 0;
-          return Math.min(prev + 1, filteredOptions.length - 1);
-        });
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setFocusedIndex((prev) => {
-          if (filteredOptions.length === 0) return null;
-          if (prev === null) return filteredOptions.length - 1;
-          return Math.max(prev - 1, 0);
-        });
-      } else if (e.key === "Enter" && focusedIndex !== null && open) {
-        e.preventDefault();
-        const opt = filteredOptions[focusedIndex];
-        if (opt) {
-          onChange?.(opt.value);
-          setOpen(false);
-          setSearch("");
-          setFocusedIndex(null);
-        }
-      } else if (e.key === "Escape") {
-        setOpen(false);
-        setSearch("");
-        setFocusedIndex(null);
-      }
-    };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [open, filteredOptions, focusedIndex, onChange]);
 
   return (
     <div className="w-full" ref={containerRef}>
@@ -128,7 +90,9 @@ export const SearchableSelectField = ({
           onClick={() => setOpen((v) => !v)}
         >
           <span className={selectedOption ? "" : "text-hyperion-slate-grey/40"}>
-            {selectedOption ? selectedOption.label : "Select..."}
+            {selectedOption
+              ? selectedOption.label
+              : t("searchableSelect.select", "Select...")}
           </span>
           <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-hyperion-deep-sea/40 pointer-events-none" />
         </button>
@@ -141,6 +105,9 @@ export const SearchableSelectField = ({
             tabIndex={-1}
           >
             <X className="w-5 h-5" />
+            <span className="sr-only">
+              {t("searchableSelect.clear", "Clear selection")}
+            </span>
           </button>
         )}
         {rightIcon && !isCancellable && (
@@ -149,7 +116,7 @@ export const SearchableSelectField = ({
           </span>
         )}
         {open && (
-          <div className="absolute left-0 right-0 mt-2 z-20 bg-white border-2 border-hyperion-fog-grey rounded-2xl shadow-lg max-h-[10.5rem] overflow-y-auto animate-fade-in">
+          <div className="absolute left-0 right-0 mt-2 z-20 bg-white border-2 border-hyperion-fog-grey rounded-2xl shadow-lg max-h-[10.5rem] overflow-y-hidden animate-fade-in">
             <div className="px-4 pt-3 pb-2">
               <input
                 type="text"
@@ -158,7 +125,7 @@ export const SearchableSelectField = ({
                   setSearch(e.target.value);
                   setFocusedIndex(0);
                 }}
-                placeholder="Search..."
+                placeholder={t("searchableSelect.search", "Search...")}
                 className="w-full px-2 py-1 rounded bg-hyperion-fog-grey/30 text-xs text-hyperion-slate-grey focus:outline-none focus:ring-2 focus:ring-hyperion-deep-sea/30"
                 autoFocus
                 aria-label="Search options"
@@ -171,7 +138,10 @@ export const SearchableSelectField = ({
               className="max-h-[7.5rem] overflow-y-auto"
             >
               {filteredOptions.length === 0 ? (
-                <li className="px-4 py-2 text-hyperion-slate-grey/40 select-none">No options found</li>
+                <li className="px-4 py-2 text-hyperion-slate-grey/40 select-none">
+                  No options found
+                  {t("searchableSelect.noOptions", "No options found")}
+                </li>
               ) : (
                 filteredOptions.map((option, idx) => (
                   <li

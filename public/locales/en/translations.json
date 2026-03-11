@@ -1,4 +1,10 @@
 {
+  "searchableSelect": {
+    "select": "Select...",
+    "search": "Search...",
+    "noOptions": "No options found",
+    "clear": "Clear selection"
+  },
   "map": {
     "show_filters": "Show filters",
     "go_to_my_location": "Go to my location",
