@@ -136,13 +136,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
               if (log.timestamp) {
                 try {
                   const date = new Date(log.timestamp);
-                  formattedTime = date.toLocaleString(undefined, {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
+                  formattedTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
                 } catch (error) {
                   console.error(
                     "Invalid timestamp format:",
@@ -168,7 +162,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-hyperion-slate-grey mt-1 truncate">
+                    <p className="text-xs text-hyperion-slate-grey mt-1">
                       {log.message}
                     </p>
                   </div>
