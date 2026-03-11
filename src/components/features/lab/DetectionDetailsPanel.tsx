@@ -1,20 +1,46 @@
-import { X, Tag, Percent, Move, Maximize } from "lucide-react";
+import { X, Tag, Percent, Move, Maximize, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import type { Detection } from "../../../types/lab";
 import { InputField } from "../../shared/InputField";
 import Divider from "../../shared/Divider";
+import { trashLabelOptions } from "../../../utils/trashLabels";
+import SearchableSelectField from "../../shared/SearchableSelectField";
 
 type DetectionDetailsPanelProps = {
   detection: Detection;
   onClose: () => void;
+  onSave?: (detection: Detection) => void;
 };
 
 const DetectionDetailsPanel = ({
   detection,
   onClose,
+  onSave,
 }: DetectionDetailsPanelProps) => {
   const { t } = useTranslation();
+  const [selectedLabel, setSelectedLabel] = useState(detection.label);
+  const [isModified, setIsModified] = useState(false);
   const confidencePercent = (detection.confidence * 100).toFixed(1);
+
+  const handleLabelChange = (value: string | React.ChangeEvent<HTMLSelectElement>) => {
+    if (typeof value === "string") {
+      setSelectedLabel(value);
+    } else {
+      setSelectedLabel(value.target.value);
+    }
+    setIsModified(true);
+  };
+
+  const handleSave = () => {
+    if (onSave && isModified) {
+      onSave({
+        ...detection,
+        label: selectedLabel,
+      });
+      setIsModified(false);
+    }
+  };
 
   return (
     <div className="border-t border-hyperion-fog-grey bg-linear-to-br from-white/90 to-hyperion-cream/50 p-4">
@@ -34,17 +60,14 @@ const DetectionDetailsPanel = ({
 
       <div className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
-          <InputField
+          {/* Label - now editable SelectField */}
+          <SearchableSelectField
             label={t("lab.detections.panel.label", "Label")}
             icon={Tag}
-            type="text"
             id={`label-${detection.id}`}
-            placeholder=""
-            inputProps={{
-              value: detection.label,
-              disabled: true,
-            }}
-            className="flex-1"
+            options={trashLabelOptions}
+            value={selectedLabel}
+            onChange={handleLabelChange}
           />
 
           {/* Confidence */}
@@ -134,6 +157,19 @@ const DetectionDetailsPanel = ({
             />
           </div>
         </div>
+
+        {/* Save Button */}
+        {isModified && (
+          <button
+            type="button"
+            onClick={handleSave}
+            className="mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90 text-hyperion-cream font-semibold py-2 px-4 transition-colors"
+            aria-label={t("lab.detections.panel.save", "Save changes")}
+          >
+            <Save className="h-4 w-4" />
+            {t("lab.detections.panel.save", "Save changes")}
+          </button>
+        )}
       </div>
     </div>
   );

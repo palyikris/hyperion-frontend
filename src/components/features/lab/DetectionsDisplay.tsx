@@ -45,6 +45,9 @@ const DetectionsDisplay = ({
   const [bboxOverrides, setBboxOverrides] = useState<
     Record<string, NormalizedBBox>
   >({});
+  const [labelOverrides, setLabelOverrides] = useState<Record<string, string>>(
+    {},
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confidenceThreshold, setConfidenceThreshold] = useState(0);
 
@@ -105,22 +108,23 @@ const DetectionsDisplay = ({
 
   // Track if detections have been modified
   const hasDirtyDetections = useMemo(() => {
-    return Object.keys(bboxOverrides).length > 0;
-  }, [bboxOverrides]);
+    return Object.keys(bboxOverrides).length > 0 || Object.keys(labelOverrides).length > 0;
+  }, [bboxOverrides, labelOverrides]);
 
   const handleSaveDetections = async () => {
     if (!mediaId || !hasDirtyDetections) {
       return;
     }
 
-    // Build updated detections array with overridden bboxes
+    // Build updated detections array with overridden bboxes and labels
     const updatedDetections = detections.map((det, index) => {
       const key = `${det.id}-${index}`;
-      const override = bboxOverrides[key];
+      const bboxOverride = bboxOverrides[key];
+      const labelOverride = labelOverrides[key];
 
       return {
-        label: det.label,
-        bbox: override || det.bbox,
+        label: labelOverride || det.label,
+        bbox: bboxOverride || det.bbox,
         area_sqm: det.area_sqm,
       };
     });
@@ -136,11 +140,23 @@ const DetectionsDisplay = ({
 
     // Clear overrides after successful save
     setBboxOverrides({});
+    setLabelOverrides({});
   };
 
   const handleResetDetections = () => {
     setBboxOverrides({});
+    setLabelOverrides({});
     setSelectedId(null);
+  };
+
+  const handleSaveDetectionLabel = (detection: Detection) => {
+    if (!selectedDetection) return;
+
+    const key = `${selectedDetection.detection.id}-${selectedDetection.index}`;
+    setLabelOverrides((prev) => ({
+      ...prev,
+      [key]: detection.label,
+    }));
   };
 
   if (!hfPath) {
@@ -266,6 +282,7 @@ const DetectionsDisplay = ({
           <DetectionDetailsPanel
             detection={selectedDetection.detection}
             onClose={() => setSelectedId(null)}
+            onSave={handleSaveDetectionLabel}
           />
         )}
       </div>

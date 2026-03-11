@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 export const toastService = {
-  success: (message: string, description = "") => {
+  success: (message: string, description = "", duration = 2000) => {
     toast.success(message, {
       description,
       style: {
@@ -9,13 +9,13 @@ export const toastService = {
         color: "var(--color-hyperion-cream)",
         border: "1px solid var(--color-hyperion-sage-mint)",
       },
-      duration: 2000,
+      duration: duration,
       // Ensures the 'X' and icons are visible against the dark background
       className: "hyperion-toast-success",
     });
   },
 
-  error: (message: string, description = "") => {
+  error: (message: string, description = "", duration = 2000) => {
     toast.error(message, {
       description,
       style: {
@@ -23,11 +23,11 @@ export const toastService = {
         color: "var(--color-hyperion-cream)",
         border: "1px solid var(--color-hyperion-muted-gold)",
       },
-      duration: 2000,
+      duration: duration,
     });
   },
 
-  info: (message: string, description = "") => {
+  info: (message: string, description = "", duration = 2000) => {
     toast.info(message, {
       description,
       style: {
@@ -35,7 +35,7 @@ export const toastService = {
         color: "var(--color-hyperion-forest)",
         border: "1px solid var(--color-hyperion-cool-aqua)",
       },
-      duration: 2000,
+      duration: duration,
     });
   },
 

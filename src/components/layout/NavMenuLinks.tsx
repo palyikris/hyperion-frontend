@@ -36,7 +36,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
 
       if (width >= 1850) {
         setVisibleLinksCount(mainNavLinks.length);
-      } else if (width >= 1000) {
+      } else if (width >= 1300) {
         setVisibleLinksCount(5);
       } else {
         setVisibleLinksCount(4);
@@ -71,6 +71,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
                 toastService.info(
                   t("nav.toast.labRedirectTitle"),
                   t("nav.toast.labRedirectMessage"),
+                  5000,
                 );
               }, 500);
             }
