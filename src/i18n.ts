@@ -2,17 +2,21 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { getStoredUser } from "./utils/authStorage";
+
+import store from "./store";
 
 const getStoredUserLanguage = (): string | undefined => {
   if (typeof window === "undefined") return undefined;
 
-  const userLanguage = getStoredUser().language;
-
-  if (typeof userLanguage === "string" && userLanguage.trim()) {
-    return userLanguage.trim();
+  try {
+    const user = store.getState().user.user;
+    const userLanguage = user?.language;
+    if (typeof userLanguage === "string" && userLanguage.trim()) {
+      return userLanguage.trim();
+    }
+  } catch {
+    // ignore
   }
-
   return undefined;
 };
 

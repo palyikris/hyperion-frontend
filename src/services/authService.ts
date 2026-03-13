@@ -1,13 +1,16 @@
 import { api } from "../api/axiosInstance";
 import type { UserData } from "../types/auth/auth";
 
+
 export const authService = {
-  signup: async (userData: UserData) => {
+  signup: async (userData: Omit<UserData, "id" | "language">) => {
     const { data } = await api.post("/auth/signup", userData);
     return data;
   },
 
-  login: async (credentials: Omit<UserData, "full_name">) => {
+  login: async (
+    credentials: Omit<UserData, "full_name" | "id" | "language">,
+  ) => {
     const { data } = await api.post("/auth/login", credentials);
     return data;
   },

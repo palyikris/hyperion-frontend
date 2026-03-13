@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import SignupForm from "../components/features/auth/SignupForm";
+import { SignupForm } from "../components/features/auth/SignupForm";
 import { Title } from "../components/shared/Title";
 import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
 

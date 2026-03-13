@@ -8,25 +8,27 @@ import { Button } from "../../shared/Button";
 import { Link } from "react-router-dom";
 import { createLoginSchema } from "../../../schemas/auth/auth";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import type { UserData } from "../../../types/auth/auth";
+
+type LoginFormValues = {
+  email: string;
+  password: string;
+};
 
 export const LoginForm = () => {
-  const { t, i18n } = useTranslation();
-  const loginSchema = useMemo(
-    () => createLoginSchema(t),
-    [t, i18n.resolvedLanguage],
-  );
+  const { t } = useTranslation();
+
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
   const { login, isLoading } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Omit<UserData, "full_name">>({
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = (data: Omit<UserData, "full_name">) => {
+  const onSubmit = (data: LoginFormValues) => {
     login(data);
   };
 

@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { setUser, clearUser } from "../../store/userSlice";
 import { authService } from "../../services/authService";
 import { toastService } from "../../services/toastService";
 
@@ -8,6 +10,7 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   // Signup Hook
   const signupMutation = useMutation({
@@ -33,7 +36,11 @@ export const useAuth = () => {
   // Login Hook
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data && data.user) {
+        console.log("Login successful, user data:", data.user);
+        dispatch(setUser(data.user));
+      }
       toastService.success(
         t("auth.toast.loginSuccessTitle"),
         t("auth.toast.loginSuccessMessage"),
@@ -58,7 +65,7 @@ export const useAuth = () => {
         t("auth.toast.logoutSuccessTitle"),
         t("auth.toast.logoutSuccessMessage"),
       );
-      localStorage.removeItem("user");
+      dispatch(clearUser());
       queryClient.removeQueries({ queryKey: ["authUser"] });
       setTimeout(() => {
         navigate("/login");

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useMeAuth } from "../../hooks/auth/useMeAuth";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 interface NavProfileProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface NavProfileProps {
 
 const NavProfile: React.FC<NavProfileProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
-  const { data: user } = useMeAuth();
+  const user = useSelector((state: RootState) => state.user.user);
   const name = user?.full_name?.toString() || t("nav.userFallback");
 
   return (

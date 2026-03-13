@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api/axiosInstance";
-import { getStoredUser } from "../../utils/authStorage";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 export const useMeAuth = () => {
-  const storedUser = getStoredUser();
-  const placeholderData =
-    Object.keys(storedUser).length > 0 ? storedUser : undefined;
+  const user = useSelector((state: RootState) => state.user.user);
+  const placeholderData = user ? user : undefined;
+
+  console.log("useMeAuth - placeholderData:", placeholderData);
 
   return useQuery({
     queryKey: ["authUser"],
