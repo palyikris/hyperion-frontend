@@ -7,8 +7,16 @@ import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
 import { UploadIcon, XIcon } from "lucide-react";
 
+
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
+  multiple?: boolean;
+  accept?: string;
+  label?: string;
+  description?: string;
+  browseText?: string;
+  fileSupportText?: string;
+  disabled?: boolean;
 };
 
 type FileUploadState = {
@@ -18,7 +26,16 @@ type FileUploadState = {
   error?: string;
 };
 
-const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
+const UploadDropZone = ({
+  onFilesSelected,
+  multiple = true,
+  accept = ".jpg,.jpeg,.png,.tiff",
+  label,
+  description,
+  browseText,
+  fileSupportText,
+  disabled = false,
+}: UploadDropZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadStates, setUploadStates] = useState<FileUploadState[]>([]);
@@ -39,15 +56,21 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    setSelectedFiles([...selectedFiles, ...files]);
-    onFilesSelected?.([...selectedFiles, ...files]);
+    let files = Array.from(e.dataTransfer.files);
+    if (!multiple && files.length > 1) {
+      files = [files[0]];
+    }
+    setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
+    onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setSelectedFiles([...selectedFiles, ...files]);
-    onFilesSelected?.([...selectedFiles, ...files]);
+    let files = Array.from(e.target.files || []);
+    if (!multiple && files.length > 1) {
+      files = [files[0]];
+    }
+    setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
+    onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
   };
 
   const removeFile = (index: number) => {
@@ -188,25 +211,25 @@ const UploadDropZone = ({ onFilesSelected }: UploadDropZoneProps) => {
               </svg>
             </div>
             <h3 className="text-xl font-semibold mb-2 text-hyperion-forest">
-              {t("upload.dropzone.heading")}
+              {label || t("upload.dropzone.heading")}
             </h3>
             <p className="text-hyperion-slate-grey/70 text-center max-w-xs px-4">
-              {t("upload.dropzone.dragDescription")}{" "}
+              {description || t("upload.dropzone.dragDescription")}{" "}
               <span className="text-hyperion-burnt-orange font-semibold">
-                {t("upload.dropzone.browseFiles")}
+                {browseText || t("upload.dropzone.browseFiles")}
               </span>
             </p>
             <p className="text-xs text-hyperion-slate-grey/50 mt-4 uppercase tracking-widest">
-              {t("upload.dropzone.fileSupport")}
+              {fileSupportText || t("upload.dropzone.fileSupport")}
             </p>
 
             <input
               type="file"
-              multiple
-              accept=".jpg,.jpeg,.png,.tiff"
+              multiple={multiple}
+              accept={accept}
               onChange={handleFileChange}
               className="absolute inset-0 opacity-0 cursor-pointer"
-              disabled={isUploading}
+              disabled={isUploading || disabled}
             />
           </label>
         </MorphBox>

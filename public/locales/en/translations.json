@@ -536,7 +536,11 @@
       "heading": "Batch Upload",
       "dragDescription": "Drag and drop your aerial surveillance photos here or",
       "browseFiles": "browse files",
-      "fileSupport": "Supports JPG, PNG, TIFF up to 50MB"
+      "fileSupport": "Supports JPG, PNG, TIFF up to 50MB",
+      "videoHeading": "Upload a video",
+      "videoDescription": "Drag and drop a video file or click to browse.",
+      "browseVideo": "Browse video",
+      "videoSupport": "Supported: mp4, webm, ogg"
     },
     "card": {
       "status": {

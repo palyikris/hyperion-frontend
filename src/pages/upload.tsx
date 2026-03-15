@@ -45,7 +45,28 @@ const UploadPage = () => {
           </p>
         </header>
 
-        <UploadDropZone />
+        {/* Two UploadDropZones side by side */}
+        <div className="flex flex-col xl:flex-row gap-8">
+          <div className="flex-1">
+            <UploadDropZone />
+          </div>
+          <div className="flex-1">
+            <UploadDropZone
+              multiple={false}
+              accept="video/mp4,video/webm,video/ogg"
+              label={t("upload.dropzone.videoHeading", "Upload a video")}
+              description={t(
+                "upload.dropzone.videoDescription",
+                "Drag and drop a video file or click to browse.",
+              )}
+              browseText={t("upload.dropzone.browseVideo", "Browse video")}
+              fileSupportText={t(
+                "upload.dropzone.videoSupport",
+                "Supported: mp4, webm, ogg",
+              )}
+            />
+          </div>
+        </div>
 
         <Divider
           label={t("upload.divider.label")}

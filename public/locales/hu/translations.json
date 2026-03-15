@@ -536,7 +536,11 @@
       "heading": "Csoportos feltöltés",
       "dragDescription": "Húzd ide a légifigyelő fényképeket vagy",
       "browseFiles": "tallózz fájlokat",
-      "fileSupport": "Támogatott: JPG, PNG, TIFF max 50MB"
+      "fileSupport": "Támogatott: JPG, PNG, TIFF max 50MB",
+      "videoHeading": "Videó feltöltése",
+      "videoDescription": "Húzz ide egy videófájlt vagy kattints tallózáshoz.",
+      "browseVideo": "Videó tallózása",
+      "videoSupport": "Támogatott: mp4, webm, ogg"
     },
     "card": {
       "status": {
