@@ -31,7 +31,6 @@ const UploadPage = () => {
   const galleryItems = recentGalleryQuery.data;
   const items = galleryItems?.items || [];
 
-  console.log("zoomed image", zoomedImage);
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
@@ -45,7 +44,6 @@ const UploadPage = () => {
           </p>
         </header>
 
-        {/* Two UploadDropZones side by side */}
         <div className="flex flex-col xl:flex-row gap-8">
           <div className="flex-1">
             <UploadDropZone />
