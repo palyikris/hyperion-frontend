@@ -1,19 +1,44 @@
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import { SignupForm } from "../components/features/auth/SignupForm";
 import { Title } from "../components/shared/Title";
 import { ScrollReveal } from "../components/shared/animation/ScrollReveal";
 
 export const SignupPage = () => {
   const { t } = useTranslation();
+  const [isImgLoading, setIsImgLoading] = useState(true);
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row relative bg-hyperion-cream overflow-hidden">
       {/* Left Column: Stylized Scene */}
-      <div className="hidden lg:flex lg:w-4/7 xl:w-4/6 relative overflow-hidden bg-gradient-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
+      <div className="hidden lg:flex lg:w-4/7 xl:w-4/6 relative overflow-hidden bg-linear-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
+        {/* Loader overlay */}
+        {isImgLoading && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-hyperion-deep-sea/80 transition-opacity duration-700">
+            <div className="relative flex flex-col items-center">
+              <div
+                className="w-24 h-24 border-2 border-dashed border-hyperion-sage-mint/40 rounded-full animate-spin mb-6"
+                style={{ animationDuration: "2.5s" }}
+              />
+              <div
+                className="w-32 h-32 bg-hyperion-forest/20 animate-pulse-blob"
+                style={{ borderRadius: "42% 58% 70% 30% / 45% 45% 55% 55%" }}
+              />
+            </div>
+            <span className="mt-6 text-hyperion-sage-mint font-bold text-xs tracking-[0.5em]">
+              {t("loading.status.lookingForTrash", "LOADING...")}
+            </span>
+          </div>
+        )}
         <img
           src="/forest.png"
           alt={t("signup.page.authImageAlt")}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 "
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full object-cover z-10 transition-opacity duration-700 ${isImgLoading ? "opacity-0" : "opacity-100"}`}
+          onLoad={() => setIsImgLoading(false)}
+          style={{
+            filter: isImgLoading ? "blur(12px)" : "none",
+            transition: "opacity 0.7s, filter 0.7s",
+          }}
         />
         <div
           className="w-3/4 h-2/3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-hyperion-forest/40"
@@ -34,6 +59,14 @@ export const SignupPage = () => {
             ></path>
           </svg>
         </div>
+        {/* Loader blob animation keyframes */}
+        <style>{`
+          @keyframes pulse-blob {
+            0%, 100% { transform: scale(1); border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
+            50% { transform: scale(1.03); border-radius: 50% 50% 60% 40% / 50% 50% 50% 50%; }
+          }
+          .animate-pulse-blob { animation: pulse-blob 6s ease-in-out infinite; }
+        `}</style>
       </div>
 
       {/* Right Column: Login Card */}
@@ -44,7 +77,7 @@ export const SignupPage = () => {
             alt={t("signup.page.authImageAlt")}
             className="h-full w-full object-cover opacity-25"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-hyperion-deep-sea/35 via-hyperion-forest/10 to-hyperion-cream/90" />
+          <div className="absolute inset-0 bg-linear-to-b from-hyperion-deep-sea/35 via-hyperion-forest/10 to-hyperion-cream/90" />
         </div>
         <div className="w-full max-w-md md:max-w-lg z-10 lg:pr-4 flex justify-center items-center flex-col">
           <div className="w-full flex justify-center items-center flex-col text-center">
