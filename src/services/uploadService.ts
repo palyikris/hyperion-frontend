@@ -5,7 +5,7 @@ import imageCompression from "browser-image-compression";
 import { toastService } from "./toastService";
 import i18n from "i18next";
 
-const CHUNK_SIZE = 5 * 1024 * 1024;
+const CHUNK_SIZE = 2 * 1024 * 1024;
 
 export const uploadService = {
   uploadFiles: async (
@@ -73,6 +73,41 @@ export const uploadService = {
   ) => {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     let mediaId: string | null = null;
+    const CONCURRENCY = 4;
+    const MAX_RETRIES = 2;
+    let completedChunks = 0;
+    let hasError = false;
+
+    const uploadChunk = async (i: number, retries = 0): Promise<void> => {
+      if (signal?.aborted) throw new axios.Cancel("Upload cancelled by user");
+      const start = i * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+      const chunkForm = new FormData();
+      chunkForm.append("chunk_index", i.toString());
+      chunkForm.append("chunk", chunk);
+      try {
+        await api.post(`/upload/video/chunk/${mediaId}`, chunkForm, {
+          headers: { "Content-Type": "multipart/form-data" },
+          signal,
+        });
+        completedChunks++;
+        if (onProgress) {
+          const percentCompleted = Math.round(
+            (completedChunks / totalChunks) * 100,
+          );
+          onProgress(percentCompleted);
+        }
+      } catch (err) {
+        if (signal?.aborted) throw new axios.Cancel("Upload cancelled by user");
+        if (retries < MAX_RETRIES) {
+          return uploadChunk(i, retries + 1);
+        } else {
+          hasError = true;
+          throw err;
+        }
+      }
+    };
 
     try {
       const initForm = new FormData();
@@ -86,31 +121,30 @@ export const uploadService = {
       });
 
       mediaId = initResponse.data.media_id;
-
       if (!mediaId)
         throw new Error("Failed to get media_id from init endpoint");
 
-      for (let i = 0; i < totalChunks; i++) {
-        if (signal?.aborted) {
-          throw new axios.Cancel("Upload cancelled by user");
+      const chunkIndexes = Array.from({ length: totalChunks }, (_, i) => i);
+
+      // Queue for parallel uploads
+      let current = 0;
+      const runNext = async (): Promise<void> => {
+        if (hasError || current >= chunkIndexes.length) return;
+        const idx = current++;
+        await uploadChunk(chunkIndexes[idx]);
+        if (!hasError && current < chunkIndexes.length) {
+          return runNext();
         }
+      };
 
-        const start = i * CHUNK_SIZE;
-        const end = Math.min(start + CHUNK_SIZE, file.size);
-        const chunk = file.slice(start, end);
+      // Start up to CONCURRENCY parallel uploads
+      const runners = Array.from(
+        { length: Math.min(CONCURRENCY, totalChunks) },
+        () => runNext(),
+      );
+      await Promise.all(runners);
 
-        const chunkForm = new FormData();
-        chunkForm.append("chunk_index", i.toString());
-        chunkForm.append("chunk", chunk);
-
-        await api.post(`/upload/video/chunk/${mediaId}`, chunkForm, {
-          headers: { "Content-Type": "multipart/form-data" },
-          signal,
-        });
-
-        const percentCompleted = Math.round(((i + 1) / totalChunks) * 100);
-        onProgress?.(percentCompleted);
-      }
+      if (hasError) throw new Error("One or more chunks failed to upload");
 
       const completeForm = new FormData();
       completeForm.append("total_chunks", totalChunks.toString());

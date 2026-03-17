@@ -72,10 +72,12 @@ const ImageSection = ({
 
       <StatusBadge status={status} config={config} />
 
-      {!isProcessing && hasImage && (
+      {!isProcessing && (
         <>
           <DeleteButton onDelete={onDelete} />
-          <ZoomButton onZoom={onZoom} onSearchIconClick={onSearchIconClick} />
+          {hasImage && (
+            <ZoomButton onZoom={onZoom} onSearchIconClick={onSearchIconClick} />
+          )}
         </>
       )}
     </div>
