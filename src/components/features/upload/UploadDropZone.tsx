@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MorphBox } from "../../shared/animation/MorphBox";
 import { useUploadFiles } from "../../../hooks/upload/useUploadFiles";
+import { useUploadVideoChunked } from "../../../hooks/upload/useUploadVideoChunked";
 import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
 import { UploadIcon, XIcon } from "lucide-react";
-
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
@@ -42,6 +42,7 @@ const UploadDropZone = ({
   const [isUploading, setIsUploading] = useState(false);
   const { t } = useTranslation();
   const uploadMutation = useUploadFiles();
+  const uploadVideoMutation = useUploadVideoChunked();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -96,70 +97,89 @@ const UploadDropZone = ({
     setIsUploading(true);
     abortControllerRef.current = new AbortController();
 
-    const initialStates: FileUploadState[] = selectedFiles.map((file) => ({
-      file,
-      progress: 0,
-      status: "pending",
-    }));
-    setUploadStates(initialStates);
+    setUploadStates(
+      selectedFiles.map((file) => ({ file, progress: 0, status: "pending" })),
+    );
 
-    try {
-      await uploadMutation.mutateAsync(
-        {
-          files: selectedFiles,
-          signal: abortControllerRef.current.signal,
-          onProgress: (progress: number) => {
-            setUploadStates((prevStates) =>
-              prevStates.map((state) => ({
-                ...state,
-                progress,
-                status: progress < 100 ? "uploading" : "completed",
-              })),
-            );
-          },
-        },
-        {
-          onSuccess: () => {
-            setUploadStates((prevStates) =>
-              prevStates.map((state) => ({
-                ...state,
-                status: "completed",
-                progress: 100,
-              })),
-            );
-            setTimeout(() => {
-              setSelectedFiles([]);
-              setUploadStates([]);
-              setIsUploading(false);
-              abortControllerRef.current = null;
-            }, 1500);
-          },
-          onError: (error) => {
-            // Don't show error if it was cancelled
-            if (error instanceof Error && error.name === "CanceledError") {
-              return;
-            }
-            setUploadStates((prevStates) =>
-              prevStates.map((state) => ({
-                ...state,
-                status: "error",
-                error: error instanceof Error ? error.message : "Upload failed",
-              })),
-            );
-            setIsUploading(false);
-            abortControllerRef.current = null;
-          },
-        },
+    const isSingleVideo =
+      selectedFiles.length === 1 && selectedFiles[0].type.startsWith("video/");
+
+    // Common progress handler
+    const handleProgress = (progress: number) => {
+      setUploadStates((prevStates) =>
+        prevStates.map((state) => ({
+          ...state,
+          progress,
+          status: progress < 100 ? "uploading" : "completed",
+        })),
       );
-    } catch (error) {
-      // Don't show error if it was cancelled
-      if (error instanceof Error && error.name === "CanceledError") {
-        return;
-      }
-      console.error("Upload error:", error);
-      toastService.error(t("upload.errors.general"));
+    };
+
+    // Common success handler
+    const handleSuccess = () => {
+      setUploadStates((prevStates) =>
+        prevStates.map((state) => ({
+          ...state,
+          status: "completed",
+          progress: 100,
+        })),
+      );
+      setTimeout(() => {
+        setSelectedFiles([]);
+        setUploadStates([]);
+        setIsUploading(false);
+        abortControllerRef.current = null;
+      }, 1500);
+    };
+
+    // Common error handler
+    const handleError = (error: unknown) => {
+      if (error instanceof Error && error.name === "CanceledError") return;
+      setUploadStates((prevStates) =>
+        prevStates.map((state) => ({
+          ...state,
+          status: "error",
+          error: error instanceof Error ? error.message : "Upload failed",
+        })),
+      );
       setIsUploading(false);
       abortControllerRef.current = null;
+    };
+
+    try {
+      if (isSingleVideo) {
+        // Video upload (chunked)
+        await uploadVideoMutation.mutateAsync(
+          {
+            file: selectedFiles[0],
+            signal: abortControllerRef.current.signal,
+            onProgress: handleProgress,
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        );
+      } else {
+        // Image/files upload
+        await uploadMutation.mutateAsync(
+          {
+            files: selectedFiles,
+            signal: abortControllerRef.current.signal,
+            onProgress: handleProgress,
+          },
+          {
+            onSuccess: handleSuccess,
+            onError: handleError,
+          },
+        );
+      }
+    } catch (error) {
+      handleError(error);
+      if (!(error instanceof Error && error.name === "CanceledError")) {
+        console.error("Upload error:", error);
+        toastService.error(t("upload.errors.general"));
+      }
     }
   };
 
