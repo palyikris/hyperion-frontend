@@ -74,28 +74,28 @@ const MapLayerRenderer: React.FC<MapLayerRendererProps> = ({
               />
             ) : null;
 
-          console.log(
-            "Rendering video detections for media_id:",
-            media_id,
-            detections,
-          );
-          const markers = detections.map((det) => (
-            <Marker
-              key={det.id}
-              position={[det.lat, det.lng]}
-              icon={createMapIcon("READY", true)}
-              eventHandlers={{
-                click: () =>
-                  onMarkerClick({
-                    ...convertMediaResponseToMapItem(det.media),
-                    image_url: det.image_url,
-                    filename: det.media.initial_metadata?.filename as
-                      | string
-                      | undefined,
-                  }),
-              }}
-            />
-          ));
+          const markers = detections.map((det) => {
+            console.log("Rendering marker for detection:", det, det.address);
+
+            return (
+              <Marker
+                key={det.id}
+                position={[det.lat, det.lng]}
+                icon={createMapIcon("READY", true)}
+                eventHandlers={{
+                  click: () =>
+                    onMarkerClick({
+                      ...convertMediaResponseToMapItem(det.media),
+                      image_url: det.image_url,
+                      filename: det.media.initial_metadata?.filename as
+                        | string
+                        | undefined,
+                      address: det.address || undefined,
+                    }),
+                }}
+              />
+            );
+          });
           return [polyline, ...markers];
         })}
       </MarkerClusterGroup>
