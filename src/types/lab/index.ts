@@ -40,3 +40,19 @@ export interface MediaPatchRequest {
   address?: string;
   detections?: DetectionInput[];
 }
+
+
+export interface VideoDetection {
+  id: string;
+  media_id: string;
+  lat: number;
+  lng: number;
+  altitude: number;
+  address?: string | null;
+  label: string;
+  confidence: number;
+  bbox: Record<string, number>;
+  timestamp_in_video: number; // seconds
+  image_url: string;
+  media: MediaResponse;
+}

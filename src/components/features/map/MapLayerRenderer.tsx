@@ -1,11 +1,16 @@
 import React from "react";
-import { Marker, Popup, Rectangle } from "react-leaflet";
+import { Marker, Popup, Rectangle, Polyline } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import type { DivIcon } from "leaflet";
+import type { DivIcon, LatLngExpression } from "leaflet";
 
 import HeatmapLayer from "./HeatmapLayer";
 import GridPopup from "./GridPopup";
-import type { GridCell, MapItem } from "../../../types/map";
+import {
+  convertMediaResponseToMapItem,
+  type GridCell,
+  type MapItem,
+} from "../../../types/map";
+import type { VideoDetection } from "../../../types/lab";
 
 type ViewMode = "markers" | "heatmap" | "grid";
 
@@ -16,6 +21,9 @@ type Cluster = {
 type MapLayerRendererProps = {
   viewMode: ViewMode;
   items: MapItem[];
+  video_detections: {
+    [media_id: string]: VideoDetection[];
+  };
   heatmapPoints: [number, number, number][];
   gridCells: GridCell[];
   maxGridCount: number;
@@ -28,6 +36,7 @@ type MapLayerRendererProps = {
 const MapLayerRenderer: React.FC<MapLayerRendererProps> = ({
   viewMode,
   items,
+  video_detections,
   heatmapPoints,
   gridCells,
   maxGridCount,
@@ -49,6 +58,46 @@ const MapLayerRenderer: React.FC<MapLayerRendererProps> = ({
             }}
           />
         ))}
+
+        {Object.entries(video_detections).flatMap(([media_id, detections]) => {
+          const positions = detections.map((det) => [
+            parseFloat(det.lat as unknown as string),
+            parseFloat(det.lng as unknown as string),
+          ]);
+
+          const polyline =
+            positions.length > 1 ? (
+              <Polyline
+                key={`polyline-${media_id}`}
+                positions={positions as unknown as LatLngExpression[]}
+                pathOptions={{ color: "#1A5F54", weight: 2 }}
+              />
+            ) : null;
+
+          console.log(
+            "Rendering video detections for media_id:",
+            media_id,
+            detections,
+          );
+          const markers = detections.map((det) => (
+            <Marker
+              key={det.id}
+              position={[det.lat, det.lng]}
+              icon={createMapIcon("READY", true)}
+              eventHandlers={{
+                click: () =>
+                  onMarkerClick({
+                    ...convertMediaResponseToMapItem(det.media),
+                    image_url: det.image_url,
+                    filename: det.media.initial_metadata?.filename as
+                      | string
+                      | undefined,
+                  }),
+              }}
+            />
+          ));
+          return [polyline, ...markers];
+        })}
       </MarkerClusterGroup>
     );
   }

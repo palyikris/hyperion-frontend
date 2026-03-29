@@ -1,4 +1,4 @@
-import type { Detection } from "../lab";
+import type { Detection, MediaResponse, VideoDetection } from "../lab";
 
 export interface MapMediaLog {
   action: string;
@@ -29,8 +29,28 @@ export interface MapItem {
   detections: Detection[];
 }
 
+export const convertMediaResponseToMapItem = (
+  media: MediaResponse,
+): MapItem => ({
+  id: media.id,
+  status: media.status,
+  failed_reason: media.failed_reason,
+  worker_name: media.assigned_worker,
+  lat: media.lat || 0,
+  lng: media.lng || 0,
+  altitude: media.altitude,
+  address: media.address,
+  image_url: media.hf_path,
+  has_trash: media.has_trash || false,
+  confidence: media.confidence || 0,
+  detections: media.detections || [],
+});
+
 export interface MapResponse {
   items: MapItem[];
+  video_detections: {
+    [media_id: string]: VideoDetection[];
+  };
   total: number;
 }
 

@@ -58,6 +58,7 @@ export const MapPage: React.FC = () => {
 
   if (isLoading && !data) return <LoadingScreen />;
 
+
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden">
       <MapFloatingControls
@@ -119,6 +120,7 @@ export const MapPage: React.FC = () => {
         <MapLayerRenderer
           viewMode={viewMode}
           items={data?.items ?? []}
+          video_detections={data?.video_detections || {}}
           heatmapPoints={heatmapPoints}
           gridCells={gridCells}
           maxGridCount={maxGridCount}
