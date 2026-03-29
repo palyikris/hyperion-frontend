@@ -34,24 +34,30 @@ export function useMapPageState() {
 
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("markers");
-  const [viewportState, setViewportState] = useState<ViewportState | null>(null);
+  const [viewportState, setViewportState] = useState<ViewportState | null>(
+    null,
+  );
   const [showLayerTransition, setShowLayerTransition] = useState(false);
   const [initialCenter] = useState<[number, number]>(() =>
-    storedViewport ? [storedViewport.lat, storedViewport.lng] : DEFAULT_MAP_CENTER,
+    storedViewport
+      ? [storedViewport.lat, storedViewport.lng]
+      : DEFAULT_MAP_CENTER,
   );
   const [initialZoom] = useState<number>(
     () => storedViewport?.zoom ?? DEFAULT_MAP_ZOOM,
   );
 
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(
-    null,
-  );
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [locating, setLocating] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MapItem | null>(null);
-  const [zoomedImage, setZoomedImage] = useState<{ id: string; url: string } | null>(
-    null,
-  );
+  const [zoomedImage, setZoomedImage] = useState<{
+    id: string;
+    url: string;
+  } | null>(null);
   const [lastTransitionDataUpdatedAt, setLastTransitionDataUpdatedAt] =
     useState(0);
 
@@ -61,21 +67,66 @@ export function useMapPageState() {
   const { data, isLoading, isFetching, isError, dataUpdatedAt } =
     useMapData(debouncedFilters);
 
-  const heatmapPoints = useMemo(
-    () =>
-      (data?.items ?? []).map(
-        (item) =>
-          [item.lat, item.lng, item.has_trash ? 1 : 0.45] as [
-            number,
-            number,
-            number,
-          ],
-      ),
-    [data?.items],
-  );
+  const heatmapPoints = useMemo(() => {
+    const itemPoints = (data?.items ?? []).map(
+      (item) =>
+        [item.lat, item.lng, item.has_trash ? 1 : 0.45] as [
+          number,
+          number,
+          number,
+        ],
+    );
+    const detectionPoints = data?.video_detections
+      ? Object.values(data.video_detections)
+          .flat()
+          .map(
+            (det) =>
+              [
+                typeof det.lat === "string"
+                  ? parseFloat(det.lat as unknown as string)
+                  : det.lat,
+                typeof det.lng === "string"
+                  ? parseFloat(det.lng as unknown as string)
+                  : det.lng,
+                1,
+              ] as [number, number, number],
+          )
+      : [];
+    return [...itemPoints, ...detectionPoints];
+  }, [data]);
+
+  // merge items and video detections for grid cell calculation
+  const mergedItems = useMemo(() => {
+    const items = data?.items ?? [];
+    const detections = data?.video_detections
+      ? Object.values(data.video_detections)
+          .flat()
+          .map((det) => ({
+            id: det.id,
+            lat:
+              typeof det.lat === "string"
+                ? parseFloat(det.lat as unknown as string)
+                : det.lat,
+            lng:
+              typeof det.lng === "string"
+                ? parseFloat(det.lng as unknown as string)
+                : det.lng,
+            has_trash: true,
+            status: "READY",
+            confidence: det.confidence ?? 1,
+            image_url: det.image_url,
+            address: det.address || undefined,
+            filename: det.media?.initial_metadata?.filename as
+              | string
+              | undefined,
+            detections: [det],
+          }))
+      : [];
+    return [...items, ...detections];
+  }, [data]);
 
   const gridCells = useMapGrid({
-    items: data?.items ?? [],
+    items: mergedItems,
     zoom: debouncedViewport?.zoom ?? DEFAULT_MAP_ZOOM,
     bounds: debouncedViewport?.bounds ?? null,
   });
