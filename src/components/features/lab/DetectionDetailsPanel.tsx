@@ -91,7 +91,7 @@ const DetectionDetailsPanel = ({
               id={`area-${detection.id}`}
               placeholder=""
               inputProps={{
-                value: detection.area_sqm.toFixed(2),
+                value: detection.area_sqm ? detection.area_sqm.toFixed(2) : 0,
                 disabled: true,
               }}
             />
