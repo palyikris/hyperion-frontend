@@ -601,7 +601,9 @@
       "altitudeLabel": "Magasság",
       "altitudePlaceholder": "Adj meg magasságot...",
       "save": "Metaadatok mentése",
-      "reset": "Visszaállítás"
+      "reset": "Visszaállítás",
+      "add_detection": "Detektálás hozzáadása",
+      "delete_selected": "Törlés"
     },
     "detections": {
       "confidence": {

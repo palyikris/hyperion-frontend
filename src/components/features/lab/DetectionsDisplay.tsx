@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Save, RotateCcw, PlusSquare } from "lucide-react";
+import { Save, RotateCcw, PlusSquare, Trash2 } from "lucide-react";
 import { getFullResUrl, getMediaAssetUrl } from "../../../utils/imageUtils";
 import type { Detection, MediaPatchRequest } from "../../../types/lab";
 import DetectionsStage from "./DetectionsStage";
@@ -39,20 +39,15 @@ const DetectionsDisplay = ({
   const updateMediaMutation = useUpdateMedia();
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [hiddenDetections, setHiddenDetections] = useState<
-    Record<string, boolean>
-  >({});
-  const [bboxOverrides, setBboxOverrides] = useState<
-    Record<string, NormalizedBBox>
-  >({});
-  const [labelOverrides, setLabelOverrides] = useState<Record<string, string>>(
-    {},
-  );
-
-  // New States for Drawing Mode
+  const [hiddenDetections, setHiddenDetections] = useState<Record<string, boolean>>({});
+  const [bboxOverrides, setBboxOverrides] = useState<Record<string, NormalizedBBox>>({});
+  const [labelOverrides, setLabelOverrides] = useState<Record<string, string>>({});
+  
+  // States for Drawing & Deleting Mode
   const [newDetections, setNewDetections] = useState<Detection[]>([]);
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [isDrawingMode, setIsDrawingMode] = useState(false);
-
+  
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confidenceThreshold, setConfidenceThreshold] = useState(0);
 
@@ -64,6 +59,7 @@ const DetectionsDisplay = ({
     return [...detections, ...newDetections];
   }, [detections, newDetections]);
 
+  // Keep original indices intact to prevent key-shifting bugs
   const keyedDetections = useMemo<KeyedDetection[]>(() => {
     return allDetections.map((det, originalIndex) => {
       const key = `${det.id}-${originalIndex}`;
@@ -76,22 +72,25 @@ const DetectionsDisplay = ({
     });
   }, [allDetections, bboxOverrides]);
 
+  // Filter out deleted items and items below confidence threshold
   const filteredDetections = useMemo<KeyedDetection[]>(() => {
     return keyedDetections.filter(
-      ({ detection }) => detection.confidence >= confidenceThreshold / 100,
+      ({ detection }) => 
+        detection.confidence >= confidenceThreshold / 100 &&
+        !deletedIds.has(detection.id)
     );
-  }, [keyedDetections, confidenceThreshold]);
+  }, [keyedDetections, confidenceThreshold, deletedIds]);
 
   const selectedDetection = useMemo(() => {
     if (!selectedId) return null;
-    const selected = keyedDetections.find((item) => item.key === selectedId);
+    const selected = filteredDetections.find((item) => item.key === selectedId);
     return selected
       ? {
           detection: selected.detection,
           index: selected.originalIndex,
         }
       : null;
-  }, [selectedId, keyedDetections]);
+  }, [selectedId, filteredDetections]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -105,34 +104,69 @@ const DetectionsDisplay = ({
     return () => observer.disconnect();
   }, []);
 
+  // Keyboard shortcut for deleting a detection
+  const handleDeleteSelected = useCallback(() => {
+    if (!selectedId) return;
+    const item = keyedDetections.find((d) => d.key === selectedId);
+    if (!item) return;
+
+    setDeletedIds((prev) => new Set(prev).add(item.detection.id));
+    setSelectedId(null);
+  }, [selectedId, keyedDetections]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Backspace" || e.key === "Delete") {
+        // Prevent deletion if user is typing in an input inside the details panel
+        const active = document.activeElement;
+        if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) {
+          return;
+        }
+        if (selectedId) {
+          handleDeleteSelected();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedId, handleDeleteSelected]);
+
   const isImageTransparent = useMemo(() => {
     return filteredDetections.some((item) => !hiddenDetections[item.key]);
   }, [filteredDetections, hiddenDetections]);
 
-  // Track if detections have been modified (or if new ones were added)
+  // Track if detections have been modified
   const hasDirtyDetections = useMemo(() => {
-    return (
-      Object.keys(bboxOverrides).length > 0 ||
-      Object.keys(labelOverrides).length > 0 ||
-      newDetections.length > 0
-    );
-  }, [bboxOverrides, labelOverrides, newDetections]);
+    return Object.keys(bboxOverrides).length > 0 || 
+           Object.keys(labelOverrides).length > 0 || 
+           newDetections.length > 0 ||
+           deletedIds.size > 0;
+  }, [bboxOverrides, labelOverrides, newDetections, deletedIds]);
 
   const handleSaveDetections = async () => {
     if (!mediaId || !hasDirtyDetections) return;
 
-    // Send the combined list of all updated/new detections
-    const updatedDetections = allDetections.map((det, index) => {
-      const key = `${det.id}-${index}`;
-      const bboxOverride = bboxOverrides[key];
-      const labelOverride = labelOverrides[key];
+    // Build the final array: apply overrides, filter out deleted, strip internal IDs
+    const updatedDetections = allDetections
+      .map((det, index) => {
+        const key = `${det.id}-${index}`;
+        const bboxOverride = bboxOverrides[key];
+        const labelOverride = labelOverrides[key];
 
-      return {
-        label: labelOverride || det.label,
-        bbox: bboxOverride || det.bbox,
+        return {
+          id: det.id,
+          label: labelOverride || det.label,
+          bbox: bboxOverride || det.bbox,
+          area_sqm: det.area_sqm,
+        };
+      })
+      .filter((det) => !deletedIds.has(det.id))
+      .map((det) => ({
+        label: det.label,
+        bbox: det.bbox,
         area_sqm: det.area_sqm,
-      };
-    });
+      }));
 
     const patchData: MediaPatchRequest = {
       detections: updatedDetections,
@@ -145,7 +179,8 @@ const DetectionsDisplay = ({
 
     setBboxOverrides({});
     setLabelOverrides({});
-    setNewDetections([]); // Cleared because the mutation syncs the updated backend list
+    setNewDetections([]);
+    setDeletedIds(new Set());
     setIsDrawingMode(false);
   };
 
@@ -153,6 +188,7 @@ const DetectionsDisplay = ({
     setBboxOverrides({});
     setLabelOverrides({});
     setNewDetections([]);
+    setDeletedIds(new Set());
     setSelectedId(null);
     setIsDrawingMode(false);
   };
@@ -164,11 +200,10 @@ const DetectionsDisplay = ({
       confidence: 1.0,
       bbox,
     };
-
+    
     setNewDetections((prev) => [...prev, newDet]);
-    setIsDrawingMode(false); // Snap out of draw mode after creating one
+    setIsDrawingMode(false);
 
-    // Automatically select the new detection so the user can easily rename it
     const newIndex = allDetections.length;
     setSelectedId(`${newDet.id}-${newIndex}`);
   };
@@ -263,7 +298,7 @@ const DetectionsDisplay = ({
         <ConfidenceFilter
           confidenceThreshold={confidenceThreshold}
           filteredCount={filteredDetections.length}
-          totalCount={allDetections.length}
+          totalCount={allDetections.filter((d) => !deletedIds.has(d.id)).length}
           onChange={setConfidenceThreshold}
         />
 
@@ -299,12 +334,26 @@ const DetectionsDisplay = ({
               : t("lab.form.add_detection", "Add Detection")
           }
           icon={!isDrawingMode && <PlusSquare className="h-4 w-4 text-white" />}
+          className="px-6"
           onClick={() => {
             setIsDrawingMode(!isDrawingMode);
             setSelectedId(null);
           }}
-          className={`px-6 ${isDrawingMode ? "bg-amber-600 hover:bg-amber-700 text-white" : ""}`}
         />
+
+        {selectedId && !isDrawingMode && (
+          <Button
+            type="button"
+            text={t("lab.form.delete_selected", "Delete")}
+            icon={<Trash2 className="h-4 w-4 text-white" />}
+            onClick={handleDeleteSelected}
+            className="px-6"
+            theme="danger"
+          />
+        )}
+
+        <div className="flex-grow"></div>
+
         <Button
           type="button"
           text={

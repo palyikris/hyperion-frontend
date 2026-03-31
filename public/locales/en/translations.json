@@ -601,7 +601,9 @@
       "altitudeLabel": "Altitude",
       "altitudePlaceholder": "Enter altitude...",
       "save": "Save metadata",
-      "reset": "Reset"
+      "reset": "Reset",
+      "add_detection": "Add Detection",
+      "delete_selected": "Delete"
     },
     "detections": {
       "confidence": {
