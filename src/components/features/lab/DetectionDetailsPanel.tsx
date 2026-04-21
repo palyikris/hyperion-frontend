@@ -83,7 +83,7 @@ const DetectionDetailsPanel = ({
           />
 
           {/* Area */}
-          {detection.area_sqm !== undefined && (
+          {detection.area_sqm != null && (
             <InputField
               label={t("lab.detections.panel.area", "Estimated area (m2)")}
               icon={Maximize}
@@ -91,7 +91,7 @@ const DetectionDetailsPanel = ({
               id={`area-${detection.id}`}
               placeholder=""
               inputProps={{
-                value: detection.area_sqm ? detection.area_sqm.toFixed(2) : 0,
+                value: detection.area_sqm.toFixed(2),
                 disabled: true,
               }}
             />
