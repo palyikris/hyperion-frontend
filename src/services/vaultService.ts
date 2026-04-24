@@ -1,4 +1,5 @@
 import { api } from "../api/axiosInstance";
+import type { VideoDetectionResponse } from "../types/lab";
 import type { GalleryItem, CardStatus } from "../types/upload";
 
 export interface VaultParams {
@@ -18,7 +19,8 @@ export const vaultService = {
     page: number;
     page_size: number;
     total_pages: number;
-    items: GalleryItem[];
+    image_items: GalleryItem[];
+    video_items: VideoDetectionResponse[];
   }> => {
     const { data } = await api.get("/vault", { params });
     return data;

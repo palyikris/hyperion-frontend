@@ -20,19 +20,21 @@ export type RecentMediaItem = GalleryItem;
 
 export type GalleryItem = {
   id: string;
-  filename: string;
-  image_url: string;
-  status: CardStatus;
-  failed_reason?: string;
-  gpsCoordinates?: string;
-  timestamp: string;
-  metadata: GalleryItemMetadata;
-  assigned_worker?: string;
+  uploader_id: string;
+  status: string;
+  hf_path: string;
+  initial_metadata?: Record<string, unknown>;
   technical_metadata?: GalleryItemTechnicalMetadata;
+  assigned_worker?: string;
+  created_at: string;
+  updated_at: string;
   lat?: number;
   lng?: number;
   altitude?: number;
   address?: string;
+  has_trash?: boolean;
+  confidence?: number;
+  failed_reason?: string;
 };
 
 export interface GalleryItemMetadata {
