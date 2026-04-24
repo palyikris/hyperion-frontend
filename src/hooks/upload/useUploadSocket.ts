@@ -27,7 +27,7 @@ export const useUploadSocket = () => {
                       update.status === "FAILED"
                         ? (update.failed_reason ?? item.failed_reason)
                         : undefined,
-                    image_url: update.image_url ?? item.image_url,
+                    image_url: update.image_url ?? item.hf_path,
                   }
                 : item,
             ),
@@ -54,7 +54,7 @@ export const useUploadSocket = () => {
                           update.status === "FAILED"
                             ? (update.failed_reason ?? item.failed_reason)
                             : undefined,
-                        image_url: update.image_url ?? item.image_url,
+                        image_url: update.image_url ?? item.hf_path,
                         assigned_worker: update.worker ?? item.assigned_worker,
                         address: update.address ?? item.address,
                       }
