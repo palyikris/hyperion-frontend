@@ -1,72 +1,59 @@
 # Hyperion Frontend
 
-Hyperion Frontend is a React + TypeScript SPA for an environmental monitoring platform. It provides authenticated operator workflows for dashboard monitoring, geospatial review, upload processing, and media vault management.
+A high-performance, AI-driven geospatial monitoring and analytics dashboard built with **React**, **TypeScript**, and **Tailwind CSS**. Hyperion provides a sophisticated interface for visualizing environmental data, managing AI-driven object detection workflows, and monitoring system health in real-time.
 
-## Current status
+## 🚀 Key Features
 
-Implemented:
+### 🗺️ Advanced Geospatial Visualization
+- **Interactive Map Engine**: Built with **React-Leaflet**, supporting high-density data visualization through multiple view modes.
+- **Dynamic View Modes**: Toggle between individual markers, clustered grids, and intensity-based heatmaps to analyze data distribution.
+- **Real-time Search & Filtering**: Integrated address/city search and advanced filters for trash detection presence, confidence levels, and date ranges.
+- **User Location Support**: Permission-based geolocation to center the map on the user's current position.
 
-- Authentication (`/login`, `/signup`)
-- Dashboard (`/dashboard`)
-- Map (`/map`)
-- Upload (`/upload`)
-- Vault (`/vault`)
-- Settings (`/settings`)
-- Stats (`/stats`)
+### 🔬 AI Validation Lab (Human-in-the-Loop)
+- **High-Precision Review**: A dedicated environment for human operators to validate AI-generated detections.
+- **Zoom & Pan Interaction**: Custom-built zoomable image container for detailed inspection of high-resolution media.
+- **Detection Management**: Add, remove, or modify bounding boxes and labels with automatic synchronization to the backend.
+- **Geospatial Correction**: Integrated Mini-Map for manual coordinate adjustments and reverse geocoding verification.
 
-Placeholders:
+### 📊 Comprehensive Analytics Dashboard
+- **KPI Visualization**: Real-time charts powered by **Recharts**, including trash composition (Pie charts), environmental footprint (Area charts), and temporal trends.
+- **AI Fleet Metrics**: Detailed performance analysis of the AI worker fleet, measuring processing efficiency and success rates.
+- **Personalized Insights**: "Fun Fact" boxes providing bilingual, data-driven highlights of environmental impact.
+- **Export Capabilities**: Generate and download localized PDF reports and Excel cleanup manifests directly from the UI.
 
-- Lab (`/lab/:id`)
+### ☁️ Intelligent Media Management
+- **Batch Upload**: Multi-file drag-and-drop interface with automatic dimension and metadata extraction.
+- **Real-time Feedback**: **WebSocket-driven** status updates (PENDING → PROCESSING → READY) with live progress tracking for every media item.
+- **Personal Vault**: A robust media library with server-side pagination, advanced sorting, and bulk deletion capabilities.
 
-## Features
+### 🖥️ System Health & Monitoring
+- **Fleet Overview**: Live monitoring of the 10 AI workers, displaying current tasks and daily processing loads.
+- **Hardware Telemetry**: Visualized CPU and Memory metrics with 7-day historical load analysis.
+- **UX Metrics**: Active user session tracking and response time analysis for platform performance auditing.
 
-- Authenticated app shell with route protection
-- Dashboard cards for system health, UX pulse, AI workers, and quick navigation
-- Map analysis with:
-  - marker clustering
-  - heatmap + grid overlays
-  - map-bounds capture into API filters
-  - confidence + `has_trash` filtering
-  - marker detail sidebar + processing logs
-  - map viewport persistence in localStorage
-- Upload flow with drag-and-drop, multi-file support, cancelable uploads, and progress bars
-- Client-side image compression before upload (`browser-image-compression`)
-- Live upload/vault status refresh via WebSocket updates
-- Vault search, status filter, sort direction, pagination, delete one, and delete all
-- Stats analytics with:
-  - environmental footprint, hotspot density, mean time to process, temporal trends, trash composition, AI fleet efficiency
-  - temporal trend ranges (`7`, `30`, `90` days)
-  - summary refresh action
-  - localized fun facts (`en`/`hu`)
-  - cleanup manifest export (`.xlsx`) and PDF report export (`.pdf`)
-- i18n with English/Hungarian translations from `public/locales`
+## 🛠️ Technical Stack
 
-## Tech stack
+- **Framework**: [React 18](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [Framer Motion](https://www.framer.com/motion/) (Fluid animations)
+- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) + [TanStack Query v5](https://tanstack.com/query/latest)
+- **Maps**: [Leaflet](https://leafletjs.com/) + [React-Leaflet](https://react-leaflet.js.org/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Localization**: [i18next](https://www.i18next.com/) (Full EN/HU support)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-- React 19 + TypeScript
-- Vite 7
-- React Router 7
-- TanStack Query
-- React Hook Form + Zod
-- i18next + http-backend + language detector
-- Tailwind CSS 4
-- Axios
-- Leaflet + React Leaflet + clustering + heat layer
-- Recharts
-- Motion (`motion`)
-- Sonner
+## 🏗️ Architecture Highlights
 
-## Prerequisites
+- **Custom Hooks Logic**: Business logic is decoupled from UI components using specialized hooks (e.g., `useMapPageState`, `useUploadSocket`).
+- **Web Workers**: Offloads intensive geospatial calculations (like grid bucketing) to background threads for stutter-free performance.
+- **Atmospheric UI**: Implements a unique "Page Atmosphere" system with dynamic SVG blobs and glassmorphism effects.
+- **Bilingual Core**: Fully internationalized architecture supporting seamless language switching across all dashboards and reports.
 
-- Node.js 20.19+ (recommended for Vite 7)
-- npm
+## 🚦 Getting Started
 
-## Getting started
-
-```bash
-npm install
-npm run dev
-```
+1. **Install Dependencies**:
+   ```bash
+   npm install
 
 Default local URL: `http://localhost:5173`
 
