@@ -1,3 +1,18 @@
+export interface VideoDetectionResponse {
+  id: string;
+  media_id: string;
+  lat?: number;
+  lng?: number;
+  altitude?: number;
+  address?: string;
+  label: string;
+  confidence: number;
+  bbox: Record<string, number>; // {"x", "y", "w", "h"}
+  timestamp_in_video: number; // Seconds
+  frame_hf_path: string;
+  created_at: string; // ISO datetime string
+  area_sqm?: number;
+}
 export interface Detection {
   id: string;
   label: string;
@@ -40,7 +55,6 @@ export interface MediaPatchRequest {
   address?: string;
   detections?: DetectionInput[];
 }
-
 
 export interface VideoDetection {
   id: string;

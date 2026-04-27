@@ -52,7 +52,14 @@ const VaultPage = () => {
   };
 
   const {
-    data = { items: [], total: 0, page: 1, page_size: 20, total_pages: 0 },
+    data = {
+      image_items: [],
+      video_items: [],
+      total: 0,
+      page: 1,
+      page_size: 20,
+      total_pages: 0,
+    },
     isLoading,
   } = useVault({
     search: search || undefined,
@@ -79,14 +86,13 @@ const VaultPage = () => {
     id: string;
     url: string;
   } | null>(null);
-  const items = data.items || [];
 
   const handleCardZoom = (itemId: string, imageUrl: string) => {
     setZoomedImage({ id: itemId, url: imageUrl });
   };
   const handleCloseModal = () => setZoomedImage(null);
 
-  if ((isLoading && !items.length) || deleteAllMutation.isPending) {
+  if ((isLoading && !data.image_items.length) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
   }
 
@@ -97,7 +103,7 @@ const VaultPage = () => {
         <header className="flex flex-col items-start gap-4">
           <div className="w-full flex justify-between items-start">
             <VaultHeader />
-            {items.length > 0 && (
+            {data.image_items.length > 0 && (
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllMutation.isPending || isLoading}
@@ -133,8 +139,12 @@ const VaultPage = () => {
           className="py-6"
         />
 
-        {items.length > 0 ? (
-          <Gallery items={items} onCardZoom={handleCardZoom} />
+        {data.image_items.length > 0 ? (
+          <Gallery
+            items={data.image_items}
+            video_items={data.video_items}
+            onCardZoom={handleCardZoom}
+          />
         ) : (
           <VaultEmptyState />
         )}
@@ -145,7 +155,7 @@ const VaultPage = () => {
           onClose={handleCloseModal}
         />
 
-        {items.length > 0 && (
+        {data.image_items.length > 0 && (
           <VaultPagination
             currentPage={data.page}
             totalPages={data.total_pages}

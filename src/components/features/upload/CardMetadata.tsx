@@ -50,7 +50,7 @@ const CardMetadata = ({
 
         <div className="flex items-center gap-2 text-xs text-hyperion-slate-grey/70">
           <Calendar className="w-4 h-4" />
-          {new Date(timestamp).toISOString().split("T")[0]}
+          {timestamp ? new Date(timestamp).toISOString().split("T")[0] : "N/A"}
         </div>
 
         <div
