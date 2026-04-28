@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Title } from "../components/shared/Title";
 import { useParams } from "react-router-dom";
 import { useGetMedia } from "../hooks/lab/useGetMedia";
+import { useGetVideoMedia } from "./../hooks/lab/useGetVideoMedia";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import MiniMap from "../components/features/lab/MiniMap";
 import LocationForm from "../components/features/lab/LocationForm";
@@ -13,15 +14,41 @@ import {
   type LabMetadataFormData,
 } from "../schemas/lab/media";
 import { useUpdateMedia } from "../hooks/lab/useUpdateMedia";
-import type { MediaPatchRequest } from "../types/lab";
+import type {
+  MediaPatchRequest,
+  MediaResponse,
+  VideoDetectionResponse,
+} from "../types/lab";
 import Divider from "../components/shared/Divider";
 import DetectionsDisplay from "../components/features/lab/DetectionsDisplay";
 import { PageAtmosphere } from "../components/shared/decoration";
 
+type CombinedMediaData = MediaResponse | VideoDetectionResponse;
+
+const useGetCombinedMedia = (id?: string) => {
+  const mediaQuery = useGetMedia(id);
+
+  const noMediaFound =
+    (mediaQuery.isSuccess && !mediaQuery.data) || mediaQuery.isError;
+
+  const videoQuery = useGetVideoMedia(id, {
+    enabled: !!id && noMediaFound,
+  });
+
+  const isPending =
+    mediaQuery.isPending || (noMediaFound && videoQuery.isPending);
+  const data =
+    mediaQuery.data || (videoQuery.data as CombinedMediaData | undefined);
+
+  return { data, isPending };
+};
+
 const LabPage = () => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { data, isPending } = useGetMedia(id);
+
+  const { data, isPending } = useGetCombinedMedia(id);
+
   const updateMediaMutation = useUpdateMedia();
   const metadataSchema = useMemo(() => createLabMetadataSchema(t), [t]);
 
@@ -99,6 +126,22 @@ const LabPage = () => {
     return <LoadingScreen />;
   }
 
+  // --- Normalization Logic for DetectionsDisplay ---
+  // We use the 'in' operator to safely narrow the union type.
+  const displayHfPath = data
+    ? "hf_path" in data
+      ? data.hf_path
+      : data.frame_hf_path
+    : undefined;
+
+  // If it's a standard media response, use its detections array.
+  // If it's a video detection response, wrap the object itself in an array.
+  const displayDetections = data
+    ? "detections" in data
+      ? data.detections
+      : [data]
+    : [];
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="lab" />
@@ -113,8 +156,8 @@ const LabPage = () => {
         <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
           <DetectionsDisplay
             mediaId={id}
-            hfPath={data?.hf_path}
-            detections={data?.detections || []}
+            hfPath={displayHfPath}
+            detections={displayDetections}
           />
           <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
             {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
