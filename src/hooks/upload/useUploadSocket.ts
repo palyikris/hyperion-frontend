@@ -1,7 +1,16 @@
+// src/hooks/upload/useUploadSocket.ts
+
 import { useEffect, useCallback, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { GalleryItem, WSStatusUpdate } from "../../types/upload";
 import { toastService } from "../../services/toastService";
+import type { VideoDetectionResponse } from "../../types/lab";
+
+interface VaultCacheData {
+  total: number;
+  image_items: GalleryItem[];
+  video_items: VideoDetectionResponse[];
+}
 
 export const useUploadSocket = () => {
   const queryClient = useQueryClient();
@@ -14,11 +23,11 @@ export const useUploadSocket = () => {
     (update: WSStatusUpdate) => {
       queryClient.setQueryData(
         ["upload", "recent-gallery"],
-        (oldData: { items: GalleryItem[] } | undefined) => {
-          if (!oldData || !oldData.items) return oldData;
+        (oldData: VaultCacheData | undefined) => {
+          if (!oldData || !oldData.image_items) return oldData;
           return {
             ...oldData,
-            items: oldData.items.map((item) =>
+            image_items: oldData.image_items.map((item) =>
               item.id === update.media_id
                 ? {
                     ...item,
@@ -31,6 +40,7 @@ export const useUploadSocket = () => {
                   }
                 : item,
             ),
+            video_items: oldData.video_items || [],
           };
         },
       );
@@ -41,11 +51,11 @@ export const useUploadSocket = () => {
         .forEach((query) => {
           queryClient.setQueryData(
             query.queryKey,
-            (oldData: { items: GalleryItem[] } | undefined) => {
-              if (!oldData || !oldData.items) return oldData;
+            (oldData: VaultCacheData | undefined) => {
+              if (!oldData || !oldData.image_items) return oldData;
               return {
                 ...oldData,
-                items: oldData.items.map((item) =>
+                image_items: oldData.image_items.map((item) =>
                   item.id === update.media_id
                     ? {
                         ...item,
@@ -60,6 +70,7 @@ export const useUploadSocket = () => {
                       }
                     : item,
                 ),
+                video_items: oldData.video_items || [],
               };
             },
           );
