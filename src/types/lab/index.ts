@@ -54,6 +54,7 @@ export interface MediaPatchRequest {
   altitude?: number;
   address?: string;
   detections?: DetectionInput[];
+  item_type: "image" | "video";
 }
 
 export interface VideoDetection {

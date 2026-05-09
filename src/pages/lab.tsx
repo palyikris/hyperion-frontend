@@ -100,7 +100,9 @@ const LabPage = () => {
       return;
     }
 
-    const patchData: MediaPatchRequest = {};
+    const patchData: MediaPatchRequest = {
+      item_type: "image",
+    };
 
     if (dirtyFields.lat) {
       patchData.lat = formData.lat;
@@ -142,6 +144,12 @@ const LabPage = () => {
       : [data]
     : [];
 
+  const item_type = data
+    ? "detections" in data
+      ? "image"
+      : "video"
+    : undefined;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="lab" />
@@ -158,6 +166,7 @@ const LabPage = () => {
             mediaId={id}
             hfPath={displayHfPath}
             detections={displayDetections}
+            item_type={item_type}
           />
           <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
             {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">

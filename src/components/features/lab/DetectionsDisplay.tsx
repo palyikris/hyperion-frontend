@@ -15,6 +15,7 @@ type DetectionsDisplayProps = {
   mediaId?: string;
   hfPath?: string;
   detections: Detection[];
+  item_type: "image" | "video" | undefined;
 };
 
 type NormalizedBBox = {
@@ -34,20 +35,27 @@ const DetectionsDisplay = ({
   mediaId,
   hfPath,
   detections,
+  item_type,
 }: DetectionsDisplayProps) => {
   const { t } = useTranslation();
   const updateMediaMutation = useUpdateMedia();
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [hiddenDetections, setHiddenDetections] = useState<Record<string, boolean>>({});
-  const [bboxOverrides, setBboxOverrides] = useState<Record<string, NormalizedBBox>>({});
-  const [labelOverrides, setLabelOverrides] = useState<Record<string, string>>({});
-  
+  const [hiddenDetections, setHiddenDetections] = useState<
+    Record<string, boolean>
+  >({});
+  const [bboxOverrides, setBboxOverrides] = useState<
+    Record<string, NormalizedBBox>
+  >({});
+  const [labelOverrides, setLabelOverrides] = useState<Record<string, string>>(
+    {},
+  );
+
   // States for Drawing & Deleting Mode
   const [newDetections, setNewDetections] = useState<Detection[]>([]);
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [isDrawingMode, setIsDrawingMode] = useState(false);
-  
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confidenceThreshold, setConfidenceThreshold] = useState(0);
 
@@ -75,9 +83,9 @@ const DetectionsDisplay = ({
   // Filter out deleted items and items below confidence threshold
   const filteredDetections = useMemo<KeyedDetection[]>(() => {
     return keyedDetections.filter(
-      ({ detection }) => 
+      ({ detection }) =>
         detection.confidence >= confidenceThreshold / 100 &&
-        !deletedIds.has(detection.id)
+        !deletedIds.has(detection.id),
     );
   }, [keyedDetections, confidenceThreshold, deletedIds]);
 
@@ -119,7 +127,10 @@ const DetectionsDisplay = ({
       if (e.key === "Backspace" || e.key === "Delete") {
         // Prevent deletion if user is typing in an input inside the details panel
         const active = document.activeElement;
-        if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA")) {
+        if (
+          active &&
+          (active.tagName === "INPUT" || active.tagName === "TEXTAREA")
+        ) {
           return;
         }
         if (selectedId) {
@@ -138,10 +149,12 @@ const DetectionsDisplay = ({
 
   // Track if detections have been modified
   const hasDirtyDetections = useMemo(() => {
-    return Object.keys(bboxOverrides).length > 0 || 
-           Object.keys(labelOverrides).length > 0 || 
-           newDetections.length > 0 ||
-           deletedIds.size > 0;
+    return (
+      Object.keys(bboxOverrides).length > 0 ||
+      Object.keys(labelOverrides).length > 0 ||
+      newDetections.length > 0 ||
+      deletedIds.size > 0
+    );
   }, [bboxOverrides, labelOverrides, newDetections, deletedIds]);
 
   const handleSaveDetections = async () => {
@@ -169,6 +182,7 @@ const DetectionsDisplay = ({
       }));
 
     const patchData: MediaPatchRequest = {
+      item_type: item_type || "image", // Default to "image" if item_type is undefined
       detections: updatedDetections,
     };
 
@@ -200,7 +214,7 @@ const DetectionsDisplay = ({
       confidence: 1.0,
       bbox,
     };
-    
+
     setNewDetections((prev) => [...prev, newDet]);
     setIsDrawingMode(false);
 
