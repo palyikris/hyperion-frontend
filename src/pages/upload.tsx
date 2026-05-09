@@ -29,8 +29,8 @@ const UploadPage = () => {
   }
 
   const galleryItems = recentGalleryQuery.data;
-  const items = galleryItems?.items || [];
 
+  if (!galleryItems) return null;
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
@@ -73,7 +73,12 @@ const UploadPage = () => {
           textClassName="text-hyperion-forest/70"
         />
 
-        <Gallery items={items} onCardZoom={handleCardZoom} showInfo={false} />
+        <Gallery
+          items={galleryItems.image_items}
+          video_items={galleryItems.video_items}
+          onCardZoom={handleCardZoom}
+          showInfo={false}
+        />
       </div>
 
       <ImageModal

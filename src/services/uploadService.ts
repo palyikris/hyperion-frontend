@@ -1,9 +1,10 @@
 import { api } from "../api/axiosInstance";
 import axios from "axios";
-import type { RecentMediaItem } from "../types/upload";
+import type { GalleryItem } from "../types/upload";
 import imageCompression from "browser-image-compression";
 import { toastService } from "./toastService";
 import i18n from "i18next";
+import type { VideoDetectionResponse } from "../types/lab";
 
 const CHUNK_SIZE = 2 * 1024 * 1024;
 
@@ -176,7 +177,8 @@ export const uploadService = {
   },
 
   getRecentGallery: async (): Promise<{
-    items: RecentMediaItem[];
+    image_items: GalleryItem[];
+    video_items: VideoDetectionResponse[];
     total: number;
   }> => {
     const { data } = await api.get("/upload/recents");
