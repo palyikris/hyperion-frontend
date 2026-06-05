@@ -146,7 +146,6 @@ describe("LoginForm", () => {
   });
 
   it("disables submit button and shows loading text when logging in", async () => {
-    const user = userEvent.setup();
     useAuthMock.mockReturnValue({
       login: vi.fn(),
       isLoading: true,

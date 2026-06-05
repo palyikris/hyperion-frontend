@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import LoginPage from "./login";
 
@@ -29,7 +29,8 @@ vi.mock("react-i18next", () => ({
         "login.form.signup": "Sign up",
         "auth.validation.invalidEmail": "Invalid email",
         "auth.validation.emailRequired": "Email is required",
-        "auth.validation.passwordMinLength": "Password must be at least 8 characters",
+        "auth.validation.passwordMinLength":
+          "Password must be at least 8 characters",
       };
       return translations[key] || defaultValue || key;
     },

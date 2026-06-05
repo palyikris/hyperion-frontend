@@ -167,7 +167,6 @@ describe("SignupForm", () => {
   });
 
   it("disables submit button and shows loading text when creating account", async () => {
-    const user = userEvent.setup();
     useAuthMock.mockReturnValue({
       signup: vi.fn(),
       isLoading: true,
