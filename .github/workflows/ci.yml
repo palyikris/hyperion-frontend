@@ -21,6 +21,12 @@ jobs:
 
       - name: Run Tests
         run: npm test
+      
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        run: npx playwright test
 
   deploy:
     needs: validate 
