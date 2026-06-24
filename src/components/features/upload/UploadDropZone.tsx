@@ -263,6 +263,7 @@ const UploadDropZone = ({
             style={{
               borderRadius: "68px 44px 30px 48px / 40px 28px 46px 32px",
             }}
+            id={multiple ? "selected-images-section" : "selected-video-section"}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-hyperion-forest">

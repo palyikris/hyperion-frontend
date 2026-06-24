@@ -203,6 +203,7 @@ const VaultFilters = ({
           icon={<Search className="w-4 h-4 text-white" />}
           className="w-auto px-8 py-3"
           disabled={isSubmitting}
+          id="apply-filters-button"
         />
         <Button
           type="button"
@@ -218,6 +219,7 @@ const VaultFilters = ({
           theme="danger"
           className="px-8"
           icon={<X className="w-4 h-4 text-white" />}
+          id="reset-filters-button"
         ></Button>
       </div>
     </form>

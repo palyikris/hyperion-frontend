@@ -10,6 +10,7 @@ type ButtonProps = {
   disabled?: boolean;
   animateIcon?: boolean;
   theme?: "primary" | "info" | "danger";
+  id?: string;
 };
 
 export const Button = ({
@@ -21,6 +22,7 @@ export const Button = ({
   disabled = false,
   animateIcon = true,
   theme = "primary",
+  id,
 }: ButtonProps) => {
   const themeClasses = {
     primary: "bg-hyperion-deep-sea text-white hover:bg-hyperion-deep-sea/90",
@@ -65,6 +67,7 @@ export const Button = ({
         type={type}
         disabled={disabled}
         onClick={onClick}
+        id={id}
       >
         {text !== "" && <span>{text}</span>}
         {icon && (

@@ -160,6 +160,7 @@ const ConfirmModal = ({
                       ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
                       : "bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90"
                   }`}
+                  id="confirm-button"
                 >
                   {loading ? confirmText + "..." : confirmText}
                 </button>

@@ -109,6 +109,7 @@ const VaultPage = () => {
                 disabled={deleteAllMutation.isPending || isLoading}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-hyperion-burnt-orange/20 text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 title={t("vault.button.deleteAllTooltip", "Delete all media")}
+                id="delete-all-button"
               >
                 <Trash2 size={18} />
                 <span className="text-sm font-semibold whitespace-nowrap">
