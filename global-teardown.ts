@@ -1,4 +1,4 @@
-import { chromium, FullConfig } from "@playwright/test";
+import { chromium } from "@playwright/test";
 import { VaultPage } from "./tests/pages/VaultPage";
 import path from "path";
 
