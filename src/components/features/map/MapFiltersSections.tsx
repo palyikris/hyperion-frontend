@@ -128,6 +128,7 @@ export const DetectionQualitySection: React.FC<DetectionQualitySectionProps> = (
         max="100"
         value={minConfidenceValue}
         onChange={(event) => onChange(Number(event.target.value))}
+        id="confidence-filter-input"
       />
       <div className="flex justify-between text-[10px] font-bold text-hyperion-deep-sea px-1">
         <span>{t("map.filters.zero_percent", "0%")}</span>
@@ -185,6 +186,7 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({
               ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"
               : "bg-hyperion-cream text-hyperion-deep-sea border-hyperion-fog-grey hover:bg-hyperion-fog-grey/50"
           } ${isGridMode ? "opacity-50 cursor-not-allowed" : ""}`}
+          id="clear-status-filter-btn"
         >
           <X size={16} />
         </button>
@@ -208,7 +210,7 @@ export const ViewModeSection: React.FC<ViewModeSectionProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" id="filters-view-mode-section">
       <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
         {t("map.filters.view_mode", "View Mode")}
       </label>

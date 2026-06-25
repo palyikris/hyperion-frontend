@@ -119,6 +119,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
           exit={{ opacity: 0, x: 24 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
           className="absolute top-6 right-6 z-1000 w-85 h-[calc(100dvh-3rem)]"
+          id="map-filters-panel"
         >
           <ScrollReveal className="relative h-full overflow-hidden" delay={0.1}>
             <form

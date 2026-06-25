@@ -21,7 +21,7 @@ export class VaultPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.searchInput = page.locator('#search-input');
+    this.searchInput = page.locator("#vault-search");
     this.statusSelect = page.locator('#vault-status');
     this.sortSelect = page.locator('#vault-order-by');
     this.pageSizeSelect = page.locator('#vault-page-size');

@@ -78,6 +78,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
         style={{
           boxShadow: "0 0 40px 0 rgba(26,95,84,0.18)",
         }}
+        id="marker-sidebar"
       >
         {/* Decorative amorph blobs */}
         <div

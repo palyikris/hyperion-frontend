@@ -31,6 +31,7 @@ const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
             onClick={onShowFilters}
             className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
             title={showFiltersLabel}
+            id="show-filters-btn"
           >
             <FilterIcon className="text-hyperion-cream w-5 h-5" />
           </motion.button>

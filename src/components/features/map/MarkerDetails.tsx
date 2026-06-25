@@ -58,8 +58,10 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
 
   return (
     <>
-      {/* 2. Right Content Section */}
-      <div className="flex-1 p-0 flex flex-col min-w-0 gap-6">
+      <div
+        className="flex-1 p-0 flex flex-col min-w-0 gap-6"
+        id="marker-details"
+      >
         {/* Image Preview Card */}
         <div className="w-full flex justify-center">
           <button
@@ -86,6 +88,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
             )}
           </button>
         </div>
+
         {/* Header Data */}
         {item.status === "FAILED" && item.failed_reason && (
           <section className="rounded-2xl border border-hyperion-burnt-orange/35 bg-hyperion-burnt-orange/10 p-4 shadow-sm">
@@ -109,7 +112,10 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
               {t("map.popup.logs", "Logs")}
             </span>
           </div>
-          <div className="flex flex-col gap-4 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
+          <div
+            className="flex flex-col gap-4 max-h-64 overflow-y-auto pr-1 custom-scrollbar"
+            id="marker-logs"
+          >
             {isLogsLoading && (
               <div className="flex flex-col gap-4 animate-pulse">
                 {[1, 2, 3].map((row) => (
@@ -175,6 +181,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
         <button
           className="mt-6 w-full py-3 bg-hyperion-deep-sea hover:bg-hyperion-forest-depth text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 group/btn shadow-md"
           onClick={handleLabNav}
+          id="open-lab-view-btn"
         >
           {t("map.popup.open_lab_view", "Open Lab View")}
           <ChevronRight
