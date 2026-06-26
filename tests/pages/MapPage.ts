@@ -28,8 +28,10 @@ export class MapPage {
     this.searchInput = page.locator(".hyperion-map-search-input");
     this.toggleFiltersButton = page.locator("#show-filters-btn");
     this.viewModeSection = page.locator("#filters-view-mode-section");
-    this.searchResultsList = page.locator(".hyperion-map-search-results")
-    this.firstSearchResult = this.searchResultsList.locator(".hyperion-map-search-item").first();
+    this.searchResultsList = page.locator(".hyperion-map-search-results");
+    this.firstSearchResult = this.searchResultsList
+      .locator(".hyperion-map-search-item")
+      .first();
     this.markerSidebar = page.locator("#marker-sidebar");
     this.markerDetails = page.locator("#marker-details");
     this.markerLogs = page.locator("#marker-logs");
@@ -67,7 +69,7 @@ export class MapPage {
   async isHeatmapLayerVisible() {
     return await this.heatmapLayer.isVisible();
   }
-  
+
   async isGridOverlayVisible() {
     return await this.mapOverlayPane.isVisible();
   }
@@ -90,5 +92,14 @@ export class MapPage {
     await this.clearStatusFilterButton.click();
   }
 
-  
+  async waitForMapResponse() {
+    await this.page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/map") && response.status() === 200,
+    );
+  }
+
+  async waitForTimeout(ms: number) {
+    await this.page.waitForTimeout(ms);
+  }
 }

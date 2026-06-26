@@ -11,6 +11,7 @@ export class UploadPage {
   private readonly videoUploadButton: Locator;
   private readonly galleryImageCards: Locator;
   private readonly galleryVideoCards: Locator;
+  private readonly statusBadges: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -27,6 +28,7 @@ export class UploadPage {
       .getByRole("button", { name: /upload/i });
     this.galleryImageCards = page.locator("#image-items > div");
     this.galleryVideoCards = page.locator("#video-items > div");
+    this.statusBadges = page.locator(".gallery-card-status-badge");
   }
 
   async goto() {
@@ -104,4 +106,37 @@ export class UploadPage {
     await this.waitForResponse("/api/upload/recents", 200);
   }
 
+  async waitForStatusBadgesToBe(status: string) {
+    const targetStatus = status.toLowerCase();
+
+    await this.page.waitForFunction(
+      ({ selector, target }) => {
+        const badges = document.querySelectorAll(selector);
+        if (badges.length === 0) return false;
+
+        return Array.from(badges).every(
+          (badge) => badge.textContent?.toLowerCase().trim() === target,
+        );
+      },
+      { selector: ".gallery-card-status-badge", target: targetStatus },
+      { timeout: 10000 },
+    );
+  }
+
+  async waitForAStatusBadgeToBe(status: string) {
+    const targetStatus = status.toLowerCase();
+
+    await this.page.waitForFunction(
+      ({ selector, target }) => {
+        const badges = document.querySelectorAll(selector);
+        if (badges.length === 0) return false;
+
+        return Array.from(badges).some(
+          (badge) => badge.textContent?.toLowerCase().trim() === target,
+        );
+      },
+      { selector: ".gallery-card-status-badge", target: targetStatus },
+      { timeout: 10000 },
+    );
+  }
 }
