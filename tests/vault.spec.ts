@@ -91,7 +91,6 @@ test.describe.serial("Upload files to Vault Workflow", () => {
     expect(titleExists, `Title containing test1.jpg not found`).toBe(true);
 
     await vaultPage.resetFilters();
-    await vaultPage.waitForGalleryResponse();
     expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
       4,
     );
@@ -99,7 +98,6 @@ test.describe.serial("Upload files to Vault Workflow", () => {
     await vaultPage.waitForTimeout(5000);
 
     await vaultPage.selectStatusFilter("Ready");
-    await vaultPage.waitForGalleryResponse();
     expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
       2,
     );
