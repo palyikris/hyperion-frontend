@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { UploadPage } from "./pages/UploadPage";
 import { VaultPage } from "./pages/VaultPage";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
