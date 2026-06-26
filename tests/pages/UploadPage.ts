@@ -11,7 +11,7 @@ export class UploadPage {
   private readonly videoUploadButton: Locator;
   private readonly galleryImageCards: Locator;
   private readonly galleryVideoCards: Locator;
-  private readonly statusBadges: Locator;
+  // private readonly statusBadges: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -28,7 +28,7 @@ export class UploadPage {
       .getByRole("button", { name: /upload/i });
     this.galleryImageCards = page.locator("#image-items > div");
     this.galleryVideoCards = page.locator("#video-items > div");
-    this.statusBadges = page.locator(".gallery-card-status-badge");
+    // this.statusBadges = page.locator(".gallery-card-status-badge");
   }
 
   async goto() {
