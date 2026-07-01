@@ -1,14 +1,14 @@
-import { type Page, type Locator } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
+import { BasePage } from "./BasePage.ts";
 
-export class SignupPage {
-  private readonly page: Page;
+export class SignupPage extends BasePage {
   private readonly fullNameInput: Locator;
   private readonly emailInput: Locator;
   private readonly passwordInput: Locator;
   private readonly submitButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.fullNameInput = page.locator("#signup-full-name");
     this.emailInput = page.locator("#signup-email");
     this.passwordInput = page.locator("#signup-password");
@@ -16,7 +16,7 @@ export class SignupPage {
   }
 
   async goto() {
-    await this.page.goto("/signup");
+    await this.navigate("/signup");
   }
 
   async signup(name: string, email: string, password: string) {

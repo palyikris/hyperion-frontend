@@ -1,7 +1,7 @@
 import { type Locator, type Page } from "@playwright/test";
+import { BasePage } from "./BasePage.ts";
 
-export class MapPage {
-  readonly page: Page;
+export class MapPage extends BasePage {
   readonly mapContainer: Locator;
   readonly filterPanel: Locator;
   readonly searchInput: Locator;
@@ -20,9 +20,12 @@ export class MapPage {
   readonly clearStatusFilterButton: Locator;
   readonly confidenceInput: Locator;
   readonly popupContent: Locator;
+  readonly gridElements: Locator;
+  readonly cleanFilterButton: Locator;
+  readonly trashFilterButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.mapContainer = page.locator(".leaflet-container");
     this.filterPanel = page.locator("#map-filters-panel");
     this.searchInput = page.locator(".hyperion-map-search-input");
@@ -43,10 +46,13 @@ export class MapPage {
     this.clearStatusFilterButton = page.locator("#clear-status-filter-btn");
     this.confidenceInput = page.locator("#confidence-filter-input");
     this.popupContent = page.locator(".leaflet-popup-content");
+    this.gridElements = page.locator(".leaflet-interactive");
+    this.cleanFilterButton = page.locator("button:has-text('ClEAN')");
+    this.trashFilterButton = page.locator("button:has-text('HAS TRASH')");
   }
 
   async goto() {
-    await this.page.goto("/map");
+    await this.navigate("/map");
   }
 
   async openFilters() {
@@ -70,8 +76,8 @@ export class MapPage {
     return await this.heatmapLayer.isVisible();
   }
 
-  async isGridOverlayVisible() {
-    return await this.mapOverlayPane.isVisible();
+  async areGridsVisible() {
+    return (await this.gridElements.count()) > 0;
   }
 
   async searchLocation(query: string) {
@@ -93,13 +99,17 @@ export class MapPage {
   }
 
   async waitForMapResponse() {
-    await this.page.waitForResponse(
+    await this.waitForResponse(
       (response) =>
         response.url().includes("/api/map") && response.status() === 200,
     );
   }
 
-  async waitForTimeout(ms: number) {
-    await this.page.waitForTimeout(ms);
+  async filterForCleanUploads() {
+    await this.cleanFilterButton.click();
+  }
+
+  async filterForUploadsWithTrash() {
+    await this.trashFilterButton.click();
   }
 }

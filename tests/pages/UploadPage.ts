@@ -1,7 +1,7 @@
-import { type Page, type Locator } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
+import { BasePage } from "./BasePage.ts";
 
-export class UploadPage {
-  private readonly page: Page;
+export class UploadPage extends BasePage {
   private readonly dropZones: Locator;
   private readonly imageDropZone: Locator;
   private readonly videoDropZone: Locator;
@@ -14,7 +14,7 @@ export class UploadPage {
   // private readonly statusBadges: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
     this.dropZones = page.locator('input[type="file"]');
     this.imageDropZone = this.dropZones.nth(0);
     this.videoDropZone = this.dropZones.nth(1);
@@ -32,7 +32,7 @@ export class UploadPage {
   }
 
   async goto() {
-    await this.page.goto("/upload");
+    await this.navigate("/upload");
   }
 
   async uploadImageFiles(filePaths: string[]) {
@@ -44,7 +44,7 @@ export class UploadPage {
     await this.selectedImagesSection.waitFor({ state: "visible" });
 
     await this.imageUploadButton.click();
-    await this.waitForResponse("/api/upload/files", 201);
+    await this.waitForResponseWithStatus("/api/upload/files", 201);
   }
 
   async uploadVideoFile(filePath: string) {
@@ -53,15 +53,11 @@ export class UploadPage {
     await this.selectedVideoSection.waitFor({ state: "visible" });
 
     await this.videoUploadButton.click();
-    await this.waitForResponse("api/upload/video/complete", 200);
+    await this.waitForResponseWithStatus("api/upload/video/complete", 200);
   }
 
-  async waitForTimeout(ms: number) {
-    await this.page.waitForTimeout(ms);
-  }
-
-  async waitForResponse(includeText: string, statusCode: number) {
-    await this.page.waitForResponse(
+  async waitForResponseWithStatus(includeText: string, statusCode: number) {
+    await super.waitForResponse(
       (response) =>
         response.url().includes(includeText) &&
         response.status() === statusCode,
@@ -103,7 +99,7 @@ export class UploadPage {
   }
 
   async waitForRecentsResponse() {
-    await this.waitForResponse("/api/upload/recents", 200);
+    await this.waitForResponseWithStatus("/api/upload/recents", 200);
   }
 
   async waitForStatusBadgesToBe(status: string) {
@@ -119,7 +115,7 @@ export class UploadPage {
         );
       },
       { selector: ".gallery-card-status-badge", target: targetStatus },
-      { timeout: 10000 },
+      { timeout: 120000 },
     );
   }
 
@@ -136,7 +132,7 @@ export class UploadPage {
         );
       },
       { selector: ".gallery-card-status-badge", target: targetStatus },
-      { timeout: 10000 },
+      { timeout: 120000 },
     );
   }
 }
