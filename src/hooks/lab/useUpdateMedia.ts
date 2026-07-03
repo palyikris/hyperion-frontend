@@ -19,6 +19,9 @@ export const useUpdateMedia = () => {
       queryClient.invalidateQueries({
         queryKey: ["media", variables.mediaId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["video", variables.mediaId],
+      });
       toastService.success(i18n.t("media.toast.updateSuccess"));
     },
     onError: () => {

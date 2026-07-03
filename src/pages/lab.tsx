@@ -129,7 +129,7 @@ const LabPage = () => {
   }
 
   // --- Normalization Logic for DetectionsDisplay ---
-  // We use the 'in' operator to safely narrow the union type.
+  // Use the 'in' operator to safely narrow the union type.
   const displayHfPath = data
     ? "hf_path" in data
       ? data.hf_path

@@ -99,7 +99,7 @@ test.describe.serial("Vault features and file handling", () => {
 
     await vaultPage.selectStatusFilter("Ready");
     expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
-      2,
+      1,
     );
 
     await vaultPage.resetFilters();

@@ -59,11 +59,10 @@ const DetectionDetailsPanel = ({
 
       <div className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
-          {/* Label - now editable SelectField */}
           <SearchableSelectField
             label={t("lab.detections.panel.label", "Label")}
             icon={Tag}
-            id={`label-${detection.id}`}
+            id={`detection-details-label`}
             options={trashLabelOptions}
             value={selectedLabel}
             onChange={handleLabelChange}
@@ -74,7 +73,7 @@ const DetectionDetailsPanel = ({
             label={t("lab.detections.panel.confidence", "Confidence")}
             icon={Percent}
             type="text"
-            id={`confidence-${detection.id}`}
+            id={`detection-details-confidence`}
             placeholder=""
             inputProps={{
               value: `${confidencePercent}%`,
@@ -88,7 +87,7 @@ const DetectionDetailsPanel = ({
               label={t("lab.detections.panel.area", "Estimated area (m2)")}
               icon={Maximize}
               type="text"
-              id={`area-${detection.id}`}
+              id={`detection-details-area`}
               placeholder=""
               inputProps={{
                 value: detection.area_sqm.toFixed(2),
@@ -114,7 +113,7 @@ const DetectionDetailsPanel = ({
               label={t("lab.detections.panel.x", "X")}
               icon={Move}
               type="text"
-              id={`bbox-x-${detection.id}`}
+              id={`detection-details-bbox-x`}
               placeholder=""
               inputProps={{
                 value: detection.bbox.x.toFixed(4),
@@ -125,7 +124,7 @@ const DetectionDetailsPanel = ({
               label={t("lab.detections.panel.y", "Y")}
               icon={Move}
               type="text"
-              id={`bbox-y-${detection.id}`}
+              id={`detection-details-bbox-y`}
               placeholder=""
               inputProps={{
                 value: detection.bbox.y.toFixed(4),
@@ -136,7 +135,7 @@ const DetectionDetailsPanel = ({
               label={t("lab.detections.panel.width", "Width")}
               icon={Move}
               type="text"
-              id={`bbox-w-${detection.id}`}
+              id={`detection-details-bbox-w`}
               placeholder=""
               inputProps={{
                 value: detection.bbox.w.toFixed(4),
@@ -147,7 +146,7 @@ const DetectionDetailsPanel = ({
               label={t("lab.detections.panel.height", "Height")}
               icon={Move}
               type="text"
-              id={`bbox-h-${detection.id}`}
+              id={`detection-details-bbox-h`}
               placeholder=""
               inputProps={{
                 value: detection.bbox.h.toFixed(4),

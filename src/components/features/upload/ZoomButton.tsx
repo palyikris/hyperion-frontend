@@ -13,7 +13,7 @@ const ZoomButton = ({ onZoom, onSearchIconClick }: ZoomButtonProps) => {
           if (onSearchIconClick) onSearchIconClick(e);
           else if (onZoom) onZoom();
         }}
-        className="bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+        className="bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors image-card-zoom-button"
       >
         <svg
           className="w-5 h-5 text-hyperion-forest"

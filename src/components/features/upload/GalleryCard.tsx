@@ -116,7 +116,7 @@ const GalleryCard = ({
   };
 
   return (
-    <>
+    <div data-id={id} className="relative">
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         title={t("upload.deleteSingleTitle")}
@@ -195,7 +195,7 @@ const GalleryCard = ({
           failed_reason={failed_reason}
         />
       </ScrollReveal>
-    </>
+    </div>
   );
 };
 

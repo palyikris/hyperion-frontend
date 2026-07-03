@@ -36,6 +36,7 @@ const DetectionsVisibilityToggler = ({
             type="button"
             onClick={onShowAll}
             className="rounded-md border border-hyperion-deep-sea/30 px-3 py-1 text-xs font-medium text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
+            id="show-all-detections-button"
           >
             {t("lab.detections.visibility.showAll", "Show all")}
           </button>
@@ -43,6 +44,7 @@ const DetectionsVisibilityToggler = ({
             type="button"
             onClick={onShowNone}
             className="rounded-md border border-hyperion-deep-sea/30 px-3 py-1 text-xs font-medium text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
+            id="show-none-detections-button"
           >
             {t("lab.detections.visibility.showNone", "Show none")}
           </button>
@@ -66,7 +68,7 @@ const DetectionsVisibilityToggler = ({
               <button
                 type="button"
                 onClick={() => onToggleDetection(key)}
-                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                className={`detection-visibility-toggler inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   isSelected
                     ? "border-hyperion-burnt-orange bg-hyperion-burnt-orange/20 text-hyperion-deep-sea ring-2 ring-hyperion-burnt-orange/50"
                     : isVisible
@@ -106,6 +108,7 @@ const DetectionsVisibilityToggler = ({
                   label: det.label,
                   defaultValue: "Show only {{label}}",
                 })}
+                id="focus-detection-button"
               >
                 <Focus className="h-3.5 w-3.5" />
               </button>

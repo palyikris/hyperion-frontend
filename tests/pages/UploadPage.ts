@@ -72,6 +72,21 @@ export class UploadPage extends BasePage {
     return await this.galleryVideoCards.count();
   }
 
+  async waitForGalleryImageCardCount(count: number) {
+    await this.page.waitForFunction(
+      ({ selector, expectedCount }) =>
+        document.querySelectorAll(selector).length >= expectedCount,
+      { selector: "#image-items > div", expectedCount: count },
+    );
+  }
+
+  async getFirstImageCardId() {
+    const firstImageCard = this.galleryImageCards.first();
+    const id = await firstImageCard.getAttribute("data-id");
+    if (!id) throw new Error("No ID found for the first uploaded image card.");
+    return id;
+  }
+
   async getGalleryImageCardTitles() {
     const titles = [];
     const count = await this.galleryImageCards.count();

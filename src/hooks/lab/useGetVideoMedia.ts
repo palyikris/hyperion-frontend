@@ -3,7 +3,7 @@ import { mediaService } from "../../services/mediaService";
 
 export const useGetVideoMedia = (mediaId?: string, options?: Partial<UseQueryOptions>) => {
   return useQuery({
-    queryKey: ["media", mediaId],
+    queryKey: ["video", mediaId],
     queryFn: () => {
       if (!mediaId) throw new Error("Media ID is required");
       return mediaService.getVideoMedia(mediaId);

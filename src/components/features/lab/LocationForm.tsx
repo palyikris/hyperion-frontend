@@ -94,10 +94,13 @@ const LocationForm = ({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           type="submit"
-          text={t("lab.form.save", "Save metadata") + (isUpdatePending ? "..." : "")}
+          text={
+            t("lab.form.save", "Save metadata") + (isUpdatePending ? "..." : "")
+          }
           icon={<Save className="h-4 w-4 text-white" />}
           className="px-6"
           disabled={!id || !isDirty || isSubmitting || isUpdatePending}
+          id="save-minimap-location-btn"
         />
         <Button
           type="button"
@@ -107,6 +110,7 @@ const LocationForm = ({
           onClick={onReset}
           className="px-6"
           disabled={isSubmitting || isUpdatePending}
+          id="reset-minimap-location-btn"
         />
       </div>
     </form>

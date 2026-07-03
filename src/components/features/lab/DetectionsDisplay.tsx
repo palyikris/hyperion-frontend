@@ -353,6 +353,7 @@ const DetectionsDisplay = ({
             setIsDrawingMode(!isDrawingMode);
             setSelectedId(null);
           }}
+          id="add-detection-btn"
         />
 
         {selectedId && !isDrawingMode && (
@@ -363,6 +364,7 @@ const DetectionsDisplay = ({
             onClick={handleDeleteSelected}
             className="px-6"
             theme="danger"
+            id="delete-selected-detection-btn"
           />
         )}
 
@@ -380,6 +382,7 @@ const DetectionsDisplay = ({
             !mediaId || !hasDirtyDetections || updateMediaMutation.isPending
           }
           onClick={handleSaveDetections}
+          id="save-detections-btn"
         />
         <Button
           type="button"
@@ -389,6 +392,7 @@ const DetectionsDisplay = ({
           onClick={handleResetDetections}
           className="px-6"
           disabled={updateMediaMutation.isPending}
+          id="reset-detections-btn"
         />
       </div>
     </div>

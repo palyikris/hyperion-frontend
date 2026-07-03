@@ -163,4 +163,25 @@ export class VaultPage extends BasePage {
     await this.applyFiltersButton.click();
     await this.waitForGalleryResponse();
   }
+
+  async getFirstImageCardId() {
+    const firstImageCard = this.galleryImageCards.first();
+    const id = await firstImageCard.getAttribute("data-id");
+    if (!id) throw new Error("No ID found for the first image card.");
+    return id;
+  }
+
+  async getNthImageCardId(n: number) {
+    const nthImageCard = this.galleryImageCards.nth(n);
+    const id = await nthImageCard.getAttribute("data-id");
+    if (!id) throw new Error(`No ID found for the ${n}th image card.`);
+    return id;
+  }
+
+  async getNthVideoCardId(n: number) {
+    const nthVideoCard = this.galleryVideoCards.nth(n);
+    const id = await nthVideoCard.getAttribute("data-id");
+    if (!id) throw new Error(`No ID found for the ${n}th video card.`);
+    return id;
+  }
 }
