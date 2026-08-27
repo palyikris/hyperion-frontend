@@ -103,7 +103,9 @@ const MiniMap = ({
       >
         <MiniMapMapReadySync onMapReady={handleMapReady} />
         <MiniMapViewportSync lat={lat} lng={lng} zoom={zoom} />
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer
+          url={`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${import.meta.env.CARTO_API_KEY}`}
+        />
         <Marker
           position={[lat, lng]}
           icon={createMapIcon("default", true)}
