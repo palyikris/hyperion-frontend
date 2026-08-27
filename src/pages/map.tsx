@@ -56,8 +56,9 @@ export const MapPage: React.FC = () => {
     setFiltersWithTransition,
   } = useMapPageState();
 
-  if (isLoading && !data) return <LoadingScreen />;
+  const cartoApiKey = import.meta.env.CARTO_API_KEY;
 
+  if (isLoading && !data) return <LoadingScreen />;
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-hidden">
@@ -115,7 +116,9 @@ export const MapPage: React.FC = () => {
         <MapViewportEvents onViewportChange={handleViewportChange} />
         {/* Address/City Search */}
         <MapSearch />
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer
+          url={`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`}
+        />
 
         <MapLayerRenderer
           viewMode={viewMode}

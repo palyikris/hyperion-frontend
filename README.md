@@ -63,6 +63,7 @@ Create `.env` in project root:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:8000/api
+CARTO_API_KEY=your_carto_key_here
 ```
 
 If omitted, the app falls back to `http://localhost:8000/api`.
