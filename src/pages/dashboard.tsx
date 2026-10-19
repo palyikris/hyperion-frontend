@@ -56,8 +56,10 @@ const DashboardPage = () => {
 
         <div className="mt-12 space-y-10">
           <NavigatorSection />
-          <SystemHealthSnapshot data={systemHealthData} />
-          <UserExperiencePulse data={userExperienceData} />
+          <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+            <SystemHealthSnapshot data={systemHealthData} />
+            <UserExperiencePulse data={userExperienceData} />
+          </div>
           <AIWorkerStatus data={aiWorkersData} />
         </div>
       </div>

@@ -189,35 +189,22 @@
       "actionTile": "Akció csempe"
     },
     "systemHealth": {
-      "title": "Rendszerállapot pillanatkép",
-      "uptimeGauge": "Üzemidő mérő",
-      "systemStability": "Rendszerstabilitás",
       "serverLoad": "Szerverterhelés (CPU/RAM)",
-      "environmentStatus": "Környezeti állapot",
-      "lastUpdated": "Utoljára frissítve",
       "min": "Min",
       "avg": "Átlag",
       "max": "Max"
     },
     "userExperience": {
-      "title": "Felhasználói élmény pulzusa",
       "activeNow": "Aktív most",
       "avgResponseTime": "Átlagos válaszidő",
-      "activeTrend": "Aktív felhasználók trendje",
-      "dailyActivity": "Napi aktivitás (7 nap)",
       "rollingUsage": "Gördülő 7 napos használat",
-      "lastUpdated": "Utoljára frissítve",
-      "ms": "ms",
-      "min": "Min",
-      "max": "Max",
-      "dailyActivityAvg": "Átlag"
+      "ms": "ms"
     },
     "aiWorkers": {
       "title": "AI dolgozók állapota",
       "lastUpdated": "Utoljára frissítve",
       "activeFleet": "Aktív flotta",
       "totalWorkersOnline": "Összes online dolgozó",
-      "queueDepth": "Hátralévő feladatok száma",
       "workerNodes": "Dolgozók állapotai",
       "live": "Élő",
       "nodeStatus": "Dolgozó állapot",

@@ -189,35 +189,22 @@
       "actionTile": "Action Tile"
     },
     "systemHealth": {
-      "title": "System Health Snapshot",
-      "uptimeGauge": "Uptime Gauge",
-      "systemStability": "System Stability",
       "serverLoad": "Server Load (CPU/RAM)",
-      "environmentStatus": "Environment Status",
-      "lastUpdated": "Last updated",
       "min": "Min",
       "avg": "Avg",
       "max": "Max"
     },
     "userExperience": {
-      "title": "User Experience Pulse",
       "activeNow": "Active Now",
       "avgResponseTime": "Avg. Response Time",
-      "activeTrend": "Active User Trend",
-      "dailyActivity": "Daily Activity (7 Days)",
       "rollingUsage": "Rolling 7-day usage",
-      "lastUpdated": "Last updated",
-      "ms": "ms",
-      "min": "Min",
-      "max": "Max",
-      "dailyActivityAvg": "Avg"
+      "ms": "ms"
     },
     "aiWorkers": {
       "title": "AI Worker Status",
       "lastUpdated": "Last updated",
       "activeFleet": "Active Fleet",
       "totalWorkersOnline": "Total workers online",
-      "queueDepth": "Tasks remaining",
       "workerNodes": "Worker Nodes",
       "live": "Live",
       "nodeStatus": "Node status",

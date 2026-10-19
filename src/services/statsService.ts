@@ -163,36 +163,8 @@ const mapMeanTimeToProcess = (
     taskCount: worker.task_count,
   }));
 
-  const totalTasks = byWorker.reduce(
-    (accumulator, worker) => accumulator + Math.max(0, worker.taskCount),
-    0,
-  );
-
-  const weightedTotalSeconds = byWorker.reduce(
-    (accumulator, worker) =>
-      accumulator +
-      Math.max(0, worker.avgProcessingSeconds) * Math.max(0, worker.taskCount),
-    0,
-  );
-
-  const fallbackAverageSeconds =
-    byWorker.length > 0
-      ? byWorker.reduce(
-          (accumulator, worker) =>
-            accumulator + Math.max(0, worker.avgProcessingSeconds),
-          0,
-        ) / byWorker.length
-      : 0;
-
-  const normalizedOverallAvgSeconds =
-    totalTasks > 0
-      ? weightedTotalSeconds / totalTasks
-      : byWorker.length > 0
-        ? fallbackAverageSeconds
-        : data.overall_avg_seconds;
-
   return {
-    overallAvgSeconds: normalizedOverallAvgSeconds,
+    overallAvgSeconds: data.overall_avg_seconds,
     byWorker,
   };
 };

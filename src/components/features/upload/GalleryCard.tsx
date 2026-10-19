@@ -129,6 +129,7 @@ const GalleryCard = ({
         isDangerous
       />
       <ScrollReveal
+        revealOnScroll={false}
         className={`relative ${isProcessing || isDeleting ? "" : "group"} bg-white border ${config.borderColor} ${isProcessing || isDeleting ? "cursor-not-allowed" : "cursor-default"}`}
         style={{
           borderRadius: initialRadius,
