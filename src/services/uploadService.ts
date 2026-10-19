@@ -14,22 +14,31 @@ export const uploadService = {
     onProgress?: (progress: number) => void,
     signal?: AbortSignal,
   ) => {
+    if (signal?.aborted) throw new axios.CanceledError("Upload cancelled by user");
     const options = {
       maxSizeMB: 5,
       maxWidthOrHeight: 2560,
       useWebWorker: true,
       preserveExif: true,
       initialQuality: 0.85,
+      signal,
     };
 
     const formData = new FormData();
 
     const compressionPromises = files.map(async (file) => {
-      if (file.type.startsWith("image/")) {
+      // TIFF is accepted by the server but cannot be decoded by browser canvases.
+      if (["image/jpeg", "image/png"].includes(file.type)) {
         try {
           const compressedFile = await imageCompression(file, options);
-          return new File([compressedFile], file.name, { type: file.type });
+          return new File([compressedFile], file.name, {
+            type: compressedFile.type,
+            lastModified: file.lastModified,
+          });
         } catch (error) {
+          if (signal?.aborted || axios.isCancel(error)) {
+            throw new axios.CanceledError("Upload cancelled by user");
+          }
           toastService.error(
             i18n.t("upload.toast.compressionErrorTitle"),
             i18n.t("upload.toast.compressionErrorMessage", {
@@ -44,6 +53,7 @@ export const uploadService = {
     });
 
     const compressedFiles = await Promise.all(compressionPromises);
+    if (signal?.aborted) throw new axios.CanceledError("Upload cancelled by user");
 
     compressedFiles.forEach((file) => {
       formData.append("files", file);

@@ -505,6 +505,16 @@
     "empty": "Nincs média, amely megfelel a keresési feltételeknek. Próbáld meg módosítani a szűrőket vagy tölts fel új képeket."
   },
   "upload": {
+    "recents": {
+      "loading": "Legutóbbi feltöltések betöltése…",
+      "error": "A legutóbbi feltöltések nem tölthetők be. Továbbra is feltölthetsz fájlokat.",
+      "retry": "Újrapróbálkozás"
+    },
+    "errors": {
+      "general": "A feltöltés sikertelen. Próbáld újra.",
+      "unsupportedFile": "Nem támogatott fájltípus: {{fileName}}.",
+      "invalidSize": "A(z) {{fileName}} fájl üres vagy meghaladja a feltöltési méretkorlátot."
+    },
     "imageModal": {
       "range": "TÁV: 402m",
       "heading": "IRÁNY: 184°",

@@ -36,7 +36,9 @@ export const useUploadSocket = () => {
                       update.status === "FAILED"
                         ? (update.failed_reason ?? item.failed_reason)
                         : undefined,
-                    image_url: update.image_url ?? item.hf_path,
+                    hf_path: update.img_url ?? update.image_url ?? item.hf_path,
+                    assigned_worker: update.worker ?? item.assigned_worker,
+                    address: update.address ?? item.address,
                   }
                 : item,
             ),
@@ -64,7 +66,7 @@ export const useUploadSocket = () => {
                           update.status === "FAILED"
                             ? (update.failed_reason ?? item.failed_reason)
                             : undefined,
-                        image_url: update.image_url ?? item.hf_path,
+                        hf_path: update.img_url ?? update.image_url ?? item.hf_path,
                         assigned_worker: update.worker ?? item.assigned_worker,
                         address: update.address ?? item.address,
                       }
@@ -92,12 +94,12 @@ export const useUploadSocket = () => {
     [queryClient],
   );
 
-  const connect = useCallback(() => {
+  const connect = useCallback(function connectSocket() {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
     const apiBaseUrl =
       import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
-    const wsUrl = new URL(apiBaseUrl);
+    const wsUrl = new URL(apiBaseUrl, window.location.origin);
     wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
     wsUrl.pathname = `${wsUrl.pathname.replace(/\/$/, "")}/upload/ws/updates`;
 
@@ -131,7 +133,7 @@ export const useUploadSocket = () => {
 
       reconnectTimeoutRef.current = window.setTimeout(() => {
         reconnectAttempts.current++;
-        connect();
+        connectSocket();
       }, delay);
     };
 

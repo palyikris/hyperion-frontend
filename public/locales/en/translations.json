@@ -505,6 +505,16 @@
     "empty": "No media found matching your criteria. Try adjusting your filters or upload some new images."
   },
   "upload": {
+    "recents": {
+      "loading": "Loading recent uploads…",
+      "error": "Recent uploads could not be loaded. You can still upload files.",
+      "retry": "Try again"
+    },
+    "errors": {
+      "general": "Upload failed. Please try again.",
+      "unsupportedFile": "Unsupported file type: {{fileName}}.",
+      "invalidSize": "{{fileName}} is empty or exceeds the upload size limit."
+    },
     "imageModal": {
       "range": "RNG: 402m",
       "heading": "HDG: 184°",
