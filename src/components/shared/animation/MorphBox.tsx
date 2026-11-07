@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
-import { type ReactNode, useState } from "react";
+import {
+  type AriaRole,
+  type KeyboardEventHandler,
+  type ReactNode,
+  useState,
+} from "react";
 
 interface MorphBoxProps {
   children: ReactNode;
@@ -7,6 +12,10 @@ interface MorphBoxProps {
   blobShape: string;
   hoverShape?: string;
   onClick?: () => void;
+  role?: AriaRole;
+  ariaLabel?: string;
+  tabIndex?: number;
+  onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
   onDragOver?: (e: React.DragEvent) => void;
   onDragLeave?: (e: React.DragEvent) => void;
   onDrop?: (e: React.DragEvent) => void;
@@ -18,6 +27,10 @@ export const MorphBox = ({
   blobShape,
   hoverShape,
   onClick,
+  role,
+  ariaLabel,
+  tabIndex,
+  onKeyDown,
   onDragLeave,
   onDragOver,
   onDrop,
@@ -45,6 +58,10 @@ export const MorphBox = ({
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={onClick}
+      role={role}
+      aria-label={ariaLabel}
+      tabIndex={tabIndex}
+      onKeyDown={onKeyDown}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}

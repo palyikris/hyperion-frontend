@@ -1,7 +1,6 @@
 import type { AIWorkersResponse } from "../../../types/dashboard/dashboard";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
-import { RollingNumber } from "../../shared/animation/RollingNumber";
 import { DecryptText } from "../../shared/animation/DecryptText";
 import { Blob, blobShapes } from "../../shared/decoration";
 
@@ -80,15 +79,6 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
             <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               <DecryptText text={clusterStatus}></DecryptText>
-            </div>
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
-              <span className="font-semibold">
-                {t("dashboard.aiWorkers.queueDepth")}:
-              </span>
-              <RollingNumber
-                className="font-bold text-hyperion-forest"
-                value={data.queue_depth}
-              ></RollingNumber>
             </div>
           </div>
         </ScrollReveal>

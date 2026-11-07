@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toastService } from "../../../services/toastService";
 
 const tileStyles =
-  "group relative flex flex-col items-center justify-center gap-3 border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px] cursor-pointer";
+  "group relative flex flex-col items-center justify-center gap-3 border p-4 py-12 text-center shadow-[rgba(26,95,84,0.18)_0px_16px_40px] transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[rgba(26,95,84,0.28)_0px_26px_60px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-hyperion-deep-sea cursor-pointer";
 
 const iconWrapStyles =
   "flex h-12 w-12 items-center justify-center rounded-2xl bg-hyperion-deep-sea/15 text-hyperion-deep-sea transition-all duration-500 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:bg-hyperion-forest/30";
@@ -89,16 +89,22 @@ const NavigatorSection = () => {
               className={`${tileStyles} relative ${palette.bg} ${palette.border} z-10`}
               blobShape={palette.radius}
               hoverShape="12px"
+              role="link"
+              ariaLabel={t(link.labelKey)}
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  handleClick(link.href);
+                }
+              }}
               onClick={() => handleClick(link.href)}
             >
-              <span className={iconWrapStyles}>
+              <span className={iconWrapStyles} aria-hidden="true">
                 <link.icon className="h-6 w-6" />
               </span>
               <span className="text-sm font-bold text-hyperion-forest transition-transform duration-500 ease-out group-hover:translate-y-0.5">
                 {t(link.labelKey)}
-              </span>
-              <span className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/70 transition-opacity duration-500 ease-out group-hover:opacity-90">
-                {t("dashboard.navigator.actionTile")}
               </span>
             </MorphBox>
           );

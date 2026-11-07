@@ -8,7 +8,7 @@ import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
 import { UploadIcon, XIcon } from "lucide-react";
 import type { FileUploadProgress, FileUploadStatus } from "../../../types/upload";
-import { isVideoFile } from "../../../utils/fileTypes";
+import { getVideoContentType, isVideoFile } from "../../../utils/fileTypes";
 import axios from "axios";
 
 type UploadDropZoneProps = {
@@ -20,6 +20,7 @@ type UploadDropZoneProps = {
   browseText?: string;
   fileSupportText?: string;
   disabled?: boolean;
+  maxFileSize?: number;
 };
 
 type FileUploadState = {
@@ -32,12 +33,13 @@ type FileUploadState = {
 const UploadDropZone = ({
   onFilesSelected,
   multiple = true,
-  accept = ".jpg,.jpeg,.png,.tiff",
+  accept = ".jpg,.jpeg,.png,.tif,.tiff",
   label,
   description,
   browseText,
   fileSupportText,
   disabled = false,
+  maxFileSize = 50 * 1024 * 1024,
 }: UploadDropZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -55,6 +57,34 @@ const UploadDropZone = ({
     abortControllerRef.current = null;
   }, []);
 
+  const selectFiles = (files: File[]) => {
+    if (disabled || isUploading || abortControllerRef.current) return;
+    const acceptedTypes = accept.toLowerCase().split(",").map((type) => type.trim());
+    const validFiles = files.filter((file) => {
+      const matchesType = acceptedTypes.some((type) =>
+        type.startsWith(".")
+          ? file.name.toLowerCase().endsWith(type)
+          : type.endsWith("/*")
+            ? getVideoContentType(file).toLowerCase().startsWith(type.slice(0, -1))
+            : getVideoContentType(file).toLowerCase() === type,
+      );
+      if (!matchesType) {
+        toastService.error(t("upload.errors.unsupportedFile", { fileName: file.name }));
+        return false;
+      }
+      if (file.size === 0 || file.size > maxFileSize) {
+        toastService.error(t("upload.errors.invalidSize", { fileName: file.name }));
+        return false;
+      }
+      return true;
+    });
+    if (!validFiles.length) return;
+    const nextFiles = multiple ? [...selectedFiles, ...validFiles] : [validFiles[0]];
+    setSelectedFiles(nextFiles);
+    if (!multiple) setUploadStates([]);
+    onFilesSelected?.(nextFiles);
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     if (isUploading || disabled || abortControllerRef.current) return;
@@ -68,25 +98,12 @@ const UploadDropZone = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (isUploading || disabled || abortControllerRef.current) return;
-    let files = Array.from(e.dataTransfer.files);
-    if (!multiple && files.length > 1) {
-      files = [files[0]];
-    }
-    setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
-    if (!multiple) setUploadStates([]);
-    onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
+    selectFiles(Array.from(e.dataTransfer.files));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isUploading || disabled || abortControllerRef.current) return;
-    let files = Array.from(e.target.files || []);
-    if (!multiple && files.length > 1) {
-      files = [files[0]];
-    }
-    setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
-    if (!multiple) setUploadStates([]);
-    onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
+    selectFiles(Array.from(e.target.files || []));
+    e.target.value = "";
   };
 
   const removeFile = (index: number) => {
@@ -258,6 +275,7 @@ const UploadDropZone = ({
 
             <input
               type="file"
+              aria-label={label || t("upload.dropzone.heading")}
               multiple={multiple}
               accept={accept}
               onChange={handleFileChange}
@@ -328,8 +346,9 @@ const UploadDropZone = ({
                           {(file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
-                      {!isFileUploading && !isCompleted && !isError && (
+                      {!isFileUploading && !isCompleted && (
                         <button
+                          type="button"
                           onClick={() => removeFile(index)}
                           disabled={isUploading || disabled}
                           className="ml-3 shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"

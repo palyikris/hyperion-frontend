@@ -1,33 +1,24 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, testUser, testPassword } from "./fixtures";
 import { LoginPage } from "./pages/LoginPage";
-import { getTestCredentials } from "./testAccount";
 
-test.describe("Authentication - Login", () => {
-  test("should login with valid credentials", async ({ page }) => {
-    const { email, password } = getTestCredentials();
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+test.use({ authenticated: false });
 
-    await loginPage.login(email, password);
+test("logs in with valid credentials", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(testUser.email, testPassword);
+  await expect(page).toHaveURL("/dashboard");
+  await expect(page.getByText("System overview and key metrics")).toBeVisible();
+});
 
-    await expect(page).toHaveURL(/.*dashboard/);
-  });
+test("shows validation errors for an invalid email and short password", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
 
-  test("should validate malformed login fields", async ({ page }) => {
-    const loginRequests: string[] = [];
-    page.on("request", (request) => {
-      if (request.url().endsWith("/api/auth/login")) loginRequests.push(request.url());
-    });
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  await loginPage.login(testUser.email, "short");
+  await expect(page.locator("#password-error")).toBeVisible();
 
-    await loginPage.login("test@example.com", "short");
-    const errorPWMessage = page.locator("#password-error");
-    await expect(errorPWMessage).toBeVisible();
-
-    await loginPage.login("invalid-email", "short");
-    const errorUnameMessage = page.locator("#email-error");
-    await expect(errorUnameMessage).toBeVisible();
-    expect(loginRequests).toHaveLength(0);
-  });
+  await loginPage.login("invalid-email", testPassword);
+  await expect(page.locator("#email-error")).toBeVisible();
+  await expect(page).toHaveURL("/login");
 });

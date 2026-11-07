@@ -138,7 +138,7 @@ describe("per-file progress and upload selection", () => {
   it("waits for the video's completion response before showing success at 100 percent", async () => {
     const complete = deferred();
     videos.mockReturnValueOnce(complete.promise);
-    const { container } = render(<UploadDropZone multiple={false} />);
+    const { container } = render(<UploadDropZone multiple={false} accept=".mp4,.webm,.ogg,.ogv" />);
     select(container, [new File(["video"], "clip.mp4", { type: "video/mp4" })]);
     fireEvent.click(screen.getByRole("button", { name: "nav.main.upload" }));
     act(() => { videos.mock.calls[0][0].onProgress(100); });
@@ -150,7 +150,7 @@ describe("per-file progress and upload selection", () => {
   it("does not reuse a completed file's state when a single-file selection is replaced", async () => {
     const complete = deferred();
     videos.mockReturnValueOnce(complete.promise);
-    const { container } = render(<UploadDropZone multiple={false} />);
+    const { container } = render(<UploadDropZone multiple={false} accept=".mp4,.webm,.ogg,.ogv" />);
     select(container, [new File(["old"], "old.mp4")]);
     fireEvent.click(screen.getByRole("button", { name: "nav.main.upload" }));
     await act(async () => { complete.resolve(); });

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { PropsWithChildren } from "react";
@@ -175,6 +175,15 @@ describe("personalized fact cards", () => {
   });
 });
 
+const reportRange = { startDate: "2026-01-01", endDate: "2026-11-07" };
+const exportActions = () => within(document.querySelector("header")!);
+async function submitExport(label: string) {
+  await userEvent.click(exportActions().getByRole("button", { name: label }));
+  fireEvent.change(screen.getByLabelText("Start date"), { target: { value: reportRange.startDate } });
+  fireEvent.change(screen.getByLabelText("End date"), { target: { value: reportRange.endDate } });
+  await userEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: label }));
+}
+
 describe("independent report exports", () => {
   it("exports without requesting a summary even if a chart cannot load", async () => {
     service.getTrashComposition.mockRejectedValueOnce(new Error("Unavailable"));
@@ -182,11 +191,12 @@ describe("independent report exports", () => {
     const client = renderPage(false);
     await waitFor(() => expect(client.getQueryState(["stats", "trash-composition"])?.status).toBe("error"));
 
-    await userEvent.click(screen.getByRole("button", { name: "Export Manifest" }));
-    await userEvent.click(screen.getByRole("button", { name: "Export PDF" }));
+    await submitExport("Export Manifest");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await submitExport("Export PDF");
     await waitFor(() => {
-      expect(service.exportCleanupManifest).toHaveBeenCalledWith(7, "en");
-      expect(service.exportCleanupManifestPdf).toHaveBeenCalledWith(7, "en");
+      expect(service.exportCleanupManifest).toHaveBeenCalledWith(reportRange, "en");
+      expect(service.exportCleanupManifestPdf).toHaveBeenCalledWith(reportRange, "en");
       expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2);
     });
     expect(service.getStatsSummary).not.toHaveBeenCalled();
@@ -199,13 +209,13 @@ describe("independent report exports", () => {
     let resolve!: (value: { blob: Blob; filename: string }) => void;
     exportRequest.mockReturnValueOnce(new Promise(done => { resolve = done; }));
     renderPage();
-    await userEvent.click(screen.getByRole("button", { name: label }));
-    expect(screen.getByRole("button", { name: `${label}...` })).toBeDisabled();
-    expect(screen.getByRole("button", { name: other })).toBeEnabled();
-    await userEvent.click(screen.getByRole("button", { name: `${label}...` }));
+    await submitExport(label);
+    expect(exportActions().getByRole("button", { name: `${label}...` })).toBeDisabled();
+    expect(exportActions().getByRole("button", { name: other })).toBeEnabled();
+    await userEvent.click(exportActions().getByRole("button", { name: `${label}...` }));
     expect(exportRequest).toHaveBeenCalledTimes(1);
     await act(async () => { resolve({ blob: new Blob(["xlsx"]), filename: "manifest.xlsx" }); });
-    await waitFor(() => expect(screen.getByRole("button", { name: label })).toBeEnabled());
+    await waitFor(() => expect(exportActions().getByRole("button", { name: label })).toBeEnabled());
   });
 });
 

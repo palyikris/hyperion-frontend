@@ -4,7 +4,6 @@ import ImageModal from "../components/shared/ImageModal";
 import UploadDropZone from "../components/features/upload/UploadDropZone";
 import Divider from "../components/shared/Divider";
 import { Title } from "../components/shared/Title";
-import LoadingScreen from "../components/shared/LoadingScreen";
 import { useRecentGallery } from "../hooks/upload/useRecentGallery";
 import { useState } from "react";
 import { PageAtmosphere } from "../components/shared/decoration";
@@ -24,13 +23,7 @@ const UploadPage = () => {
 
   const handleCloseModal = () => setZoomedImage(null);
 
-  if (recentGalleryQuery.isLoading) {
-    return <LoadingScreen />;
-  }
-
   const galleryItems = recentGalleryQuery.data;
-
-  if (!galleryItems) return null;
 
   return (
     <div className="relative min-h-screen bg-hyperion-cream">
@@ -73,12 +66,23 @@ const UploadPage = () => {
           textClassName="text-hyperion-forest/70"
         />
 
-        <Gallery
-          items={galleryItems.image_items}
-          video_items={galleryItems.video_items}
-          onCardZoom={handleCardZoom}
-          showInfo={false}
-        />
+        {recentGalleryQuery.isLoading && <p role="status">{t("upload.recents.loading")}</p>}
+        {recentGalleryQuery.isError && (
+          <div role="alert">
+            <p>{t("upload.recents.error")}</p>
+            <button type="button" onClick={() => recentGalleryQuery.refetch()}>
+              {t("upload.recents.retry")}
+            </button>
+          </div>
+        )}
+        {galleryItems && (
+          <Gallery
+            items={galleryItems.image_items}
+            video_items={galleryItems.video_items}
+            onCardZoom={handleCardZoom}
+            showInfo={false}
+          />
+        )}
       </div>
 
       <ImageModal

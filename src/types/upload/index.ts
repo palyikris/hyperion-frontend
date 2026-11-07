@@ -74,6 +74,7 @@ export interface WSStatusUpdate {
   status: CardStatus;
   failed_reason?: string | null;
   img_url?: string | null;
+  image_url?: string | null;
   worker?: string | null;
   timestamp: string;
   address?: string | null;

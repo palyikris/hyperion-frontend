@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { statsService } from "../../services/statsService";
+import type { ReportDateRange } from "../../services/statsService";
 import { toastService } from "../../services/toastService";
 
-type ExportCleanupManifestParams = {
-  days?: number;
+type ExportCleanupManifestParams = ReportDateRange & {
   language?: "en" | "hu";
 };
 
@@ -23,8 +23,8 @@ export const useExportCleanupManifest = () => {
   const { t } = useTranslation();
 
   return useMutation({
-    mutationFn: ({ days = 30, language = "en" }: ExportCleanupManifestParams) =>
-      statsService.exportCleanupManifest(days, language),
+    mutationFn: ({ language = "en", ...range }: ExportCleanupManifestParams) =>
+      statsService.exportCleanupManifest(range, language),
     onSuccess: ({ blob, filename }) => {
       triggerFileDownload(blob, filename);
       toastService.success(

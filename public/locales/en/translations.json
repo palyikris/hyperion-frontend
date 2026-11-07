@@ -191,35 +191,22 @@
       "actionTile": "Action Tile"
     },
     "systemHealth": {
-      "title": "System Health Snapshot",
-      "uptimeGauge": "Uptime Gauge",
-      "systemStability": "System Stability",
       "serverLoad": "Server Load (CPU/RAM)",
-      "environmentStatus": "Environment Status",
-      "lastUpdated": "Last updated",
       "min": "Min",
       "avg": "Avg",
       "max": "Max"
     },
     "userExperience": {
-      "title": "User Experience Pulse",
       "activeNow": "Active Now",
       "avgResponseTime": "Avg. Response Time",
-      "activeTrend": "Active User Trend",
-      "dailyActivity": "Daily Activity (7 Days)",
       "rollingUsage": "Rolling 7-day usage",
-      "lastUpdated": "Last updated",
-      "ms": "ms",
-      "min": "Min",
-      "max": "Max",
-      "dailyActivityAvg": "Avg"
+      "ms": "ms"
     },
     "aiWorkers": {
       "title": "AI Worker Status",
       "lastUpdated": "Last updated",
       "activeFleet": "Active Fleet",
       "totalWorkersOnline": "Total workers online",
-      "queueDepth": "Tasks remaining",
       "workerNodes": "Worker Nodes",
       "live": "Live",
       "nodeStatus": "Node status",
@@ -443,6 +430,14 @@
     },
     "shared": {
       "info": "info"
+    },
+    "exportRange": {
+      "title": "Choose report dates",
+      "description": "Include media uploaded between these dates, including both days (UTC).",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "cancel": "Cancel",
+      "invalidRange": "End date must be on or after start date."
     }
   },
   "common": {
@@ -512,6 +507,16 @@
     "empty": "No media found matching your criteria. Try adjusting your filters or upload some new images."
   },
   "upload": {
+    "recents": {
+      "loading": "Loading recent uploads…",
+      "error": "Recent uploads could not be loaded. You can still upload files.",
+      "retry": "Try again"
+    },
+    "errors": {
+      "general": "Upload failed. Please try again.",
+      "unsupportedFile": "Unsupported file type: {{fileName}}.",
+      "invalidSize": "{{fileName}} is empty or exceeds the upload size limit."
+    },
     "imageModal": {
       "range": "RNG: 402m",
       "heading": "HDG: 184°",

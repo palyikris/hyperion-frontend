@@ -191,35 +191,22 @@
       "actionTile": "Akció csempe"
     },
     "systemHealth": {
-      "title": "Rendszerállapot pillanatkép",
-      "uptimeGauge": "Üzemidő mérő",
-      "systemStability": "Rendszerstabilitás",
       "serverLoad": "Szerverterhelés (CPU/RAM)",
-      "environmentStatus": "Környezeti állapot",
-      "lastUpdated": "Utoljára frissítve",
       "min": "Min",
       "avg": "Átlag",
       "max": "Max"
     },
     "userExperience": {
-      "title": "Felhasználói élmény pulzusa",
       "activeNow": "Aktív most",
       "avgResponseTime": "Átlagos válaszidő",
-      "activeTrend": "Aktív felhasználók trendje",
-      "dailyActivity": "Napi aktivitás (7 nap)",
       "rollingUsage": "Gördülő 7 napos használat",
-      "lastUpdated": "Utoljára frissítve",
-      "ms": "ms",
-      "min": "Min",
-      "max": "Max",
-      "dailyActivityAvg": "Átlag"
+      "ms": "ms"
     },
     "aiWorkers": {
       "title": "AI dolgozók állapota",
       "lastUpdated": "Utoljára frissítve",
       "activeFleet": "Aktív flotta",
       "totalWorkersOnline": "Összes online dolgozó",
-      "queueDepth": "Hátralévő feladatok száma",
       "workerNodes": "Dolgozók állapotai",
       "live": "Élő",
       "nodeStatus": "Dolgozó állapot",
@@ -443,6 +430,14 @@
     },
     "shared": {
       "info": "infó"
+    },
+    "exportRange": {
+      "title": "Jelentési időszak kiválasztása",
+      "description": "A megadott dátumok között feltöltött médiák, mindkét napot beleértve (UTC).",
+      "startDate": "Kezdő dátum",
+      "endDate": "Záró dátum",
+      "cancel": "Mégse",
+      "invalidRange": "A záró dátum nem lehet korábbi a kezdő dátumnál."
     }
   },
   "common": {
@@ -512,6 +507,16 @@
     "empty": "Nincs média, amely megfelel a keresési feltételeknek. Próbáld meg módosítani a szűrőket vagy tölts fel új képeket."
   },
   "upload": {
+    "recents": {
+      "loading": "Legutóbbi feltöltések betöltése…",
+      "error": "A legutóbbi feltöltések nem tölthetők be. Továbbra is feltölthetsz fájlokat.",
+      "retry": "Újrapróbálkozás"
+    },
+    "errors": {
+      "general": "A feltöltés sikertelen. Próbáld újra.",
+      "unsupportedFile": "Nem támogatott fájltípus: {{fileName}}.",
+      "invalidSize": "A(z) {{fileName}} fájl üres vagy meghaladja a feltöltési méretkorlátot."
+    },
     "imageModal": {
       "range": "TÁV: 402m",
       "heading": "IRÁNY: 184°",

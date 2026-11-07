@@ -15,6 +15,11 @@ import type {
 
 type LanguageCode = "en" | "hu";
 
+export interface ReportDateRange {
+  startDate: string;
+  endDate: string;
+}
+
 interface CleanupManifestExportResult {
   blob: Blob;
   filename: string;
@@ -62,7 +67,7 @@ const getResponseHeader = (
 
 const resolveManifestFilename = (
   headers: RawAxiosResponseHeaders | AxiosResponseHeaders,
-  days: number,
+  range: ReportDateRange,
 ): string => {
   const reportFilename = getResponseHeader(headers, "x-report-filename");
   if (reportFilename) {
@@ -76,7 +81,7 @@ const resolveManifestFilename = (
     return parsedFileName;
   }
 
-  return `hyperion-cleanup-manifest-${days}d.xlsx`;
+  return `hyperion-cleanup-manifest-${range.startDate}_${range.endDate}.xlsx`;
 };
 
 interface EnvironmentalFootprintApiResponse {
@@ -292,35 +297,31 @@ export const statsService = {
   },
 
   exportCleanupManifest: async (
-    days = 30,
+    range: ReportDateRange,
     language: LanguageCode = "en",
   ): Promise<CleanupManifestExportResult> => {
     const response = await api.get<Blob>("/stats/reports/manifest", {
-      params: { days, language },
+      params: { start_date: range.startDate, end_date: range.endDate, language },
       responseType: "blob",
     });
 
     return {
       blob: response.data,
-      filename: resolveManifestFilename(response.headers, days),
+      filename: resolveManifestFilename(response.headers, range),
     };
   },
 
   exportCleanupManifestPdf: async (
-    days = 30,
+    range: ReportDateRange,
     language: LanguageCode = "en",
   ): Promise<CleanupManifestExportResult> => {
-    console.log(
-      `Requesting PDF report with params: days=${days}, language=${language}`,
-    );
-
     const response = await api.get<Blob>("/stats/reports/pdf", {
-      params: { days, language },
+      params: { start_date: range.startDate, end_date: range.endDate, language },
       responseType: "blob",
     });
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const fallbackFilename = `hyperion-stats-report-${timestamp}.pdf`;
+    const fallbackFilename = `hyperion-stats-report-${range.startDate}_${range.endDate}-${timestamp}.pdf`;
     const filename =
       getResponseHeader(response.headers, "x-report-filename") ||
       fallbackFilename;

@@ -12,6 +12,9 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   isDangerous?: boolean;
+  children?: ReactNode;
+  confirmDisabled?: boolean;
+  isPending?: boolean;
 }
 
 const ConfirmModal = ({
@@ -24,8 +27,14 @@ const ConfirmModal = ({
   confirmText = "Confirm",
   cancelText = "Cancel",
   isDangerous = false,
+  children,
+  confirmDisabled = false,
+  isPending,
 }: ConfirmModalProps) => {
   const [loading, setLoading] = React.useState(false);
+  const panel = React.useRef<HTMLDivElement>(null);
+  const titleId = React.useId();
+  const descriptionId = React.useId();
 
   React.useEffect(() => {
     if (isOpen) {
@@ -33,9 +42,29 @@ const ConfirmModal = ({
     }
   }, [isOpen]);
 
+  React.useEffect(() => {
+    if (isPending) panel.current?.focus();
+  }, [isPending]);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusTarget = panel.current?.querySelector<HTMLElement>("input")
+      ?? panel.current?.querySelector<HTMLElement>("button:not([disabled])");
+    focusTarget?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [isOpen]);
+
+  const close = () => { if (!isPending) onClose(); };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      close();
     }
   };
 
@@ -51,6 +80,36 @@ const ConfirmModal = ({
           transition={{ duration: 0.2 }}
         >
           <motion.div
+            ref={panel}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={descriptionId}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.stopPropagation();
+                close();
+              }
+              if (event.key !== "Tab") return;
+              const elements = panel.current?.querySelectorAll<HTMLElement>(
+                "input:not([disabled]), button:not([disabled]), [tabindex='0']",
+              );
+              if (!elements?.length) {
+                event.preventDefault();
+                panel.current?.focus();
+                return;
+              }
+              const first = elements[0];
+              const last = elements[elements.length - 1];
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+              }
+            }}
             className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 p-8 overflow-hidden"
             style={{
               borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px",
@@ -73,7 +132,8 @@ const ConfirmModal = ({
             {/* Close button */}
             <motion.button
               type="button"
-              onClick={onClose}
+              onClick={close}
+              disabled={isPending}
               className="absolute top-4 right-4 p-2 hover:bg-hyperion-fog-grey/20 rounded-full transition-colors"
               aria-label="Close modal"
               whileHover={{ scale: 1.1 }}
@@ -127,13 +187,15 @@ const ConfirmModal = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.3 }}
               >
-                <h2 className="text-2xl font-bold text-hyperion-deep-sea text-center">
+                <h2 id={titleId} className="text-2xl font-bold text-hyperion-deep-sea text-center">
                   {title}
                 </h2>
-                <p className="text-hyperion-slate-grey text-center leading-relaxed">
+                <p id={descriptionId} className="text-hyperion-slate-grey text-center leading-relaxed">
                   {description}
                 </p>
               </motion.div>
+
+              {children}
 
               {/* Actions */}
               <motion.div
@@ -144,7 +206,8 @@ const ConfirmModal = ({
               >
                 <button
                   type="button"
-                  onClick={onClose}
+                  onClick={close}
+                  disabled={isPending}
                   className="flex-1 px-4 py-3 rounded-xl border-2 border-hyperion-fog-grey text-hyperion-deep-sea font-semibold hover:bg-hyperion-fog-grey/30 transition-colors"
                 >
                   {cancelText}
@@ -152,17 +215,19 @@ const ConfirmModal = ({
                 <button
                   type="button"
                   onClick={() => {
+                    if (confirmDisabled || isPending) return;
                     setLoading(true);
                     onConfirm();
                   }}
-                  className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-colors ${
+                  disabled={confirmDisabled || isPending}
+                  className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isDangerous
                       ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
                       : "bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90"
                   }`}
                   id="confirm-button"
                 >
-                  {loading ? confirmText + "..." : confirmText}
+                  {(isPending ?? loading) ? confirmText + "..." : confirmText}
                 </button>
               </motion.div>
             </motion.div>

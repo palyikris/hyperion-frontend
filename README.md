@@ -148,17 +148,10 @@ The frontend uses `withCredentials: true` in Axios, so backend CORS must allow c
 
 ## Tests
 
-- `npm run test:run` runs Vitest once; `npm test` starts watch mode locally.
-- `npx playwright test --list` lists the browser scenarios without executing them.
-- `npx playwright test` needs a running frontend and backend, plus available
-  media storage and AI processing for the upload and map workflows.
+- `npm run test:run` runs the unit suite; `npm test` starts watch mode.
+- `npx playwright test` builds the frontend and runs deterministic Chromium scenarios against local API fixtures. This is the browser suite used by CI.
+- `npx playwright test --config playwright.live.config.ts` runs the retained live-service scenarios against `E2E_BASE_URL` (default: `http://localhost:5173`). Set `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated disposable account whose language is English. These media scenarios clear that account's Vault during cleanup and require the backend, media storage, and AI processing services.
 
-Playwright defaults to `http://localhost:5173`. Set `E2E_BASE_URL` to target a
-different test deployment, and set `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated
-test account whose language is English. Media scenarios clear this account's
-Vault during cleanup, so use a disposable account with no personal uploads.
-CI reads these three values from repository secrets with the same names.
-The signup and Lab browser scenarios are currently commented out.
 
 ## Project structure
 

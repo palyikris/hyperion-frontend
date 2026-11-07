@@ -73,3 +73,18 @@ describe.each(["individual KPI", "summary"])("processing time mapping in %s", (e
     }
   });
 });
+
+it.each([
+  { method: statsService.exportCleanupManifest, path: "/stats/reports/manifest" },
+  { method: statsService.exportCleanupManifestPdf, path: "/stats/reports/pdf" },
+])("passes exact calendar dates to $path without a rolling window", async ({ method, path }) => {
+  const blob = new Blob(["report"]);
+  get.mockResolvedValue({ data: blob, headers: {} });
+  const result = await method({ startDate: "2026-02-01", endDate: "2026-03-15" }, "hu");
+  expect(get).toHaveBeenCalledWith(path, {
+    params: { start_date: "2026-02-01", end_date: "2026-03-15", language: "hu" },
+    responseType: "blob",
+  });
+  expect(result.blob).toBe(blob);
+  expect(result.filename).toContain("2026-02-01_2026-03-15");
+});

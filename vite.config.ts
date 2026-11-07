@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -11,6 +11,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/setupTests.ts",
     css: true,
-    exclude: ["**/tests/**", "node_modules"],
+    exclude: [...configDefaults.exclude, "**/tests/**"],
   },
 });

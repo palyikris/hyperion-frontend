@@ -39,10 +39,13 @@ export const uploadService = {
         if (signal?.aborted) throw new axios.CanceledError();
         onProgress?.({ index, progress, status: "preparing" });
         let preparedFile = file;
-        if (file.type.startsWith("image/")) {
+        if (["image/jpeg", "image/png"].includes(file.type)) {
           try {
             const compressed = await imageCompression(file, options);
-            preparedFile = new File([compressed], file.name, { type: file.type });
+            preparedFile = new File([compressed], file.name, {
+              type: compressed.type || file.type,
+              lastModified: file.lastModified,
+            });
           } catch (error) {
             if (signal?.aborted || axios.isCancel(error)) throw error;
             toastService.error(

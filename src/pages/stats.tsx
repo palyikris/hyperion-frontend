@@ -16,12 +16,15 @@ import FunFactBox from "../components/features/stats/FunFactBox";
 import { useExportCleanupManifest } from "../hooks/stats/useExportCleanupManifest";
 import { useExportCleanupManifestPdf } from "../hooks/stats/useExportCleanupManifestPdf";
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import ReportDateRangeModal from "../components/shared/ReportDateRangeModal";
+import type { ReportDateRange } from "../services/statsService";
 
 const StatsPage = () => {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const isRefreshing = useIsFetching({ queryKey: ["stats"] }) > 0;
-  const dateRangeDays = 7;
+  const [exportFormat, setExportFormat] = useState<"excel" | "pdf" | null>(null);
   // const environmentalFootprintQuery = useEnvironmentalFootprint();
   const funFactsQuery = useFunFacts(
     i18n.language as "en" | "hu" | undefined,
@@ -31,18 +34,13 @@ const StatsPage = () => {
   const exportPdfMutation = useExportCleanupManifestPdf();
   const funFacts = funFactsQuery.data?.facts ?? [];
 
-  const onExportManifest = () => {
-    exportCleanupManifestMutation.mutate({
-      days: dateRangeDays,
-      language: i18n.language as "hu" | "en",
-    });
-  };
-
-  const onExportPdf = () => {
-    exportPdfMutation.mutate({
-      days: dateRangeDays,
-      language: i18n.language as "hu" | "en",
-    });
+  const onExport = (range: ReportDateRange) => {
+    const mutation = exportFormat === "excel" ? exportCleanupManifestMutation : exportPdfMutation;
+    if (!exportFormat || mutation.isPending) return;
+    mutation.mutate({
+      ...range,
+      language: (i18n.resolvedLanguage ?? i18n.language).startsWith("hu") ? "hu" : "en",
+    }, { onSuccess: () => setExportFormat(null) });
   };
 
   const onRefreshData = () => {
@@ -51,6 +49,14 @@ const StatsPage = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#FDFCF8] via-[#FDFCF8] to-[#F5F3ED] selection:bg-hyperion-soft-sky/30">
+      {exportFormat ? (
+        <ReportDateRangeModal
+          format={exportFormat}
+          isPending={exportFormat === "excel" ? exportCleanupManifestMutation.isPending : exportPdfMutation.isPending}
+          onConfirm={onExport}
+          onClose={() => setExportFormat(null)}
+        />
+      ) : null}
       <div className="relative z-10 mx-auto w-full max-w-400 px-6 pb-40 pt-10 sm:px-10">
         {/* Header Section */}
         <header className="mb-24 space-y-8">
@@ -81,7 +87,7 @@ const StatsPage = () => {
                   ? `${t("stats.command.exportManifest", "Export Manifest")}...`
                   : t("stats.command.exportManifest", "Export Manifest")
               }
-              onClick={onExportManifest}
+              onClick={() => setExportFormat("excel")}
               disabled={exportCleanupManifestMutation.isPending}
               theme="info"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
@@ -92,7 +98,7 @@ const StatsPage = () => {
                   ? `${t("stats.command.exportPdf", "Export PDF")}...`
                   : t("stats.command.exportPdf", "Export PDF")
               }
-              onClick={onExportPdf}
+              onClick={() => setExportFormat("pdf")}
               disabled={exportPdfMutation.isPending}
               theme="primary"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"

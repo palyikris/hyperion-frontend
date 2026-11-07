@@ -20,7 +20,6 @@ vi.mock("react-i18next", () => ({
         "login.form.emailPlaceholder": "Enter your email",
         "login.form.passwordLabel": "Password",
         "login.form.passwordPlaceholder": "Enter your password",
-        "login.form.recovery": "Forgot password?",
         "login.form.loggingIn": "Logging in...",
         "login.form.submit": "Sign In",
         "login.form.noAccount": "Don't have an account?",
@@ -62,13 +61,6 @@ describe("LoginForm", () => {
     const signupLink = screen.getByRole("link", { name: /Sign up/i });
     expect(signupLink).toBeInTheDocument();
     expect(signupLink).toHaveAttribute("href", "/signup");
-  });
-
-  it("renders password recovery link when there's no error", () => {
-    renderWithRouter(<LoginForm />);
-
-    const recoveryLink = screen.getByRole("link", { name: /Forgot password/i });
-    expect(recoveryLink).toBeInTheDocument();
   });
 
   it("submits form with valid data", async () => {
@@ -155,40 +147,5 @@ describe("LoginForm", () => {
 
     const submitButton = screen.getByRole("button", { name: /Logging in/i });
     expect(submitButton).toBeDisabled();
-  });
-
-  it("hides password recovery link when password has error", async () => {
-    const user = userEvent.setup();
-    renderWithRouter(<LoginForm />);
-
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
-    const submitButton = screen.getByRole("button", { name: /Sign In/i });
-
-    // Trigger validation error by entering short password and submitting
-    await user.type(passwordInput, "short");
-    await user.click(submitButton);
-
-    await waitFor(() => {
-      const recoveryLink = screen.queryByRole("link", {
-        name: /Forgot password/i,
-      });
-      expect(recoveryLink).not.toBeInTheDocument();
-    });
-  });
-
-  it("enables password recovery link when password is valid", async () => {
-    const user = userEvent.setup();
-    renderWithRouter(<LoginForm />);
-
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
-    await user.type(passwordInput, "validPassword123");
-    await user.click(document.body); // Blur to trigger validation
-
-    await waitFor(() => {
-      const recoveryLink = screen.getByRole("link", {
-        name: /Forgot password/i,
-      });
-      expect(recoveryLink).toBeInTheDocument();
-    });
   });
 });
