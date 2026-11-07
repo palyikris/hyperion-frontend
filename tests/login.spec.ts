@@ -1,26 +1,24 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, testUser, testPassword } from "./fixtures";
 import { LoginPage } from "./pages/LoginPage";
 
-test.describe("Authentication - Login", () => {
-  test("should login with valid credentials", async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+test.use({ authenticated: false });
 
-    await loginPage.login("palyi.kristof@gmail.com", "Nem1234!");
+test("logs in with valid credentials", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(testUser.email, testPassword);
+  await expect(page).toHaveURL("/dashboard");
+  await expect(page.getByText("System overview and key metrics")).toBeVisible();
+});
 
-    await expect(page).toHaveURL(/.*dashboard/);
-  });
+test("shows validation errors for an invalid email and short password", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
 
-  test("should show error with invalid credentials", async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  await loginPage.login(testUser.email, "short");
+  await expect(page.locator("#password-error")).toBeVisible();
 
-    await loginPage.login("palyi.kristof@gmail.com", "Nem1234");
-    const errorPWMessage = page.locator("#password-error");
-    await expect(errorPWMessage).toBeVisible();
-
-    await loginPage.login("palyi.kristofgmail.com", "Nem1234");
-    const errorUnameMessage = page.locator("#email-error");
-    await expect(errorUnameMessage).toBeVisible();
-  });
+  await loginPage.login("invalid-email", testPassword);
+  await expect(page.locator("#email-error")).toBeVisible();
+  await expect(page).toHaveURL("/login");
 });

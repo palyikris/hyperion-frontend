@@ -1,84 +1,61 @@
-// import { test, expect, type Page } from "@playwright/test";
-// import path from "node:path";
-// import { fileURLToPath } from "node:url";
-// import { LabPage } from "./pages/LabPage";
-// import { UploadPage } from "./pages/UploadPage";
-// import { VaultPage } from "./pages/VaultPage";
+import { test, expect, galleryItem } from "./fixtures";
+import { LabPage } from "./pages/LabPage";
+import type { MediaPatchRequest, MediaResponse } from "../src/types/lab";
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const fileNames = ["test1.jpg", "test2.jpg", "test3.jpg", "test4.jpg"];
+const mediaId = "lab-image";
 
-// let sharedPage: Page;
-// let mediaId: string;
+test.beforeEach(async ({ page }) => {
+  let media: MediaResponse = {
+    ...galleryItem("test1.jpg", mediaId),
+    lat: 47.5,
+    lng: 19.05,
+    altitude: 90,
+    detections: [
+      { id: "plastic", label: "Plastic", confidence: 0.95, bbox: { x: 10, y: 10, w: 100, h: 100 } },
+    ],
+  };
 
-// async function openLabPage() {
-//   const labPage = new LabPage(sharedPage);
-//   await labPage.goto(mediaId);
-//   await labPage.waitForLabResponse();
-//   return labPage;
-// }
+  await page.route(`**/api/lab/image/${mediaId}`, (route) => route.fulfill({ json: media }));
+  await page.route(`**/api/lab/${mediaId}`, (route) => {
+    const { lat, lng, altitude } = route.request().postDataJSON() as MediaPatchRequest;
+    media = { ...media, lat, lng, altitude };
+    return route.fulfill({ json: media });
+  });
+});
 
-// test.describe.serial("Lab Feature: Detections and Minimap Lifecycle", () => {
-//   test.setTimeout(180000);
+test("saves new minimap coordinates and loads them again", async ({ page }) => {
+  const labPage = new LabPage(page);
+  await labPage.goto(mediaId);
 
-//   test.use({ storageState: "playwright/.auth/user.json" });
+  await labPage.setMinimapLocation(47.4979, 19.0402, 100);
+  const [response] = await Promise.all([
+    page.waitForResponse((result) =>
+      result.url().endsWith(`/api/lab/${mediaId}`) && result.request().method() === "PATCH",
+    ),
+    labPage.saveMinimapLocation(),
+  ]);
+  expect(response.ok()).toBe(true);
+  expect(response.request().postDataJSON()).toEqual({
+    item_type: "image",
+    lat: 47.4979,
+    lng: 19.0402,
+    altitude: 100,
+  });
 
-//   test.beforeAll(
-//     "should upload images and navigate directly to lab",
-//     async ({ browser }, testInfo) => {
-//       testInfo.setTimeout(180000);
+  await page.reload();
+  await expect(page.locator("#latitude")).toHaveValue("47.4979");
+  await expect(page.locator("#longitude")).toHaveValue("19.0402");
+  await expect(page.locator("#altitude")).toHaveValue("100");
+});
 
-//       const context = await browser.newContext({
-//         storageState: "playwright/.auth/user.json",
-//       });
-//       sharedPage = await context.newPage();
+test("hides and restores detections", async ({ page }) => {
+  const labPage = new LabPage(page);
+  await labPage.goto(mediaId);
+  const toggle = page.getByRole("button", { name: "Plastic - 95%" });
 
-//       const uploadPage = new UploadPage(sharedPage);
-//       const filePaths = fileNames.map((name) =>
-//         path.join(__dirname, "fixtures", name),
-//       );
-
-//       await uploadPage.goto();
-//       await uploadPage.uploadImageFiles(filePaths);
-//       await uploadPage.waitForRecentsResponse();
-//       await uploadPage.waitForStatusBadgesToBe("Ready");
-
-//       await uploadPage.waitForGalleryImageCardCount(1);
-//       mediaId = await uploadPage.getFirstImageCardId();
-
-//       await openLabPage();
-//     },
-//   );
-
-//   test.afterAll(async () => {
-//     const vaultPage = new VaultPage(sharedPage);
-//     await vaultPage.goto();
-//     await vaultPage.waitForGalleryResponse();
-//     if ((await vaultPage.getGalleryImageCardCount()) > 0) {
-//       await vaultPage.deleteAll();
-//     }
-//     await sharedPage.context().close();
-//   });
-
-//   test("should update minimap location", async () => {
-//     const labPage = await openLabPage();
-
-//     await labPage.setMinimapLocation(47.4979, 19.0402, 100);
-//     await labPage.saveMinimapLocation();
-//     await labPage.waitForLabResponse();
-
-//     expect(await labPage.getMinimapLocation()).toEqual({
-//       latitude: 47.4979,
-//       longitude: 19.0402,
-//       altitude: 100,
-//     });
-//   });
-
-//   test("should toggle detection visibility", async () => {
-//     const labPage = await openLabPage();
-
-//     await labPage.showNoDetections();
-//     await labPage.showAllDetections();
-//   });
-// });
+  await expect(toggle).toHaveAttribute("title", "Hide detection");
+  await labPage.showNoDetections();
+  await expect(toggle).toHaveAttribute("title", "Show detection");
+  await labPage.showAllDetections();
+  await expect(toggle).toHaveAttribute("title", "Hide detection");
+});

@@ -1,23 +1,19 @@
-// import { test, expect } from "@playwright/test";
-// import { SignupPage } from "./pages/SignupPage";
-// import { LoginPage } from "./pages/LoginPage";
+import { test, expect, testPassword } from "./fixtures";
+import { SignupPage } from "./pages/SignupPage";
+import { LoginPage } from "./pages/LoginPage";
 
-// test.describe("Authentication - Signup", () => {
-//   test("should register a new user successfully", async ({ page }) => {
-//     const signupPage = new SignupPage(page);
-//     const loginPage = new LoginPage(page);
-//     await signupPage.goto();
+test.use({ authenticated: false });
 
-//     const uniqueEmail = `test_${Date.now()}@hyperion.com`;
+test("registers a new user who can then sign in", async ({ page }) => {
+  const signupPage = new SignupPage(page);
+  const loginPage = new LoginPage(page);
+  const email = "new-user@example.test";
 
-//     await signupPage.signup(
-//       "Test User",
-//       uniqueEmail, 
-//       "SecurePassword123!",
-//     );
-//     await expect(page).toHaveURL(/.*login/);
+  await signupPage.goto();
+  await signupPage.signup("New User", email, testPassword);
+  await expect(page).toHaveURL("/login");
 
-//     await loginPage.login(uniqueEmail, "SecurePassword123!");
-//     await expect(page).toHaveURL(/.*dashboard/);
-//   });
-// });
+  await loginPage.login(email, testPassword);
+  await expect(page).toHaveURL("/dashboard");
+  await expect(page.getByText("System overview and key metrics")).toBeVisible();
+});

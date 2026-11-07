@@ -14,10 +14,6 @@ export class VaultPage extends BasePage {
   private readonly galleryImageCards: Locator;
   private readonly galleryVideoCards: Locator;
 
-  // Actions
-  private readonly deleteAllButton: Locator;
-  private readonly confirmDeleteButton: Locator;
-
   constructor(page: Page) {
     super(page);
     this.searchInput = page.locator("#vault-search");
@@ -30,17 +26,10 @@ export class VaultPage extends BasePage {
     this.galleryImageCards = page.locator("#image-items > div");
     this.galleryVideoCards = page.locator("#video-items > div");
 
-    this.deleteAllButton = page.locator("#delete-all-button");
-    this.confirmDeleteButton = page.locator("#confirm-button");
   }
 
   async goto() {
     await this.navigate("/vault");
-  }
-
-  async deleteAllVaultItems() {
-    await this.deleteAllButton.click();
-    await this.confirmDeleteButton.click();
   }
 
   async goToPageNumber(pageNumber: number) {
@@ -124,32 +113,20 @@ export class VaultPage extends BasePage {
     );
   }
 
-  async waitForDeleteAllResponse() {
-    await this.waitForResponse(
-      (response) =>
-        response.url().includes("/api/vault/all") &&
-        response.status() === 200 &&
-        response.request().method() === "DELETE",
-    );
-  }
-
-  async deleteAll() {
-    await this.deleteAllButton.click();
-    await this.page.waitForSelector("#confirm-button", { state: "visible" });
-    await this.confirmDeleteButton.click();
-    await this.waitForDeleteAllResponse();
-  }
-
   async searchForItem(searchTerm: string) {
     await this.searchInput.fill(searchTerm);
-    await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
+    await Promise.all([
+      this.waitForGalleryResponse(),
+      this.applyFiltersButton.click(),
+    ]);
   }
 
   async selectStatusFilter(status: string) {
     await this.statusSelect.selectOption(status);
-    await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
+    await Promise.all([
+      this.waitForGalleryResponse(),
+      this.applyFiltersButton.click(),
+    ]);
   }
 
   async selectSortOption(sortOption: string) {

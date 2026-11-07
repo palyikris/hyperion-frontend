@@ -2,13 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,26 +20,30 @@ jobs:
         run: npm ci
 
       - name: Run Tests
-        run: npm test
-      
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npm run test:run
 
-      - name: Run E2E Tests
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build and Run E2E Tests
         run: npx playwright test
 
   deploy:
-    needs: validate 
-    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: validate
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-      
+        run: npm install --global vercel@65.12.1
+
       - name: Deploy to Vercel
-      
-        run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --yes --token="$VERCEL_TOKEN"
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
