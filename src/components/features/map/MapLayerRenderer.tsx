@@ -6,7 +6,7 @@ import type { DivIcon, LatLngExpression } from "leaflet";
 import HeatmapLayer from "./HeatmapLayer";
 import GridPopup from "./GridPopup";
 import {
-  convertMediaResponseToMapItem,
+  convertVideoDetectionToMapItem,
   type GridCell,
   type MapItem,
 } from "../../../types/map";
@@ -74,28 +74,17 @@ const MapLayerRenderer: React.FC<MapLayerRendererProps> = ({
               />
             ) : null;
 
-          const markers = detections.map((det) => {
-            console.log("Rendering marker for detection:", det, det.address);
-
-            return (
-              <Marker
-                key={det.id}
-                position={[det.lat, det.lng]}
-                icon={createMapIcon("READY", true)}
-                eventHandlers={{
-                  click: () =>
-                    onMarkerClick({
-                      ...convertMediaResponseToMapItem(det.media),
-                      image_url: det.image_url,
-                      filename: det.media.initial_metadata?.filename as
-                        | string
-                        | undefined,
-                      address: det.address || undefined,
-                    }),
-                }}
-              />
-            );
-          });
+          const markers = detections.map((det) => (
+            <Marker
+              key={det.id}
+              position={[det.lat, det.lng]}
+              icon={createMapIcon("READY", true)}
+              eventHandlers={{
+                click: () =>
+                  onMarkerClick(convertVideoDetectionToMapItem(det)),
+              }}
+            />
+          ));
           return [polyline, ...markers];
         })}
       </MarkerClusterGroup>

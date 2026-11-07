@@ -10,6 +10,8 @@ import ZoomableContainer from "./ZoomableContainer";
 import ConfidenceFilter from "./ConfidenceFilter";
 import { Button } from "../../shared/Button";
 import { useUpdateMedia } from "../../../hooks/lab/useUpdateMedia";
+import { useNavigate } from "react-router-dom";
+import { useIsMutating } from "@tanstack/react-query";
 
 type DetectionsDisplayProps = {
   mediaId?: string;
@@ -31,14 +33,18 @@ type KeyedDetection = {
   originalIndex: number;
 };
 
-const DetectionsDisplay = ({
+const DetectionsEditor = ({
   mediaId,
   hfPath,
   detections,
   item_type,
 }: DetectionsDisplayProps) => {
   const { t } = useTranslation();
-  const updateMediaMutation = useUpdateMedia();
+  const navigate = useNavigate();
+  const updateMediaMutation = useUpdateMedia(mediaId);
+  const isSaving = useIsMutating({ mutationKey: ["lab", "update", mediaId] }) > 0;
+  const savingRef = useRef(false);
+  const [draftBase, setDraftBase] = useState<Detection[] | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [hiddenDetections, setHiddenDetections] = useState<
@@ -64,8 +70,9 @@ const DetectionsDisplay = ({
 
   // Combine fetched detections + locally added detections
   const allDetections = useMemo(() => {
-    return [...detections, ...newDetections];
-  }, [detections, newDetections]);
+    return [...(draftBase ?? detections), ...newDetections];
+  }, [detections, newDetections, draftBase]);
+  const startEditing = () => setDraftBase((current) => current ?? detections);
 
   // Keep original indices intact to prevent key-shifting bugs
   const keyedDetections = useMemo<KeyedDetection[]>(() => {
@@ -75,10 +82,15 @@ const DetectionsDisplay = ({
       return {
         key,
         originalIndex,
-        detection: override ? { ...det, bbox: override } : det,
+        detection: {
+          ...det,
+          label: labelOverrides[key] ?? det.label,
+          bbox: override ?? det.bbox,
+          area_sqm: override ? undefined : det.area_sqm,
+        },
       };
     });
-  }, [allDetections, bboxOverrides]);
+  }, [allDetections, bboxOverrides, labelOverrides]);
 
   // Filter out deleted items and items below confidence threshold
   const filteredDetections = useMemo<KeyedDetection[]>(() => {
@@ -114,13 +126,14 @@ const DetectionsDisplay = ({
 
   // Keyboard shortcut for deleting a detection
   const handleDeleteSelected = useCallback(() => {
-    if (!selectedId) return;
+    if (!selectedId || isSaving || savingRef.current) return;
     const item = keyedDetections.find((d) => d.key === selectedId);
     if (!item) return;
 
+    setDraftBase((current) => current ?? detections);
     setDeletedIds((prev) => new Set(prev).add(item.detection.id));
     setSelectedId(null);
-  }, [selectedId, keyedDetections]);
+  }, [selectedId, keyedDetections, isSaving, detections]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -158,7 +171,7 @@ const DetectionsDisplay = ({
   }, [bboxOverrides, labelOverrides, newDetections, deletedIds]);
 
   const handleSaveDetections = async () => {
-    if (!mediaId || !hasDirtyDetections) return;
+    if (!mediaId || !hasDirtyDetections || isSaving || savingRef.current) return;
 
     // Build the final array: apply overrides, filter out deleted, strip internal IDs
     const updatedDetections = allDetections
@@ -171,11 +184,12 @@ const DetectionsDisplay = ({
           id: det.id,
           label: labelOverride || det.label,
           bbox: bboxOverride || det.bbox,
-          area_sqm: det.area_sqm,
+          area_sqm: bboxOverride ? undefined : det.area_sqm,
         };
       })
       .filter((det) => !deletedIds.has(det.id))
       .map((det) => ({
+        id: det.id.startsWith("new-") ? undefined : det.id,
         label: det.label,
         bbox: det.bbox,
         area_sqm: det.area_sqm,
@@ -186,30 +200,45 @@ const DetectionsDisplay = ({
       detections: updatedDetections,
     };
 
-    await updateMediaMutation.mutateAsync({
-      mediaId,
-      patchData,
-    });
+    savingRef.current = true;
+    try {
+      await updateMediaMutation.mutateAsync({ mediaId, patchData });
 
-    setBboxOverrides({});
-    setLabelOverrides({});
-    setNewDetections([]);
-    setDeletedIds(new Set());
-    setIsDrawingMode(false);
+      if (item_type === "video" && updatedDetections.length === 0) {
+        navigate("/vault");
+        return;
+      }
+
+      setBboxOverrides({});
+      setLabelOverrides({});
+      setNewDetections([]);
+      setDeletedIds(new Set());
+      setIsDrawingMode(false);
+      setSelectedId(null);
+      setDraftBase(null);
+    } catch {
+      // The mutation displays the error. Keep the unsaved draft for retry.
+    } finally {
+      savingRef.current = false;
+    }
   };
 
   const handleResetDetections = () => {
+    if (isSaving || savingRef.current) return;
     setBboxOverrides({});
     setLabelOverrides({});
     setNewDetections([]);
     setDeletedIds(new Set());
     setSelectedId(null);
     setIsDrawingMode(false);
+    setDraftBase(null);
   };
 
   const handleAddDetection = (bbox: NormalizedBBox) => {
+    if (isSaving || savingRef.current) return;
+    startEditing();
     const newDet: Detection = {
-      id: `new-${Date.now()}`,
+      id: `new-${crypto.randomUUID()}`,
       label: "unknown",
       confidence: 1.0,
       bbox,
@@ -273,7 +302,7 @@ const DetectionsDisplay = ({
           </div>
         )}
 
-        <ZoomableContainer>
+        <ZoomableContainer panEnabled={!isDrawingMode && !isSaving}>
           <div className="w-full relative" ref={containerRef}>
             <img
               src={getMediaAssetUrl(imageUrl)}
@@ -300,8 +329,11 @@ const DetectionsDisplay = ({
               hasError={hasError}
               selectedId={selectedId}
               isDrawingMode={isDrawingMode}
+              disabled={isSaving || updateMediaMutation.isPending}
               onSelectDetection={(id) => setSelectedId(id)}
               onUpdateDetectionBBox={(id, bbox) => {
+                if (isSaving || savingRef.current) return;
+                startEditing();
                 setBboxOverrides((prev) => ({ ...prev, [id]: bbox }));
               }}
               onAddDetection={handleAddDetection}
@@ -330,8 +362,11 @@ const DetectionsDisplay = ({
         {selectedDetection && !isDrawingMode && (
           <DetectionDetailsPanel
             detection={selectedDetection.detection}
+            disabled={isSaving}
             onClose={() => setSelectedId(null)}
             onLabelChange={(label) => {
+              if (isSaving || savingRef.current) return;
+              startEditing();
               const key = `${selectedDetection.detection.id}-${selectedDetection.index}`;
               setLabelOverrides((prev) => ({ ...prev, [key]: label }));
             }}
@@ -350,10 +385,12 @@ const DetectionsDisplay = ({
           icon={!isDrawingMode && <PlusSquare className="h-4 w-4 text-white" />}
           className="px-6"
           onClick={() => {
+            if (isSaving || savingRef.current) return;
             setIsDrawingMode(!isDrawingMode);
             setSelectedId(null);
           }}
           id="add-detection-btn"
+          disabled={isSaving}
         />
 
         {selectedId && !isDrawingMode && (
@@ -365,6 +402,7 @@ const DetectionsDisplay = ({
             className="px-6"
             theme="danger"
             id="delete-selected-detection-btn"
+            disabled={isSaving}
           />
         )}
 
@@ -379,7 +417,7 @@ const DetectionsDisplay = ({
           icon={<Save className="h-4 w-4 text-white" />}
           className="px-6"
           disabled={
-            !mediaId || !hasDirtyDetections || updateMediaMutation.isPending
+            !mediaId || !hasDirtyDetections || isSaving || updateMediaMutation.isPending
           }
           onClick={handleSaveDetections}
           id="save-detections-btn"
@@ -391,12 +429,15 @@ const DetectionsDisplay = ({
           icon={<RotateCcw className="h-4 w-4 text-white" />}
           onClick={handleResetDetections}
           className="px-6"
-          disabled={updateMediaMutation.isPending}
+          disabled={isSaving || updateMediaMutation.isPending}
           id="reset-detections-btn"
         />
       </div>
     </div>
   );
 };
+
+const DetectionsDisplay = (props: DetectionsDisplayProps) =>
+  <DetectionsEditor key={`${props.item_type}:${props.mediaId}:${props.hfPath}`} {...props} />;
 
 export default DetectionsDisplay;

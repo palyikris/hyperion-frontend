@@ -14,11 +14,11 @@ import { useMeAuth } from "../../../hooks/auth/useMeAuth";
 import { useUpdateMe } from "../../../hooks/auth/useUpdateMe";
 
 export const SettingsForm = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const settingsSchema = useMemo(
     () => createSettingsSchema(t),
-    [t, i18n.resolvedLanguage],
+    [t],
   );
 
   const { data: user } = useMeAuth();
@@ -43,7 +43,7 @@ export const SettingsForm = () => {
   useEffect(() => {
     reset({
       full_name: user?.full_name?.toString() ?? "",
-      language: user?.language?.toString() ?? "en",
+      language: user?.language === "hu" ? "hu" : "en",
     });
   }, [reset, user?.full_name, user?.language]);
 

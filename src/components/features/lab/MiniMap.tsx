@@ -11,6 +11,7 @@ type MiniMapProps = {
   zoom?: number;
   className?: string;
   onPositionChange?: (lat: number, lng: number) => void;
+  disabled?: boolean;
 };
 
 type MiniMapViewportSyncProps = {
@@ -58,6 +59,7 @@ const MiniMap = ({
   zoom = 16,
   className,
   onPositionChange,
+  disabled = false,
 }: MiniMapProps) => {
   const mapRef = useRef<LeafletMap | null>(null);
   const isDraggingRef = useRef(false);
@@ -82,10 +84,10 @@ const MiniMap = ({
         isDraggingRef.current = false;
         const marker = event.target as LeafletMarker;
         const nextPosition = marker.getLatLng();
-        onPositionChange?.(nextPosition.lat, nextPosition.lng);
+        if (!disabled) onPositionChange?.(nextPosition.lat, nextPosition.lng);
       },
     }),
-    [onPositionChange],
+    [onPositionChange, disabled],
   );
 
   return (
@@ -109,7 +111,7 @@ const MiniMap = ({
         <Marker
           position={[lat, lng]}
           icon={createMapIcon("default", true)}
-          draggable
+          draggable={!disabled}
           eventHandlers={markerDragEvents}
         />
       </MapContainer>

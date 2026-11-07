@@ -4,12 +4,14 @@ import { LogOut } from "lucide-react";
 
 interface NavLogoutButtonProps {
   isOpen: boolean;
-  onLogout: () => Promise<void>;
+  onLogout: () => void | Promise<void>;
+  disabled?: boolean;
 }
 
 const NavLogoutButton: React.FC<NavLogoutButtonProps> = ({
   isOpen,
   onLogout,
+  disabled = false,
 }) => {
   const { t } = useTranslation();
 
@@ -17,7 +19,8 @@ const NavLogoutButton: React.FC<NavLogoutButtonProps> = ({
     <button
       type="button"
       onClick={onLogout}
-      className="cursor-pointer flex items-center gap-4 p-3 rounded-xl transition-all w-full group/item text-hyperion-soft-sky/60 hover:text-hyperion-sage-mint hover:bg-hyperion-cream/5"
+      disabled={disabled}
+      className="cursor-pointer flex items-center gap-4 p-3 rounded-xl transition-all w-full group/item text-hyperion-soft-sky/60 hover:text-hyperion-sage-mint hover:bg-hyperion-cream/5 disabled:cursor-wait disabled:opacity-50"
     >
       <LogOut className="min-w-[24px] w-6 h-6 shrink-0" />
       <span

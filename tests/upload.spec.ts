@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 test.describe("Upload files to Vault Workflow", () => {
+  test.setTimeout(180000);
   test.use({ storageState: "playwright/.auth/user.json" });
 
   test.afterAll(async ({ browser }) => {
@@ -18,12 +19,8 @@ test.describe("Upload files to Vault Workflow", () => {
     const vaultPage = new VaultPage(page);
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
-    const cardCount = await vaultPage.getGalleryImageCardCount();
-    if (cardCount > 0) {
-      await vaultPage.deleteAll();
-    }
+    await vaultPage.deleteAllIfPresent();
 
     await context.close();
   });
@@ -42,19 +39,14 @@ test.describe("Upload files to Vault Workflow", () => {
     await uploadPage.goto();
     await uploadPage.uploadImageFiles(filePaths);
 
-    await uploadPage.waitForRecentsResponse();
-
-    const recentImageCount = await uploadPage.getGalleryImageCardCount();
-    expect(recentImageCount).toBeGreaterThanOrEqual(fileNames.length);
-
-    const recentTitles = await uploadPage.getGalleryImageCardTitles();
-    for (const name of fileNames) {
-      const titleExists = recentTitles.some((t) => t.includes(name));
-      expect(titleExists, `Title containing ${name} not found`).toBe(true);
-    }
+    await expect(async () => {
+      const recentTitles = await uploadPage.getGalleryImageCardTitles();
+      for (const name of fileNames) {
+        expect(recentTitles.some((title) => title.includes(name))).toBe(true);
+      }
+    }).toPass();
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
     const cardCount = await vaultPage.getGalleryImageCardCount();
     expect(cardCount).toBeGreaterThanOrEqual(fileNames.length);
@@ -77,30 +69,21 @@ test.describe("Upload files to Vault Workflow", () => {
     await uploadPage.goto();
     await uploadPage.uploadVideoFile(videoFilePath);
 
-    await uploadPage.waitForRecentsResponse();
-
-    const recentImageCount = await uploadPage.getGalleryImageCardCount();
-    expect(recentImageCount).toBeGreaterThanOrEqual(1);
-
-    const recentTitles = await uploadPage.getGalleryImageCardTitles();
-    const recentTitleExists = recentTitles.some((t) =>
-      t.includes(videoFileName),
-    );
-    expect(
-      recentTitleExists,
-      `Title containing ${videoFileName} not found`,
-    ).toBe(true);
+    // Upload completion precedes AI completion. Verify the stored video record
+    // rather than requiring a detection from the external model.
+    await expect(async () => {
+      const titles = await uploadPage.getGalleryImageCardTitles();
+      expect(titles.some((title) => title.includes(videoFileName))).toBe(true);
+    }).toPass();
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
-    const cardCount = await vaultPage.getGalleryImageCardCount();
-    expect(cardCount).toBeGreaterThanOrEqual(2);
-
-    const titles = await vaultPage.getGalleryImageCardTitles();
-    const titleExists = titles.some((t) => t.includes(videoFileName));
-    expect(titleExists, `Title containing ${videoFileName} not found`).toBe(
-      true,
-    );
+    await expect(async () => {
+      const titles = [
+        ...await vaultPage.getGalleryImageCardTitles(),
+        ...await vaultPage.getGalleryVideoCardTitles(),
+      ];
+      expect(titles.some((title) => title.includes(videoFileName))).toBe(true);
+    }).toPass();
   });
 });

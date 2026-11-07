@@ -60,7 +60,7 @@ const UploadPage = () => {
               browseText={t("upload.dropzone.browseVideo", "Browse video")}
               fileSupportText={t(
                 "upload.dropzone.videoSupport",
-                "Supported: mp4, webm, ogg",
+                "Supported: mp4, webm, ogg; maximum size: 1 GB",
               )}
             />
           </div>

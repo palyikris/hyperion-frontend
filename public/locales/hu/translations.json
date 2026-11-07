@@ -57,7 +57,8 @@
       "analysis": "Rácselemzés",
       "cell": "Cella",
       "total_hits": "Találatok száma",
-      "trash_density": "Szemét sűrűség",
+      "trash_density": "Relatív hulladéksűrűség",
+      "density_reference": "A 100% a látható cellák közül a legtöbb hulladékpozitív találatot tartalmazó cellát jelöli.",
       "avg_confidence": "Átlagos AI bizalom",
       "dominant_label": "Domináns címke",
       "no_label": "N/A"
@@ -176,7 +177,8 @@
     },
     "validation": {
       "fullNameRequired": "A teljes név megadása kötelező",
-      "languageRequired": "Nyelv megadása kötelező"
+      "languageRequired": "Nyelv megadása kötelező",
+      "languageUnsupported": "Válassz angol vagy magyar nyelvet."
     }
   },
   "dashboard": {
@@ -228,7 +230,7 @@
   "stats": {
     "page": {
       "title": "Statisztikák",
-      "subtitle": "Környezeti lábnyom, időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő, hotspot sűrűség és hulladékösszetétel",
+      "subtitle": "Időbeli trendek, AI flotta hatékonyság, átlagos feldolgozási idő, hotspot sűrűség és hulladékösszetétel",
       "loadError": "Nem sikerült betölteni a statisztikai grafikonokat."
     },
     "command": {
@@ -268,10 +270,15 @@
       "hotspot": "A magas megbízhatóságú észlelések koncentrációját és az aktivitási zónák térbeli intenzitását méri. Keress meg és összpontosítsd az erőforrásokat azokban a területeken, ahol a hulladék koncentrációja a legmagasabb a maximális működési hatékonyság érdekében.",
       "temporal": "Az észlelések időbeli alakulását követi az erősödés, a szezonalitás és a beavatkozások hatásának feltárására. Figyelemmel kísérje, hogy a tisztítási erőfeszítéseid működnek-e, és észleld a szezonális mintákat a célzott beavatkozások megtervezéséhez.",
       "fleet": "Összesíti az autonóm ügynökök megbízhatóságát, áteresztőképességét és siker-hiba arányát. Biztosítsd, hogy az AI flottád jól teljesít, és azonosítsd az olyan aláteljesítő dolgozókat, akik karbantartásra vagy újraképzésre szorulnak.",
-      "mttp": "A bemenettől a feldolgozás befejezéséig mért medián késleltetést mutatja a dolgozói optimalizáláshoz. Azonosítsd a rendszeredben a szűk keresztmetszeteket, és optimalizáld a dolgozók elosztását a válaszkészség javítása érdekében."
+      "mttp": "A bemenettől a feldolgozás befejezéséig mért átlagos időt mutatja a feldolgozás optimalizálásához. Segít azonosítani a rendszer szűk keresztmetszeteit és összehasonlítani a feldolgozóegységek teljesítményét."
     },
     "environmental": {
       "title": "Környezeti lábnyom",
+      "states": {
+        "error": "Nem sikerült betölteni a környezeti lábnyomot.",
+        "loading": "Környezeti lábnyom betöltése...",
+        "retry": "Újrapróbálás"
+      },
       "cards": {
         "impactMasterCard": "Hatás összesítő kártya",
         "totalArea": "Összterület (m²)",
@@ -524,7 +531,10 @@
     },
     "toast": {
       "compressionErrorTitle": "Képtömörítés sikertelen",
-      "compressionErrorMessage": "Nem sikerült tömöríteni: {{fileName}}. Tömörítés nélkül lesz feltöltve."
+      "compressionErrorMessage": "Nem sikerült tömöríteni: {{fileName}}. Tömörítés nélkül lesz feltöltve.",
+      "processingErrorTitle": "A média feldolgozása sikertelen",
+      "processingErrorFallback": "A feldolgozás sikertelen.",
+      "processingErrorAnnouncement": "A média feldolgozása sikertelen: {{reason}}"
     },
     "divider": {
       "label": "Legutóbbi feltöltések"
@@ -540,7 +550,7 @@
       "videoHeading": "Videó feltöltése",
       "videoDescription": "Húzz ide egy videófájlt vagy kattints tallózáshoz.",
       "browseVideo": "Videó tallózása",
-      "videoSupport": "Támogatott: mp4, webm, ogg"
+      "videoSupport": "Támogatott: mp4, webm, ogg; maximális méret: 1 GB"
     },
     "card": {
       "status": {
@@ -568,8 +578,12 @@
     "deleteConfirm": "Törlés",
     "cancel": "Mégse",
     "uploadCancel": "Feltöltés megszakítása",
+    "errors": {
+      "general": "Egy vagy több fájl feltöltése sikertelen. Ellenőrizd a fájlok állapotát, majd próbáld újra."
+    },
     "status": {
       "pending": "Függőben",
+      "preparing": "Feltöltés előkészítése...",
       "uploaded": "Feltöltve",
       "extracting": "Kicsomagolás",
       "processing": "Feldolgozás",
@@ -591,7 +605,12 @@
       "subtitle": "Média részletek megtekintése és szerkesztése",
       "location": "Helyszín",
       "edit_location_manually": "Helyszín kézi szerkesztése",
-      "location_missing": "Ehhez a médiaelemhez még nincs helyadat."
+      "location_missing": "Ehhez a médiaelemhez még nincs helyadat.",
+      "use_my_location": "Saját helyzet használata",
+      "locating": "Helyzet meghatározása...",
+      "load_error": "A médiaelem betöltése sikertelen. Próbáld újra.",
+      "not_found": "A médiaelem nem található vagy nem érhető el.",
+      "retry": "Újrapróbálás"
     },
     "form": {
       "latitudeLabel": "Szélesség",

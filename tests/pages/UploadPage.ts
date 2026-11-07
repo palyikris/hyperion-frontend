@@ -33,27 +33,31 @@ export class UploadPage extends BasePage {
 
   async goto() {
     await this.navigate("/upload");
+    await this.imageDropZone.waitFor({ state: "attached" });
   }
 
   async uploadImageFiles(filePaths: string[]) {
-    for (const filePath of filePaths) {
-      await this.imageDropZone.setInputFiles(filePath);
-    }
-
-    await this.page.waitForTimeout(1000);
+    await this.imageDropZone.setInputFiles(filePaths);
     await this.selectedImagesSection.waitFor({ state: "visible" });
 
-    await this.imageUploadButton.click();
-    await this.waitForResponseWithStatus("/api/upload/files", 201);
+    await Promise.all([
+      this.waitForResponseWithStatus("/api/upload/files", 201),
+      this.imageUploadButton.click(),
+    ]);
+    // Images are uploaded one by one; the first HTTP response is not the end
+    // of the batch. The selection disappears only after every upload succeeds.
+    await this.selectedImagesSection.waitFor({ state: "hidden", timeout: 120000 });
   }
 
   async uploadVideoFile(filePath: string) {
     await this.videoDropZone.setInputFiles(filePath);
-    await this.page.waitForTimeout(1000);
     await this.selectedVideoSection.waitFor({ state: "visible" });
 
-    await this.videoUploadButton.click();
-    await this.waitForResponseWithStatus("api/upload/video/complete", 200);
+    await Promise.all([
+      this.waitForResponseWithStatus("/api/upload/video/complete", 200),
+      this.videoUploadButton.click(),
+    ]);
+    await this.selectedVideoSection.waitFor({ state: "hidden", timeout: 120000 });
   }
 
   async waitForResponseWithStatus(includeText: string, statusCode: number) {

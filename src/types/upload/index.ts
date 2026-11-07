@@ -1,3 +1,5 @@
+import type { VideoDetectionResponse } from "../lab";
+
 export type CardStatus =
   | "PENDING"
   | "UPLOADED"
@@ -6,12 +8,22 @@ export type CardStatus =
   | "READY"
   | "FAILED";
 
+export type FileUploadStatus = "pending" | "preparing" | "uploading" | "completed" | "error" | "cancelled";
+
+export interface FileUploadProgress {
+  index: number;
+  progress: number;
+  status: FileUploadStatus;
+  error?: string;
+}
+
 export interface VaultResponse {
   total: number;
   page: number;
   page_size: number;
   total_pages: number;
-  items: VaultItem[];
+  image_items: VaultItem[];
+  video_items: VideoDetectionResponse[];
 }
 
 export type VaultItem = GalleryItem;
@@ -60,9 +72,9 @@ export interface WSStatusUpdate {
   type: "MEDIA_STATUS_UPDATE";
   media_id: string;
   status: CardStatus;
-  failed_reason?: string;
-  image_url?: string;
-  worker?: string;
+  failed_reason?: string | null;
+  img_url?: string | null;
+  worker?: string | null;
   timestamp: string;
-  address?: string;
+  address?: string | null;
 }

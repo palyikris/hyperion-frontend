@@ -69,6 +69,7 @@ const VaultPage = () => {
     page_size: pageSize,
     page,
   });
+  const hasItems = data.image_items.length > 0 || data.video_items.length > 0;
 
   const deleteAllMutation = useDeleteAllVault();
   const { t } = useTranslation();
@@ -92,7 +93,7 @@ const VaultPage = () => {
   };
   const handleCloseModal = () => setZoomedImage(null);
 
-  if ((isLoading && !data.image_items.length) || deleteAllMutation.isPending) {
+  if ((isLoading && !hasItems) || deleteAllMutation.isPending) {
     return <LoadingScreen />;
   }
 
@@ -103,7 +104,7 @@ const VaultPage = () => {
         <header className="flex flex-col items-start gap-4">
           <div className="w-full flex justify-between items-start">
             <VaultHeader />
-            {data.image_items.length > 0 && (
+            {data.total > 0 && (
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllMutation.isPending || isLoading}
@@ -140,7 +141,7 @@ const VaultPage = () => {
           className="py-6"
         />
 
-        {data.image_items.length > 0 ? (
+        {hasItems ? (
           <Gallery
             items={data.image_items}
             video_items={data.video_items}
@@ -156,7 +157,7 @@ const VaultPage = () => {
           onClose={handleCloseModal}
         />
 
-        {data.image_items.length > 0 && (
+        {data.total_pages > 0 && (
           <VaultPagination
             currentPage={data.page}
             totalPages={data.total_pages}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MorphBox } from "../../shared/animation/MorphBox";
@@ -7,6 +7,9 @@ import { useUploadVideoChunked } from "../../../hooks/upload/useUploadVideoChunk
 import { toastService } from "../../../services/toastService";
 import { Button } from "../../shared/Button";
 import { UploadIcon, XIcon } from "lucide-react";
+import type { FileUploadProgress, FileUploadStatus } from "../../../types/upload";
+import { isVideoFile } from "../../../utils/fileTypes";
+import axios from "axios";
 
 type UploadDropZoneProps = {
   onFilesSelected?: (files: File[]) => void;
@@ -22,7 +25,7 @@ type UploadDropZoneProps = {
 type FileUploadState = {
   file: File;
   progress: number;
-  status: "pending" | "uploading" | "completed" | "error";
+  status: FileUploadStatus;
   error?: string;
 };
 
@@ -44,9 +47,17 @@ const UploadDropZone = ({
   const uploadMutation = useUploadFiles();
   const uploadVideoMutation = useUploadVideoChunked();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => () => {
+    clearTimeout(successTimeoutRef.current);
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    if (isUploading || disabled || abortControllerRef.current) return;
     setIsDragging(true);
   };
 
@@ -57,24 +68,29 @@ const UploadDropZone = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    if (isUploading || disabled || abortControllerRef.current) return;
     let files = Array.from(e.dataTransfer.files);
     if (!multiple && files.length > 1) {
       files = [files[0]];
     }
     setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
+    if (!multiple) setUploadStates([]);
     onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isUploading || disabled || abortControllerRef.current) return;
     let files = Array.from(e.target.files || []);
     if (!multiple && files.length > 1) {
       files = [files[0]];
     }
     setSelectedFiles(multiple ? [...selectedFiles, ...files] : files);
+    if (!multiple) setUploadStates([]);
     onFilesSelected?.(multiple ? [...selectedFiles, ...files] : files);
   };
 
   const removeFile = (index: number) => {
+    if (isUploading || disabled || abortControllerRef.current) return;
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
     onFilesSelected?.(updatedFiles);
@@ -82,50 +98,52 @@ const UploadDropZone = ({
   };
 
   const handleCancelUpload = () => {
+    clearTimeout(successTimeoutRef.current);
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
     setIsUploading(false);
-    setUploadStates([]);
+    setUploadStates((states) => states.map((state) => state.status === "completed"
+      ? state : { ...state, status: "cancelled" }));
     toastService.error(t("upload.status.cancelled"));
   };
 
   const handleUpload = async () => {
-    if (selectedFiles.length === 0 || isUploading) return;
+    if (selectedFiles.length === 0 || isUploading || disabled || abortControllerRef.current) return;
+    const fileIndexes = selectedFiles.flatMap((_, index) =>
+      uploadStates[index]?.status === "completed" ? [] : [index]);
+    if (!fileIndexes.length) return;
+    const files = fileIndexes.map((index) => selectedFiles[index]);
 
     setIsUploading(true);
-    abortControllerRef.current = new AbortController();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     setUploadStates(
-      selectedFiles.map((file) => ({ file, progress: 0, status: "pending" })),
+      selectedFiles.map((file, index) => uploadStates[index]?.status === "completed"
+        ? uploadStates[index] : { file, progress: 0, status: "pending" }),
     );
 
     const isSingleVideo =
-      selectedFiles.length === 1 && selectedFiles[0].type.startsWith("video/");
+      files.length === 1 && isVideoFile(files[0]);
 
-    // Common progress handler
-    const handleProgress = (progress: number) => {
+    const handleFileProgress = (update: FileUploadProgress) => {
+      if (abortControllerRef.current !== controller || controller.signal.aborted) return;
+      const fileIndex = fileIndexes[update.index];
       setUploadStates((prevStates) =>
-        prevStates.map((state) => ({
-          ...state,
-          progress,
-          status: progress < 100 ? "uploading" : "completed",
-        })),
+        prevStates.map((state, index) => index === fileIndex ? { ...state, ...update } : state),
       );
     };
 
     // Common success handler
     const handleSuccess = () => {
-      setUploadStates((prevStates) =>
-        prevStates.map((state) => ({
-          ...state,
-          status: "completed",
-          progress: 100,
-        })),
-      );
-      setTimeout(() => {
+      if (abortControllerRef.current !== controller || controller.signal.aborted) return;
+      if (isSingleVideo) handleFileProgress({ index: 0, progress: 100, status: "completed" });
+      successTimeoutRef.current = setTimeout(() => {
+        if (abortControllerRef.current !== controller) return;
         setSelectedFiles([]);
+        onFilesSelected?.([]);
         setUploadStates([]);
         setIsUploading(false);
         abortControllerRef.current = null;
@@ -134,14 +152,15 @@ const UploadDropZone = ({
 
     // Common error handler
     const handleError = (error: unknown) => {
-      if (error instanceof Error && error.name === "CanceledError") return;
-      setUploadStates((prevStates) =>
-        prevStates.map((state) => ({
-          ...state,
-          status: "error",
-          error: error instanceof Error ? error.message : "Upload failed",
-        })),
-      );
+      if (abortControllerRef.current !== controller) return;
+      if (isSingleVideo) {
+        setUploadStates((states) => states.map((state, index) => index === fileIndexes[0]
+          ? {
+            ...state,
+            status: axios.isCancel(error) ? "cancelled" : "error",
+            error: error instanceof Error ? error.message : t("upload.errors.general"),
+          } : state));
+      }
       setIsUploading(false);
       abortControllerRef.current = null;
     };
@@ -151,32 +170,26 @@ const UploadDropZone = ({
         // Video upload (chunked)
         await uploadVideoMutation.mutateAsync(
           {
-            file: selectedFiles[0],
-            signal: abortControllerRef.current.signal,
-            onProgress: handleProgress,
-          },
-          {
-            onSuccess: handleSuccess,
-            onError: handleError,
+            file: files[0],
+            signal: controller.signal,
+            onProgress: (progress) => handleFileProgress({ index: 0, progress, status: "uploading" }),
           },
         );
       } else {
         // Image/files upload
         await uploadMutation.mutateAsync(
           {
-            files: selectedFiles,
-            signal: abortControllerRef.current.signal,
-            onProgress: handleProgress,
-          },
-          {
-            onSuccess: handleSuccess,
-            onError: handleError,
+            files,
+            signal: controller.signal,
+            onProgress: handleFileProgress,
           },
         );
       }
+      handleSuccess();
     } catch (error) {
+      if (abortControllerRef.current !== controller) return;
       handleError(error);
-      if (!(error instanceof Error && error.name === "CanceledError")) {
+      if (!axios.isCancel(error) && !controller.signal.aborted) {
         console.error("Upload error:", error);
         toastService.error(t("upload.errors.general"));
       }
@@ -282,6 +295,7 @@ const UploadDropZone = ({
                 <Button
                   onClick={handleUpload}
                   text={t("nav.main.upload")}
+                  disabled={disabled}
                   icon={<UploadIcon className="w-4 h-4" />}
                   className="px-6"
                 ></Button>
@@ -292,7 +306,12 @@ const UploadDropZone = ({
                 const uploadState = uploadStates[index];
                 const isCompleted = uploadState?.status === "completed";
                 const isError = uploadState?.status === "error";
-                const isUploading = uploadState?.status === "uploading";
+                const isFileUploading = uploadState?.status === "uploading";
+                const statusText = isCompleted ? t("upload.status.uploaded")
+                  : isError ? t("upload.status.failed")
+                    : uploadState?.status === "cancelled" ? t("upload.status.cancelled")
+                      : uploadState?.status === "preparing" || uploadState?.status === "pending"
+                        ? t("upload.status.preparing") : `${uploadState?.progress || 0}%`;
 
                 return (
                   <ScrollReveal
@@ -309,9 +328,10 @@ const UploadDropZone = ({
                           {(file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
-                      {!isUploading && !isCompleted && !isError && (
+                      {!isFileUploading && !isCompleted && !isError && (
                         <button
                           onClick={() => removeFile(index)}
+                          disabled={isUploading || disabled}
                           className="ml-3 shrink-0 p-2 text-hyperion-slate-grey/50 hover:text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/10 rounded-lg transition-colors"
                           title={t("common.remove", "Remove")}
                         >
@@ -333,7 +353,7 @@ const UploadDropZone = ({
                     </div>
 
                     {/* Progress Bar */}
-                    {(isUploading || isCompleted || isError) && (
+                    {uploadState && (
                       <div className="space-y-2">
                         <div className="w-full h-2 bg-hyperion-fog-grey rounded-full overflow-hidden">
                           <div
@@ -347,15 +367,17 @@ const UploadDropZone = ({
                             style={{
                               width: `${uploadState?.progress || 0}%`,
                             }}
+                            role="progressbar"
+                            aria-label={file.name}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-valuenow={uploadState.progress}
+                            aria-valuetext={statusText}
                           ></div>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-hyperion-slate-grey">
-                            {isCompleted
-                              ? t("upload.status.uploaded")
-                              : isError
-                                ? t("upload.status.failed")
-                                : `${uploadState?.progress || 0}%`}
+                            {statusText}
                           </span>
                           {isCompleted && (
                             <svg

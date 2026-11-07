@@ -53,6 +53,7 @@ export class MapPage extends BasePage {
 
   async goto() {
     await this.navigate("/map");
+    await this.mapContainer.waitFor({ state: "visible" });
   }
 
   async openFilters() {

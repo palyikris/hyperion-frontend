@@ -70,7 +70,7 @@ const Gallery = ({
       >
         {video_items?.map((item, i) => {
           const media = items.find((media) => media.id === item.media_id);
-          const title = `${media?.initial_metadata?.filename || "Untitled"} - ${item.label}`;
+          const title = `${item.filename || media?.initial_metadata?.filename || "Untitled"} - ${item.label}`;
           const metadataInfo = `Confidence: ${(item.confidence * 100).toFixed(
             2,
           )}%, Timestamp: ${item.timestamp_in_video}s`;

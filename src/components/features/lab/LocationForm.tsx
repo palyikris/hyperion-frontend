@@ -49,7 +49,7 @@ const LocationForm = ({
       className="space-y-4"
       aria-busy={isSubmitting || isUpdatePending}
     >
-      <div className="grid grid-cols-12 gap-4">
+      <fieldset disabled={isSubmitting || isUpdatePending} className="grid grid-cols-12 gap-4">
         <InputField
           label={t("lab.form.latitudeLabel", "Latitude")}
           type="number"
@@ -89,7 +89,7 @@ const LocationForm = ({
           error={errors.altitude?.message}
           className="col-span-4"
         />
-      </div>
+      </fieldset>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button

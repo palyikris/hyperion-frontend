@@ -21,10 +21,7 @@ test.describe.serial("Map Feature with data lifecycle", () => {
     const page = await context.newPage();
     const vaultPage = new VaultPage(page);
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
-    if ((await vaultPage.getGalleryImageCardCount()) > 0) {
-      await vaultPage.deleteAll();
-    }
+    await vaultPage.deleteAllIfPresent();
     await context.close();
   });
 
@@ -38,17 +35,12 @@ test.describe.serial("Map Feature with data lifecycle", () => {
 
     await uploadPage.goto();
     await uploadPage.uploadImageFiles(filePaths);
-    await uploadPage.waitForRecentsResponse();
     await uploadPage.waitForStatusBadgesToBe("Ready");
-    await uploadPage.waitForTimeout(5000);
   });
 
   test("should display markers on the map", async ({ page }) => {
     const mapPage = new MapPage(page);
     await mapPage.goto();
-
-    await mapPage.waitForMapResponse();
-    await mapPage.waitForTimeout(5000);
 
     await expect(async () => {
       expect(await mapPage.getMarkerCount()).toBeGreaterThanOrEqual(1);
@@ -66,17 +58,12 @@ test.describe.serial("Map Feature with data lifecycle", () => {
     }).toPass();
 
     await mapPage.filterForUploadsWithTrash();
-    await mapPage.waitForMapResponse();
-    await mapPage.waitForTimeout(5000);
-
-    const markerCountAfterFilter = await mapPage.getMarkerCount();
 
     await mapPage.setViewMode("Analysis Grid");
-    await mapPage.waitForTimeout(5000);
-    if (markerCountAfterFilter > 0) {
-      await expect(async () => {
-        expect(await mapPage.areGridsVisible()).toBe(true);
-      }).toPass();
-    }
+    // Marker icons are absent in heatmap mode, so their count must not decide
+    // whether the grid assertion runs.
+    await expect(async () => {
+      expect(await mapPage.areGridsVisible()).toBe(true);
+    }).toPass();
   });
 });

@@ -22,9 +22,10 @@ vi.mock("../hooks/vault/useDeleteAllVault", () => ({
 }));
 
 vi.mock("../components/features/upload/Gallery", () => ({
-  default: ({ items, onCardZoom }: any) => (
+  default: ({ items, video_items, onCardZoom }: any) => (
     <div>
       <div>Gallery with {items.length} item(s)</div>
+      <div>Video gallery with {video_items?.length ?? 0} item(s)</div>
       <button
         type="button"
         onClick={() => onCardZoom?.(items[0].id, items[0].hf_path)}
@@ -147,6 +148,21 @@ beforeEach(() => {
 });
 
 describe("VaultPage", () => {
+  it("renders and paginates a video-only page", () => {
+    useVaultMock.mockReturnValue({
+      data: {
+        image_items: [], video_items: [{ id: "video-1", media_id: "parent-id" }],
+        total: 4, page: 2, page_size: 1, total_pages: 4,
+      },
+      isLoading: false,
+    });
+    render(<VaultPage />);
+    expect(screen.getByText("Video gallery with 1 item(s)")).toBeInTheDocument();
+    expect(screen.queryByText("No vault items")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "go to page 2" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete All" })).toBeInTheDocument();
+  });
+
   it("renders vault items and handles zoom/delete interactions", async () => {
     const user = userEvent.setup();
 

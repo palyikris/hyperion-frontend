@@ -1,6 +1,7 @@
 export interface VideoDetectionResponse {
   id: string;
   media_id: string;
+  filename?: string | null;
   lat?: number;
   lng?: number;
   altitude?: number;
@@ -43,6 +44,7 @@ export interface MediaResponse {
 }
 
 export interface DetectionInput {
+  id?: string;
   label: string;
   bbox: Record<string, number>;
   area_sqm?: number;

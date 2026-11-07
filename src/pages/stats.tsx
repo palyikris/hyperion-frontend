@@ -1,5 +1,6 @@
 /** src/pages/stats.tsx **/
-import EnvironmentalFootprintChart from "../components/features/stats/EnvironmentalFootprintChart";
+// TODO: Restore environmental footprint once area calculation is implemented.
+// import EnvironmentalFootprintChart from "../components/features/stats/EnvironmentalFootprintChart";
 import TemporalTrendsChart from "../components/features/stats/TemporalTrendsChart";
 import AIFleetEfficiencyChart from "../components/features/stats/AIFleetEfficiencyChart";
 import MeanTimeToProcessChart from "../components/features/stats/MeanTimeToProcessChart";
@@ -7,27 +8,28 @@ import HotspotDensityChart from "../components/features/stats/HotspotDensityChar
 import TrashCompositionChart from "../components/features/stats/TrashCompositionChart";
 import StatsBentoCard from "../components/features/stats/StatsBentoCard";
 import { Button } from "../components/shared/Button";
-import LoadingScreen from "../components/shared/LoadingScreen";
 import { Title } from "../components/shared/Title";
-import { useEnvironmentalFootprint } from "../hooks/stats/useEnvironmentalFootprint";
-import { useStatsSummary } from "../hooks/stats/useStatsSummary";
+// import { useEnvironmentalFootprint } from "../hooks/stats/useEnvironmentalFootprint";
 import { useTranslation } from "react-i18next";
 import { useFunFacts } from "../hooks/stats/useFunFacts";
 import FunFactBox from "../components/features/stats/FunFactBox";
 import { useExportCleanupManifest } from "../hooks/stats/useExportCleanupManifest";
 import { useExportCleanupManifestPdf } from "../hooks/stats/useExportCleanupManifestPdf";
+import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 
 const StatsPage = () => {
   const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const isRefreshing = useIsFetching({ queryKey: ["stats"] }) > 0;
   const dateRangeDays = 7;
-  const environmentalFootprintQuery = useEnvironmentalFootprint();
-  const summaryQuery = useStatsSummary(dateRangeDays);
+  // const environmentalFootprintQuery = useEnvironmentalFootprint();
   const funFactsQuery = useFunFacts(
     i18n.language as "en" | "hu" | undefined,
     4,
   );
   const exportCleanupManifestMutation = useExportCleanupManifest();
   const exportPdfMutation = useExportCleanupManifestPdf();
+  const funFacts = funFactsQuery.data?.facts ?? [];
 
   const onExportManifest = () => {
     exportCleanupManifestMutation.mutate({
@@ -44,19 +46,8 @@ const StatsPage = () => {
   };
 
   const onRefreshData = () => {
-    void Promise.all([
-      environmentalFootprintQuery.refetch(),
-      summaryQuery.refetch(),
-    ]);
+    void queryClient.invalidateQueries({ queryKey: ["stats"] });
   };
-
-  if (
-    environmentalFootprintQuery.isLoading ||
-    summaryQuery.isLoading ||
-    funFactsQuery.isLoading
-  ) {
-    return <LoadingScreen />;
-  }
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#FDFCF8] via-[#FDFCF8] to-[#F5F3ED] selection:bg-hyperion-soft-sky/30">
@@ -74,12 +65,12 @@ const StatsPage = () => {
           <div className="flex flex-wrap items-center gap-3">
             <Button
               text={
-                summaryQuery.isFetching ||
-                environmentalFootprintQuery.isFetching
+                isRefreshing
                   ? `${t("stats.command.refresh", "Refresh Data")}...`
                   : t("stats.command.refresh", "Refresh Data")
               }
               onClick={onRefreshData}
+              disabled={isRefreshing}
               theme="info"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
             />
@@ -91,9 +82,7 @@ const StatsPage = () => {
                   : t("stats.command.exportManifest", "Export Manifest")
               }
               onClick={onExportManifest}
-              disabled={
-                !summaryQuery.data || exportCleanupManifestMutation.isPending
-              }
+              disabled={exportCleanupManifestMutation.isPending}
               theme="info"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
             />
@@ -104,7 +93,7 @@ const StatsPage = () => {
                   : t("stats.command.exportPdf", "Export PDF")
               }
               onClick={onExportPdf}
-              disabled={!summaryQuery.data || exportPdfMutation.isPending}
+              disabled={exportPdfMutation.isPending}
               theme="primary"
               className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
             />
@@ -113,7 +102,7 @@ const StatsPage = () => {
 
         {/* Main Grid Layout */}
         <section className="space-y-0">
-          {/* Environmental Footprint - Hero Section */}
+          {/* Environmental Footprint: disabled until area calculation is implemented.
           <StatsBentoCard
             id="chart-environmental"
             title={t("stats.environmental.title", "Environmental Footprint")}
@@ -123,27 +112,39 @@ const StatsPage = () => {
             )}
             className="h-[500px] mb-46"
           >
-            <EnvironmentalFootprintChart
-              data={environmentalFootprintQuery.data!}
-            />
+            {environmentalFootprintQuery.isError && (
+              <div role="alert" className="space-y-4 rounded-2xl border border-hyperion-burnt-orange/25 bg-hyperion-burnt-orange/5 p-6 text-sm text-hyperion-slate-grey">
+                <p>{t("stats.environmental.states.error", "Failed to load environmental footprint.")}</p>
+                <Button
+                  text={t("stats.environmental.states.retry", "Retry")}
+                  onClick={() => { void environmentalFootprintQuery.refetch(); }}
+                  disabled={environmentalFootprintQuery.isFetching}
+                  theme="info"
+                />
+              </div>
+            )}
+            {environmentalFootprintQuery.data ? (
+              <EnvironmentalFootprintChart data={environmentalFootprintQuery.data} />
+            ) : !environmentalFootprintQuery.isError ? (
+              <p role="status" className="rounded-2xl border border-hyperion-fog-grey/70 bg-white/40 p-6 text-sm text-hyperion-slate-grey/80">
+                {t("stats.environmental.states.loading", "Loading environmental footprint...")}
+              </p>
+            ) : null}
           </StatsBentoCard>
+          */}
 
           {/* Fun Facts */}
-          {funFactsQuery.data && (
+          {funFacts.length > 0 && (
             <div className="grid grid-cols-12 gap-6">
-              <StatsBentoCard
-                id="chart-funfact-1"
-                className="col-span-12 lg:col-span-6"
-              >
-                <FunFactBox funFact={funFactsQuery.data.facts[0]}></FunFactBox>
-              </StatsBentoCard>
-
-              <StatsBentoCard
-                id="chart-funfact-2"
-                className="col-span-12 lg:col-span-6"
-              >
-                <FunFactBox funFact={funFactsQuery.data.facts[1]}></FunFactBox>
-              </StatsBentoCard>
+              {funFacts.slice(0, 2).map((funFact, index) => (
+                <StatsBentoCard
+                  key={`${funFact.title}-${index}`}
+                  id={`chart-funfact-${index + 1}`}
+                  className="col-span-12 lg:col-span-6"
+                >
+                  <FunFactBox funFact={funFact} />
+                </StatsBentoCard>
+              ))}
             </div>
           )}
 
@@ -166,7 +167,7 @@ const StatsPage = () => {
               title={t("stats.meanTime.title", "Mean Time to Process")}
               description={t(
                 "stats.info.mttp",
-                "Shows median operational latency from input to completed processing for worker optimization.",
+                "Shows mean operational latency from input to completed processing for worker optimization.",
               )}
               className="col-span-12 xl:col-span-6 h-[450px]"
             >
@@ -188,21 +189,17 @@ const StatsPage = () => {
           </StatsBentoCard>
 
           {/* Fun Facts */}
-          {funFactsQuery.data && (
+          {funFacts.length > 2 && (
             <div className="grid grid-cols-12 gap-6">
-              <StatsBentoCard
-                id="chart-funfact-3"
-                className="col-span-12 lg:col-span-6"
-              >
-                <FunFactBox funFact={funFactsQuery.data.facts[2]}></FunFactBox>
-              </StatsBentoCard>
-
-              <StatsBentoCard
-                id="chart-funfact-4"
-                className="col-span-12 lg:col-span-6"
-              >
-                <FunFactBox funFact={funFactsQuery.data.facts[3]}></FunFactBox>
-              </StatsBentoCard>
+              {funFacts.slice(2, 4).map((funFact, index) => (
+                <StatsBentoCard
+                  key={`${funFact.title}-${index + 2}`}
+                  id={`chart-funfact-${index + 3}`}
+                  className="col-span-12 lg:col-span-6"
+                >
+                  <FunFactBox funFact={funFact} />
+                </StatsBentoCard>
+              ))}
             </div>
           )}
 

@@ -6,9 +6,10 @@ import { useZoomPan } from "../../../hooks/lab/useZoomPan";
 
 type ZoomableContainerProps = {
   children: ReactNode;
+  panEnabled?: boolean;
 };
 
-const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
+const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerProps) => {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -26,13 +27,12 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
       if (!containerRef.current || !contentRef.current) return;
 
       const containerRect = containerRef.current.getBoundingClientRect();
-      const contentRect = contentRef.current.getBoundingClientRect();
 
       setDimensions({
         containerWidth: containerRect.width,
         containerHeight: containerRect.height,
-        contentWidth: contentRect.width,
-        contentHeight: contentRect.height,
+        contentWidth: contentRef.current.offsetWidth,
+        contentHeight: contentRef.current.offsetHeight,
       });
     };
 
@@ -50,6 +50,7 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
   }, []);
 
   const { state, isPanning, handlers, controls } = useZoomPan({
+    panEnabled,
     minScale: 1,
     maxScale: 5,
     scaleSensitivity: 0.002,
@@ -111,7 +112,7 @@ const ZoomableContainer = ({ children }: ZoomableContainerProps) => {
         {...handlers}
         className="relative overflow-hidden"
         style={{
-          cursor: isPanning ? "grabbing" : isZoomed ? "grab" : "default",
+          cursor: !panEnabled ? "default" : isPanning ? "grabbing" : isZoomed ? "grab" : "default",
           touchAction: "none",
           overscrollBehavior: "contain",
         }}

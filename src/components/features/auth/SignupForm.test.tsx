@@ -113,6 +113,33 @@ describe("SignupForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("does not submit a full name consisting only of spaces", async () => {
+    const user = userEvent.setup();
+    const signupMock = vi.fn();
+    useAuthMock.mockReturnValue({ signup: signupMock, isLoading: false });
+    renderWithRouter(<SignupForm />);
+    await user.type(screen.getByLabelText("Full Name"), "   ");
+    await user.type(screen.getByLabelText("Email"), "user@example.com");
+    await user.type(screen.getByLabelText("Password"), "securePassword123");
+    await user.click(screen.getByRole("button", { name: /Sign Up/i }));
+    expect(await screen.findByText("Full name is required")).toBeInTheDocument();
+    expect(signupMock).not.toHaveBeenCalled();
+  });
+
+  it("trims the submitted name without trimming the password", async () => {
+    const user = userEvent.setup();
+    const signupMock = vi.fn();
+    useAuthMock.mockReturnValue({ signup: signupMock, isLoading: false });
+    renderWithRouter(<SignupForm />);
+    await user.type(screen.getByLabelText("Full Name"), "  John  Doe  ");
+    await user.type(screen.getByLabelText("Email"), "john@example.com");
+    await user.type(screen.getByLabelText("Password"), "  securePassword123  ");
+    await user.click(screen.getByRole("button", { name: /Sign Up/i }));
+    await waitFor(() => expect(signupMock).toHaveBeenCalledWith({
+      full_name: "John  Doe", email: "john@example.com", password: "  securePassword123  ",
+    }));
+  });
+
   it("displays validation error for invalid email", async () => {
     const user = userEvent.setup();
     renderWithRouter(<SignupForm />);

@@ -10,5 +10,5 @@ export const createLoginSchema = (t: (key: string) => string) =>
 
 export const createSignupSchema = (t: (key: string) => string) =>
   createLoginSchema(t).extend({
-    full_name: z.string().min(1, t("auth.validation.fullNameRequired")),
+    full_name: z.string().trim().min(1, t("auth.validation.fullNameRequired")),
   });

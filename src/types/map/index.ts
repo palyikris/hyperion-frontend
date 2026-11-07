@@ -14,7 +14,9 @@ export interface MapLogsResponse {
 }
 
 export interface MapItem {
+  // The parent media ID remains the target for logs and media deletion.
   id: string;
+  video_detection_id?: string;
   filename?: string;
   status: string;
   failed_reason?: string;
@@ -46,6 +48,23 @@ export const convertMediaResponseToMapItem = (
   detections: media.detections || [],
 });
 
+export const convertVideoDetectionToMapItem = (
+  detection: VideoDetection,
+): MapItem => ({
+  ...convertMediaResponseToMapItem(detection.media),
+  id: detection.media_id,
+  video_detection_id: detection.id,
+  filename: detection.media.initial_metadata?.filename as string | undefined,
+  lat: Number(detection.lat),
+  lng: Number(detection.lng),
+  altitude: detection.altitude,
+  address: detection.address ?? undefined,
+  image_url: detection.image_url,
+  has_trash: true,
+  confidence: detection.confidence * 100,
+  detections: [detection],
+});
+
 export interface MapResponse {
   items: MapItem[];
   video_detections: {
@@ -65,8 +84,8 @@ export interface GridCell {
   id: string;
   bounds: GridBounds;
   count: number;
-  density: number;
-  confidence: number;
+  density: number; // Trash-positive count relative to the densest visible cell, in [0, 1].
+  confidence: number; // Average confidence in percent, in [0, 100].
   dominantLabel: string | null;
   labelDistribution: Record<string, number>;
   items: MapItem[];

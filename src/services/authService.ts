@@ -1,5 +1,5 @@
 import { api } from "../api/axiosInstance";
-import type { UserData } from "../types/auth/auth";
+import type { AuthenticatedUser, UserData } from "../types/auth/auth";
 
 
 export const authService = {
@@ -11,7 +11,9 @@ export const authService = {
   login: async (
     credentials: Omit<UserData, "full_name" | "id" | "language">,
   ) => {
-    const { data } = await api.post("/auth/login", credentials);
+    const { data } = await api.post<{ message: string; user: AuthenticatedUser }>(
+      "/auth/login", credentials,
+    );
     return data;
   },
 

@@ -57,7 +57,8 @@
       "analysis": "Grid Analysis",
       "cell": "Cell",
       "total_hits": "Total hits",
-      "trash_density": "Trash density",
+      "trash_density": "Relative trash density",
+      "density_reference": "100% marks the visible cell with the most trash-positive hits.",
       "avg_confidence": "Average AI confidence",
       "dominant_label": "Dominant label",
       "no_label": "N/A"
@@ -176,7 +177,8 @@
     },
     "validation": {
       "fullNameRequired": "Full name is required",
-      "languageRequired": "Language is required"
+      "languageRequired": "Language is required",
+      "languageUnsupported": "Choose English or Hungarian."
     }
   },
   "dashboard": {
@@ -228,7 +230,7 @@
   "stats": {
     "page": {
       "title": "Stats",
-      "subtitle": "Environmental Footprint, Temporal Trends, AI Fleet Efficiency, Mean Time to Process, Hotspot Density & Trash Composition",
+      "subtitle": "Temporal Trends, AI Fleet Efficiency, Mean Time to Process, Hotspot Density & Trash Composition",
       "loadError": "Failed to load stats charts."
     },
     "command": {
@@ -268,10 +270,15 @@
       "hotspot": "Measures concentration of high-confidence detections and spatial intensity of activity zones. Locate and focus deployment resources where waste concentration is highest for maximum operational efficiency.",
       "temporal": "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect. Monitor whether your cleanup efforts are working and detect seasonal patterns to plan targeted interventions.",
       "fleet": "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents. Ensure your AI fleet is performing well and identify underperforming workers that need maintenance or retraining.",
-      "mttp": "Shows median operational latency from input to completed processing for worker optimization. Identify bottlenecks in your system and optimize worker allocation to improve responsiveness."
+      "mttp": "Shows mean operational latency from input to completed processing for worker optimization. Identify bottlenecks in your system and optimize worker allocation to improve responsiveness."
     },
     "environmental": {
       "title": "Environmental Footprint",
+      "states": {
+        "error": "Failed to load environmental footprint.",
+        "loading": "Loading environmental footprint...",
+        "retry": "Retry"
+      },
       "cards": {
         "impactMasterCard": "Impact Master Card",
         "totalArea": "Total Area (m²)",
@@ -524,7 +531,10 @@
     },
     "toast": {
       "compressionErrorTitle": "Image Compression Failed",
-      "compressionErrorMessage": "Failed to compress {{fileName}}. It will be uploaded without compression."
+      "compressionErrorMessage": "Failed to compress {{fileName}}. It will be uploaded without compression.",
+      "processingErrorTitle": "Media processing failed",
+      "processingErrorFallback": "Processing failed.",
+      "processingErrorAnnouncement": "Media processing failed: {{reason}}"
     },
     "divider": {
       "label": "Recent Uploads"
@@ -540,7 +550,7 @@
       "videoHeading": "Upload a video",
       "videoDescription": "Drag and drop a video file or click to browse.",
       "browseVideo": "Browse video",
-      "videoSupport": "Supported: mp4, webm, ogg"
+      "videoSupport": "Supported: mp4, webm, ogg; maximum size: 1 GB"
     },
     "card": {
       "status": {
@@ -568,8 +578,12 @@
     "deleteConfirm": "Delete",
     "cancel": "Cancel",
     "uploadCancel": "Cancel Upload",
+    "errors": {
+      "general": "One or more files could not be uploaded. Check the file statuses and try again."
+    },
     "status": {
       "pending": "Pending",
+      "preparing": "Preparing upload...",
       "uploaded": "Uploaded",
       "extracting": "Extracting",
       "processing": "Processing",
@@ -591,7 +605,12 @@
       "subtitle": "View and edit media details",
       "location": "Location",
       "edit_location_manually": "Edit location manually",
-      "location_missing": "No location metadata is available for this media yet."
+      "location_missing": "No location metadata is available for this media yet.",
+      "use_my_location": "Use my location",
+      "locating": "Finding your location...",
+      "load_error": "The media could not be loaded. Please try again.",
+      "not_found": "The media was not found or is not accessible.",
+      "retry": "Try again"
     },
     "form": {
       "latitudeLabel": "Latitude",

@@ -53,7 +53,7 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
   const navigate = useNavigate();
 
   const handleLabNav = () => {
-    navigate(`/lab/${item.id}`);
+    navigate(`/lab/${item.video_detection_id ?? item.id}`);
   };
 
   return (

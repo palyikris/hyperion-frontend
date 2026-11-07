@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type Konva from "konva";
 import { Group, Layer, Rect, Stage, Text, Transformer } from "react-konva";
 import type { Detection } from "../../../types/lab";
+import { clipDrawingRect } from "../../../utils/labGeometry";
 import {
   getStableDetectionColor,
   rgbToRgba,
@@ -22,6 +23,7 @@ type DetectionsStageProps = {
   isImageLoading: boolean;
   hasError: boolean;
   isDrawingMode?: boolean;
+  disabled?: boolean;
   selectedId: string | null;
   onSelectDetection: (id: string) => void;
   onUpdateDetectionBBox?: (id: string, bbox: NormalizedBBox) => void;
@@ -40,6 +42,7 @@ const DetectionsStage = ({
   hasError,
   selectedId,
   isDrawingMode = false,
+  disabled = false,
   onSelectDetection,
   onUpdateDetectionBBox,
   onAddDetection,
@@ -57,7 +60,7 @@ const DetectionsStage = ({
     if (!transformer) return;
 
     if (
-      selectedId &&
+      selectedId && !disabled && !isDrawingMode &&
       !hiddenDetections[selectedId] &&
       rectRefs.current[selectedId]
     ) {
@@ -67,18 +70,18 @@ const DetectionsStage = ({
     }
 
     transformer.getLayer()?.batchDraw();
-  }, [selectedId, hiddenDetections, detectionKeys]);
+  }, [selectedId, hiddenDetections, detectionKeys, disabled, isDrawingMode]);
 
   const emitRectUpdate = (node: Konva.Rect, key: string) => {
     if (
-      !onUpdateDetectionBBox ||
+      !onUpdateDetectionBBox || disabled ||
       dimensions.width <= 0 ||
       dimensions.height <= 0
     ) {
       return;
     }
 
-    const minPx = 6;
+    const minPx = Math.min(6, dimensions.width, dimensions.height);
     const rawWidth = node.width() * node.scaleX();
     const rawHeight = node.height() * node.scaleY();
     const rawX = node.x();
@@ -104,8 +107,12 @@ const DetectionsStage = ({
   };
 
   // --- DRAWING HANDLERS ---
-  const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!isDrawingMode) return;
+  const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
+    if (disabled || isDrawingMode || e.target !== e.target.getStage()) {
+      e.evt.stopPropagation();
+    }
+    if (!isDrawingMode || disabled || isImageLoading || hasError) return;
+    if ("button" in e.evt && e.evt.button !== 0) return;
     // ensure we are clicking on the stage background, not an existing rect
     if (e.target !== e.target.getStage()) return;
 
@@ -115,8 +122,8 @@ const DetectionsStage = ({
     }
   };
 
-  const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!isDrawingMode || !newRect) return;
+  const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
+    if (!isDrawingMode || !newRect || disabled) return;
     const pos = e.target.getStage()?.getPointerPosition();
     if (pos) {
       setNewRect({ ...newRect, w: pos.x - newRect.x, h: pos.y - newRect.y });
@@ -124,13 +131,10 @@ const DetectionsStage = ({
   };
 
   const handleMouseUp = () => {
-    if (!isDrawingMode || !newRect) return;
+    if (!isDrawingMode || !newRect || disabled || dimensions.width <= 0 || dimensions.height <= 0) return;
 
     // normalize coordinates (handle dragging left/up)
-    const absX = newRect.w < 0 ? newRect.x + newRect.w : newRect.x;
-    const absY = newRect.h < 0 ? newRect.y + newRect.h : newRect.y;
-    const absW = Math.abs(newRect.w);
-    const absH = Math.abs(newRect.h);
+    const { x: absX, y: absY, w: absW, h: absH } = clipDrawingRect(newRect, dimensions);
 
     if (absW > 5 && absH > 5 && onAddDetection) {
       onAddDetection({
@@ -143,6 +147,7 @@ const DetectionsStage = ({
     setNewRect(null);
   };
 
+  const preview = newRect ? clipDrawingRect(newRect, dimensions) : null;
   return (
     <Stage
       width={dimensions.width}
@@ -151,6 +156,10 @@ const DetectionsStage = ({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onTouchStart={handleMouseDown}
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
     >
       <Layer>
         {!isImageLoading &&
@@ -204,9 +213,10 @@ const DetectionsStage = ({
                   stroke={borderColor}
                   strokeWidth={isSelected ? 4 : 2}
                   fill={color}
-                  draggable={isSelected}
-                  onClick={() => onSelectDetection(key)}
-                  onTap={() => onSelectDetection(key)}
+                  listening={!isDrawingMode}
+                  draggable={isSelected && !disabled && !isDrawingMode}
+                  onClick={() => { if (!disabled) onSelectDetection(key); }}
+                  onTap={() => { if (!disabled) onSelectDetection(key); }}
                   onDragStart={() => {
                     setShowText(false);
                   }}
@@ -221,6 +231,7 @@ const DetectionsStage = ({
                 />
                 {showText && (
                   <Text
+                    listening={false}
                     x={pixelX + 4}
                     y={labelY}
                     text={`${det.label} - ${Math.round(det.confidence * 100)}%`}
@@ -232,6 +243,13 @@ const DetectionsStage = ({
               </Group>
             );
           })}
+        {preview && isDrawingMode && !disabled && (
+          <Rect
+            x={preview.x} y={preview.y} width={preview.w} height={preview.h}
+            stroke="#1a5f54" strokeWidth={2} dash={[6, 4]}
+            fill="rgba(26,95,84,0.15)" listening={false}
+          />
+        )}
         <Transformer
           ref={transformerRef}
           rotateEnabled={false}
@@ -258,6 +276,6 @@ const DetectionsStage = ({
       </Layer>
     </Stage>
   );
-};;
+};
 
 export default DetectionsStage;

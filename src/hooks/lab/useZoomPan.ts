@@ -14,6 +14,7 @@ interface UseZoomPanOptions {
   containerHeight?: number;
   contentWidth?: number;
   contentHeight?: number;
+  panEnabled?: boolean;
 }
 
 export const useZoomPan = (options: UseZoomPanOptions = {}) => {
@@ -25,6 +26,7 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
     containerHeight = 0,
     contentWidth = 0,
     contentHeight = 0,
+    panEnabled = true,
   } = options;
 
   const [state, setState] = useState<ZoomPanState>({
@@ -114,14 +116,14 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
   );
 
   const handleMouseDown = useCallback((event: React.MouseEvent) => {
-    if (event.button !== 0) return; // Only left click
+    if (event.button !== 0 || !panEnabled || event.defaultPrevented) return;
     setIsPanning(true);
     lastPanPos.current = { x: event.clientX, y: event.clientY };
-  }, []);
+  }, [panEnabled]);
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent) => {
-      if (!isPanning) return;
+      if (!isPanning || !panEnabled) return;
 
       const deltaX = event.clientX - lastPanPos.current.x;
       const deltaY = event.clientY - lastPanPos.current.y;
@@ -140,7 +142,7 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
 
       lastPanPos.current = { x: event.clientX, y: event.clientY };
     },
-    [isPanning, constrainPosition]
+    [isPanning, constrainPosition, panEnabled]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -152,6 +154,7 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
   }, []);
 
   const handleTouchStart = useCallback((event: React.TouchEvent) => {
+    if (!panEnabled || event.defaultPrevented) return;
     if (event.touches.length === 1) {
       // Single touch - pan
       setIsPanning(true);
@@ -169,11 +172,12 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
       );
       lastTouchDistance.current = distance;
     }
-  }, []);
+  }, [panEnabled]);
 
   const handleTouchMove = useCallback(
     (event: React.TouchEvent) => {
       event.preventDefault();
+      if (!panEnabled) return;
       
       if (event.touches.length === 1 && isPanning) {
         // Single touch - pan
@@ -235,7 +239,7 @@ export const useZoomPan = (options: UseZoomPanOptions = {}) => {
         lastTouchDistance.current = distance;
       }
     },
-    [isPanning, constrainPosition, minScale, maxScale]
+    [isPanning, constrainPosition, minScale, maxScale, panEnabled]
   );
 
   const handleTouchEnd = useCallback(() => {

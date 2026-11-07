@@ -5,6 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { GalleryItem, WSStatusUpdate } from "../../types/upload";
 import { toastService } from "../../services/toastService";
 import type { VideoDetectionResponse } from "../../types/lab";
+import i18n from "i18next";
+import { api } from "../../api/axiosInstance";
 
 interface VaultCacheData {
   total: number;
@@ -17,13 +19,21 @@ export const useUploadSocket = () => {
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<number>(0);
   const reconnectAttempts = useRef(0);
+  const hasConnected = useRef(false);
   const [liveFailureAnnouncement, setLiveFailureAnnouncement] = useState("");
+
+  const invalidateDependentQueries = useCallback(() => {
+    for (const queryKey of [
+      ["upload", "recent-gallery"], ["vault"], ["map-data"],
+      ["map-logs"], ["stats"], ["media"], ["video"],
+    ]) {
+      void queryClient.invalidateQueries({ queryKey });
+    }
+  }, [queryClient]);
 
   const handleUpdate = useCallback(
     (update: WSStatusUpdate) => {
-      queryClient.setQueryData(
-        ["upload", "recent-gallery"],
-        (oldData: VaultCacheData | undefined) => {
+      const updateCache = (oldData: VaultCacheData | undefined) => {
           if (!oldData || !oldData.image_items) return oldData;
           return {
             ...oldData,
@@ -36,68 +46,44 @@ export const useUploadSocket = () => {
                       update.status === "FAILED"
                         ? (update.failed_reason ?? item.failed_reason)
                         : undefined,
-                    image_url: update.image_url ?? item.hf_path,
+                    hf_path: update.img_url ?? item.hf_path,
+                    assigned_worker: update.worker ?? item.assigned_worker,
+                    address: update.address ?? item.address,
                   }
                 : item,
             ),
             video_items: oldData.video_items || [],
           };
-        },
-      );
+        };
+      queryClient.setQueryData(["upload", "recent-gallery"], updateCache);
 
       queryClient
         .getQueryCache()
         .findAll({ queryKey: ["vault"] })
         .forEach((query) => {
-          queryClient.setQueryData(
-            query.queryKey,
-            (oldData: VaultCacheData | undefined) => {
-              if (!oldData || !oldData.image_items) return oldData;
-              return {
-                ...oldData,
-                image_items: oldData.image_items.map((item) =>
-                  item.id === update.media_id
-                    ? {
-                        ...item,
-                        status: update.status,
-                        failed_reason:
-                          update.status === "FAILED"
-                            ? (update.failed_reason ?? item.failed_reason)
-                            : undefined,
-                        image_url: update.image_url ?? item.hf_path,
-                        assigned_worker: update.worker ?? item.assigned_worker,
-                        address: update.address ?? item.address,
-                      }
-                    : item,
-                ),
-                video_items: oldData.video_items || [],
-              };
-            },
-          );
+          queryClient.setQueryData(query.queryKey, updateCache);
         });
 
       if (update.status === "FAILED") {
-        const reason = update.failed_reason?.trim() || "Processing failed.";
-        toastService.error("Media processing failed", reason);
-        setLiveFailureAnnouncement(`Media processing failed: ${reason}`);
+        const reason = update.failed_reason?.trim()
+          || i18n.t("upload.toast.processingErrorFallback");
+        toastService.error(i18n.t("upload.toast.processingErrorTitle"), reason);
+        setLiveFailureAnnouncement(
+          i18n.t("upload.toast.processingErrorAnnouncement", { reason }),
+        );
       }
 
       if (update.status === "READY" || update.status === "FAILED") {
-        queryClient.invalidateQueries({
-          queryKey: ["upload", "recent-gallery"],
-        });
-        queryClient.invalidateQueries({ queryKey: ["vault"] });
+        invalidateDependentQueries();
       }
     },
-    [queryClient],
+    [queryClient, invalidateDependentQueries],
   );
 
-  const connect = useCallback(() => {
+  const connect = useCallback(function connect() {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
-    const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
-    const wsUrl = new URL(apiBaseUrl);
+    const wsUrl = new URL(api.defaults.baseURL || "/api", window.location.origin);
     wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
     wsUrl.pathname = `${wsUrl.pathname.replace(/\/$/, "")}/upload/ws/updates`;
 
@@ -107,6 +93,8 @@ export const useUploadSocket = () => {
     socket.onopen = () => {
       console.log("WS Connected");
       reconnectAttempts.current = 0;
+      if (hasConnected.current) invalidateDependentQueries();
+      hasConnected.current = true;
     };
 
     socket.onmessage = (event) => {
@@ -121,7 +109,9 @@ export const useUploadSocket = () => {
     };
 
     socket.onclose = (event) => {
-      if (event.wasClean) return;
+      // A normal server restart may complete the closing handshake cleanly.
+      // Authentication denial is terminal; other closures should reconnect.
+      if (event.code === 1008) return;
 
       const delay = Math.min(
         1000 * Math.pow(2, reconnectAttempts.current),
@@ -136,7 +126,7 @@ export const useUploadSocket = () => {
     };
 
     socket.onerror = () => socket.close();
-  }, [handleUpdate]);
+  }, [handleUpdate, invalidateDependentQueries]);
 
   useEffect(() => {
     connect();

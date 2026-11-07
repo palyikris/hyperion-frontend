@@ -12,6 +12,14 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
+  const clearSessionData = async () => {
+    // Cancel first so a late response cannot restore the previous user's data.
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    dispatch(clearUser());
+    localStorage.removeItem("user");
+  };
+
   // Signup Hook
   const signupMutation = useMutation({
     mutationFn: authService.signup,
@@ -36,18 +44,17 @@ export const useAuth = () => {
   // Login Hook
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await clearSessionData();
       if (data && data.user) {
-        console.log("Login successful, user data:", data.user);
         dispatch(setUser(data.user));
+        queryClient.setQueryData(["authUser"], data.user);
       }
       toastService.success(
         t("auth.toast.loginSuccessTitle"),
         t("auth.toast.loginSuccessMessage"),
       );
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
+      navigate("/dashboard", { replace: true });
     },
     onError: (err) => {
       console.error("Invalid email or password", err);
@@ -60,16 +67,15 @@ export const useAuth = () => {
 
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await clearSessionData();
+      // Keep a signed-out result so Back cannot reuse the previous identity.
+      queryClient.setQueryData(["authUser"], null);
       toastService.success(
         t("auth.toast.logoutSuccessTitle"),
         t("auth.toast.logoutSuccessMessage"),
       );
-      dispatch(clearUser());
-      queryClient.removeQueries({ queryKey: ["authUser"] });
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      navigate("/login", { replace: true });
     },
     onError: (err) => {
       console.error("Logout failed", err);
@@ -84,6 +90,7 @@ export const useAuth = () => {
     signup: signupMutation.mutate,
     login: loginMutation.mutate,
     logout: logoutMutation.mutate,
+    isLoggingOut: logoutMutation.isPending,
     isLoading: signupMutation.isPending || loginMutation.isPending,
     error: signupMutation.error || loginMutation.error,
   };

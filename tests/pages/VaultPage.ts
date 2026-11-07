@@ -36,11 +36,15 @@ export class VaultPage extends BasePage {
 
   async goto() {
     await this.navigate("/vault");
+    await this.searchInput.waitFor({ state: "visible" });
   }
 
   async deleteAllVaultItems() {
-    await this.deleteAllButton.click();
-    await this.confirmDeleteButton.click();
+    await this.deleteAll();
+  }
+
+  async deleteAllIfPresent() {
+    if (await this.deleteAllButton.isVisible()) await this.deleteAll();
   }
 
   async goToPageNumber(pageNumber: number) {
@@ -136,32 +140,30 @@ export class VaultPage extends BasePage {
   async deleteAll() {
     await this.deleteAllButton.click();
     await this.page.waitForSelector("#confirm-button", { state: "visible" });
-    await this.confirmDeleteButton.click();
-    await this.waitForDeleteAllResponse();
+    await Promise.all([
+      this.waitForDeleteAllResponse(),
+      this.confirmDeleteButton.click(),
+    ]);
   }
 
   async searchForItem(searchTerm: string) {
     await this.searchInput.fill(searchTerm);
     await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
   }
 
   async selectStatusFilter(status: string) {
     await this.statusSelect.selectOption(status);
     await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
   }
 
   async selectSortOption(sortOption: string) {
     await this.sortSelect.selectOption(sortOption);
     await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
   }
 
   async selectPageSize(pageSize: string) {
     await this.pageSizeSelect.selectOption(pageSize);
     await this.applyFiltersButton.click();
-    await this.waitForGalleryResponse();
   }
 
   async getFirstImageCardId() {

@@ -33,11 +33,17 @@ const GridPopup: React.FC<GridPopupProps> = ({ cell }) => {
           <span className="font-semibold text-hyperion-deep-sea">{cell.count}</span>
         </div>
         <div className="flex items-center justify-between gap-4 rounded-xl bg-white/65 border border-hyperion-sage-mint/20 px-3 py-2.5">
-          <span>{t("map.grid.trash_density", "Szemét sűrűség")}</span>
+          <span>{t("map.grid.trash_density", "Relative trash density")}</span>
           <span className="font-semibold text-hyperion-deep-sea">
-            {(cell.density).toFixed(1)}%
+            {(cell.density * 100).toFixed(1)}%
           </span>
         </div>
+        <p className="max-w-64 text-[10px] leading-relaxed">
+          {t(
+            "map.grid.density_reference",
+            "100% marks the visible cell with the most trash-positive hits.",
+          )}
+        </p>
         <div className="flex items-center justify-between gap-4 rounded-xl bg-white/65 border border-hyperion-sage-mint/20 px-3 py-2.5">
           <span>{t("map.grid.avg_confidence", "Átlagos AI bizalom")}</span>
           <span className="font-semibold text-hyperion-deep-sea">

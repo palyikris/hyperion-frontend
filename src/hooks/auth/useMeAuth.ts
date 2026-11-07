@@ -1,18 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api/axiosInstance";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import type { AuthenticatedUser } from "../../types/auth/auth";
 
 export const useMeAuth = () => {
-  const user = useSelector((state: RootState) => state.user.user);
-  const placeholderData = user ? user : undefined;
-
-  console.log("useMeAuth - placeholderData:", placeholderData);
-
   return useQuery({
     queryKey: ["authUser"],
-    queryFn: async () => {
-      const { data } = await api.get("/auth/me");
+    queryFn: async ({ signal }) => {
+      const { data } = await api.get<AuthenticatedUser>("/auth/me", { signal });
       return data;
     },
     retry: false,
@@ -20,6 +14,5 @@ export const useMeAuth = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    placeholderData,
   });
 };

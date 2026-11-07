@@ -76,6 +76,7 @@ export const computeGridCells = ({
   const step = getGridStepByZoom(zoom);
   const anchor = GRID_ANCHOR;
   const byCell = new Map<string, GridCell>();
+  let maxTrashCount = 0;
 
   for (const item of items) {
     if (
@@ -113,6 +114,7 @@ export const computeGridCells = ({
 
     if (item.has_trash) {
       cell.density += 1;
+      maxTrashCount = Math.max(maxTrashCount, cell.density);
     }
 
     for (const detection of item.detections ?? []) {
@@ -123,7 +125,9 @@ export const computeGridCells = ({
   }
 
   return Array.from(byCell.values()).map((cell) => {
-    const density = cell.count > 0 ? cell.density / cell.count : 0;
+    // Compare positive hit counts across visible cells. Dividing by the cell's
+    // own count would make every positive-only grid cell show 100%.
+    const density = maxTrashCount > 0 ? cell.density / maxTrashCount : 0;
     const confidence = cell.count > 0 ? cell.confidence / cell.count : 0;
 
     let dominantLabel: string | null = null;

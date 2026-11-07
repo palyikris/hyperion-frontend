@@ -5,3 +5,5 @@ export interface UserData {
   full_name: string;
   language: string;
 }
+
+export type AuthenticatedUser = Omit<UserData, "password">;

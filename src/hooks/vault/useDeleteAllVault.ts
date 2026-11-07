@@ -10,7 +10,12 @@ export const useDeleteAllVault = () => {
   return useMutation({
     mutationFn: () => vaultService.deleteAllMedia(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vault"] });
+      for (const queryKey of [
+        ["vault"], ["upload", "recent-gallery"], ["map-data"],
+        ["map-logs"], ["stats"], ["media"], ["video"],
+      ]) {
+        queryClient.invalidateQueries({ queryKey });
+      }
       toastService.success(
         t("vault.toast.deleteAllSuccessTitle"),
         t("vault.toast.deleteAllSuccessMessage"),

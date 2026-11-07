@@ -10,10 +10,12 @@ export const useDeleteVaultItem = () => {
   return useMutation({
     mutationFn: (id: string) => vaultService.deleteVaultItem(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vault"] });
-      queryClient.invalidateQueries({ queryKey: ["upload", "recent-gallery"] });
-      queryClient.invalidateQueries({ queryKey: ["map-data"] });
-      queryClient.invalidateQueries({ queryKey: ["map-logs"] });
+      for (const queryKey of [
+        ["vault"], ["upload", "recent-gallery"], ["map-data"],
+        ["map-logs"], ["stats"], ["media"], ["video"],
+      ]) {
+        queryClient.invalidateQueries({ queryKey });
+      }
       toastService.success(
         t("vault.toast.deleteSuccessTitle"),
         t("vault.toast.deleteSuccessMessage"),

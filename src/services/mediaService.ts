@@ -19,8 +19,8 @@ export const mediaService = {
   patchMedia: async (
     mediaId: string,
     patchData: MediaPatchRequest,
-  ): Promise<MediaResponse> => {
-    const { data } = await api.patch(`/lab/${mediaId}`, patchData);
-    return data;
+  ): Promise<MediaResponse | VideoDetectionResponse | null> => {
+    const response = await api.patch(`/lab/${mediaId}`, patchData);
+    return response.status === 204 ? null : response.data;
   },
 };

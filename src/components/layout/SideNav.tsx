@@ -1,8 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
-import { authService } from "../../services/authService";
-import { toastService } from "../../services/toastService";
+import { useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/auth/useAuth";
 import NavLogo from "./NavLogo";
 import NavMenuLinks from "./NavMenuLinks";
 import NavLogoutButton from "./NavLogoutButton";
@@ -10,32 +9,12 @@ import NavProfile from "./NavProfile";
 
 const SideNav = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { logout, isLoggingOut } = useAuth();
   const clipPathId = React.useId();
   const pathData = useLocation().pathname;
   const [isOpen, setIsOpen] = React.useState(false);
 
   const [hoveredLink, setHoveredLink] = React.useState<string | null>(null);
-
-  const handleLogout = async () => {
-    try {
-      await authService.logout();
-      toastService.success(
-        t("auth.toast.logoutSuccessTitle"),
-        t("auth.toast.logoutSuccessMessage"),
-      );
-      localStorage.removeItem("user");
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (err) {
-      console.error("Logout failed", err);
-      toastService.error(
-        t("auth.toast.logoutErrorTitle"),
-        t("auth.toast.logoutErrorMessage"),
-      );
-    }
-  };
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
@@ -104,7 +83,11 @@ const SideNav = () => {
 
         {/* Bottom Actions */}
         <div className="mt-auto flex flex-col gap-4 w-full px-4">
-          <NavLogoutButton isOpen={isOpen} onLogout={handleLogout} />
+          <NavLogoutButton
+            isOpen={isOpen}
+            onLogout={() => logout()}
+            disabled={isLoggingOut}
+          />
 
           {/* Profile Section */}
           <NavProfile isOpen={isOpen} onClose={handleClose} />

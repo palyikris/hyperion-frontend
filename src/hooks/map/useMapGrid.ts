@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { GridCell, MapItem } from "../../types/map";
 import {
   computeGridCells,
@@ -13,26 +13,28 @@ type UseMapGridOptions = {
 };
 
 const GRID_WORKER_THRESHOLD = 1000;
+const EMPTY_CELLS: GridCell[] = [];
+
+type WorkerResult = {
+  request: MapGridWorkerRequest;
+  cells: GridCell[];
+};
 
 export const useMapGrid = ({
   items,
   zoom,
   bounds,
 }: UseMapGridOptions): GridCell[] => {
-  const [workerCells, setWorkerCells] = useState<GridCell[]>([]);
-  const requestIdRef = useRef(0);
+  const [workerResult, setWorkerResult] = useState<WorkerResult | null>(null);
+  const request = useMemo(() => ({ items, zoom, bounds }), [items, zoom, bounds]);
 
   const shouldUseWorker =
-    bounds !== null && items.length > GRID_WORKER_THRESHOLD;
+    bounds !== null && items.length > GRID_WORKER_THRESHOLD &&
+    typeof Worker !== "undefined";
 
   const syncCells = useMemo(
-    () =>
-      computeGridCells({
-        items,
-        zoom,
-        bounds,
-      }),
-    [items, zoom, bounds],
+    () => shouldUseWorker ? EMPTY_CELLS : computeGridCells(request),
+    [shouldUseWorker, request],
   );
 
   useEffect(() => {
@@ -40,42 +42,40 @@ export const useMapGrid = ({
       return;
     }
 
-    if (typeof Worker === "undefined") {
-      return;
+    let active = true;
+    let worker: Worker | undefined;
+    const fallback = () => {
+      if (!active) return;
+      active = false;
+      worker?.terminate();
+      setWorkerResult({ request, cells: computeGridCells(request) });
+    };
+
+    try {
+      worker = new Worker(
+        new URL("./workers/mapGrid.worker.ts", import.meta.url),
+        { type: "module" },
+      );
+      worker.onmessage = (event: MessageEvent<GridCell[]>) => {
+        if (!active) return;
+        active = false;
+        setWorkerResult({ request, cells: event.data });
+        worker?.terminate();
+      };
+      worker.onerror = fallback;
+      worker.onmessageerror = fallback;
+      worker.postMessage(request);
+    } catch {
+      // Worker creation or structured cloning may fail synchronously.
+      queueMicrotask(fallback);
     }
 
-    const requestId = ++requestIdRef.current;
-    const worker = new Worker(
-      new URL("./workers/mapGrid.worker.ts", import.meta.url),
-      {
-        type: "module",
-      },
-    );
-
-    worker.onmessage = (event: MessageEvent<GridCell[]>) => {
-      if (requestId !== requestIdRef.current) return;
-      setWorkerCells(event.data);
-      worker.terminate();
-    };
-
-    worker.onerror = () => {
-      if (requestId !== requestIdRef.current) return;
-      setWorkerCells(syncCells);
-      worker.terminate();
-    };
-
-    const payload: MapGridWorkerRequest = {
-      items,
-      zoom,
-      bounds,
-    };
-
-    worker.postMessage(payload);
-
     return () => {
-      worker.terminate();
+      active = false;
+      worker?.terminate();
     };
-  }, [shouldUseWorker, items, zoom, bounds, syncCells]);
+  }, [shouldUseWorker, request]);
 
-  return shouldUseWorker ? workerCells : syncCells;
+  if (!shouldUseWorker) return syncCells;
+  return workerResult?.request === request ? workerResult.cells : EMPTY_CELLS;
 };

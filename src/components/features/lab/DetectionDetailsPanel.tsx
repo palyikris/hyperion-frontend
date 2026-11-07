@@ -1,6 +1,5 @@
 import { X, Tag, Percent, Move, Maximize } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
 import type { Detection } from "../../../types/lab";
 import { InputField } from "../../shared/InputField";
 import Divider from "../../shared/Divider";
@@ -11,19 +10,16 @@ type DetectionDetailsPanelProps = {
   detection: Detection;
   onClose: () => void;
   onLabelChange?: (label: string) => void;
+  disabled?: boolean;
 };
 
 const DetectionDetailsPanel = ({
   detection,
   onClose,
   onLabelChange,
+  disabled = false,
 }: DetectionDetailsPanelProps) => {
   const { t } = useTranslation();
-  const [selectedLabel, setSelectedLabel] = useState(detection.label);
-
-  useEffect(() => {
-    setSelectedLabel(detection.label);
-  }, [detection]);
   const confidencePercent = (detection.confidence * 100).toFixed(1);
 
   const handleLabelChange = (
@@ -35,8 +31,7 @@ const DetectionDetailsPanel = ({
     } else {
       newLabel = value.target.value;
     }
-    setSelectedLabel(newLabel);
-    if (onLabelChange) {
+    if (onLabelChange && !disabled) {
       onLabelChange(newLabel);
     }
   };
@@ -57,14 +52,14 @@ const DetectionDetailsPanel = ({
         </button>
       </div>
 
-      <div className="space-y-3">
+      <fieldset disabled={disabled} className="space-y-3">
         <div className="grid grid-cols-3 gap-2">
           <SearchableSelectField
             label={t("lab.detections.panel.label", "Label")}
             icon={Tag}
             id={`detection-details-label`}
             options={trashLabelOptions}
-            value={selectedLabel}
+            value={detection.label}
             onChange={handleLabelChange}
           />
 
@@ -157,7 +152,7 @@ const DetectionDetailsPanel = ({
         </div>
 
         {/* No Save Button here, saving is handled by parent */}
-      </div>
+      </fieldset>
     </div>
   );
 };

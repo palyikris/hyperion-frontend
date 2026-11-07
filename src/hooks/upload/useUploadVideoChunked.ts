@@ -13,7 +13,7 @@ export const useUploadVideoChunked = () => {
   return useMutation({
     mutationFn: ({ file, onProgress, signal }: UseUploadVideoChunkedArgs) =>
       uploadService.uploadVideoChunked(file, onProgress, signal),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["upload", "recent-gallery"] });
     },
   });

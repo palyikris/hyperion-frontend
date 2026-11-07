@@ -54,6 +54,7 @@ A high-performance, AI-driven geospatial monitoring and analytics dashboard buil
 1. **Install Dependencies**:
    ```bash
    npm install
+   ```
 
 Default local URL: `http://localhost:5173`
 
@@ -144,6 +145,20 @@ The frontend uses `withCredentials: true` in Axios, so backend CORS must allow c
 - `npm run build` — typecheck + production build
 - `npm run preview` — preview production build
 - `npm run lint` — run ESLint
+
+## Tests
+
+- `npm run test:run` runs Vitest once; `npm test` starts watch mode locally.
+- `npx playwright test --list` lists the browser scenarios without executing them.
+- `npx playwright test` needs a running frontend and backend, plus available
+  media storage and AI processing for the upload and map workflows.
+
+Playwright defaults to `http://localhost:5173`. Set `E2E_BASE_URL` to target a
+different test deployment, and set `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated
+test account whose language is English. Media scenarios clear this account's
+Vault during cleanup, so use a disposable account with no personal uploads.
+CI reads these three values from repository secrets with the same names.
+The signup and Lab browser scenarios are currently commented out.
 
 ## Project structure
 

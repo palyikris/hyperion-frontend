@@ -1,6 +1,5 @@
 import { api } from "../api/axiosInstance";
-import type { VideoDetectionResponse } from "../types/lab";
-import type { GalleryItem, CardStatus } from "../types/upload";
+import type { CardStatus, VaultResponse } from "../types/upload";
 
 export interface VaultParams {
   search?: string;
@@ -14,15 +13,8 @@ export interface VaultParams {
 export const vaultService = {
   getVaultItems: async (
     params: VaultParams,
-  ): Promise<{
-    total: number;
-    page: number;
-    page_size: number;
-    total_pages: number;
-    image_items: GalleryItem[];
-    video_items: VideoDetectionResponse[];
-  }> => {
-    const { data } = await api.get("/vault", { params });
+  ): Promise<VaultResponse> => {
+    const { data } = await api.get<VaultResponse>("/vault", { params });
     return data;
   },
   deleteVaultItem: async (id: string): Promise<void> => {

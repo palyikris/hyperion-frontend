@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 test.describe.serial("Vault features and file handling", () => {
+  test.setTimeout(180000);
   test.use({ storageState: "playwright/.auth/user.json" });
 
   test.afterAll(async ({ browser }) => {
@@ -18,12 +19,8 @@ test.describe.serial("Vault features and file handling", () => {
     const vaultPage = new VaultPage(page);
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
-    const cardCount = await vaultPage.getGalleryImageCardCount();
-    if (cardCount > 0) {
-      await vaultPage.deleteAll();
-    }
+    await vaultPage.deleteAllIfPresent();
 
     await context.close();
   });
@@ -40,19 +37,14 @@ test.describe.serial("Vault features and file handling", () => {
     await uploadPage.goto();
     await uploadPage.uploadImageFiles(filePaths);
 
-    await uploadPage.waitForRecentsResponse();
-
-    const recentImageCount = await uploadPage.getGalleryImageCardCount();
-    expect(recentImageCount).toBeGreaterThanOrEqual(fileNames.length);
-
-    const recentTitles = await uploadPage.getGalleryImageCardTitles();
-    for (const name of fileNames) {
-      const titleExists = recentTitles.some((t) => t.includes(name));
-      expect(titleExists, `Title containing ${name} not found`).toBe(true);
-    }
+    await expect(async () => {
+      const titles = await uploadPage.getGalleryImageCardTitles();
+      for (const name of fileNames) {
+        expect(titles.some((title) => title.includes(name))).toBe(true);
+      }
+    }).toPass();
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
     const cardCount = await vaultPage.getGalleryImageCardCount();
     expect(cardCount).toBeGreaterThanOrEqual(fileNames.length);
@@ -69,7 +61,6 @@ test.describe.serial("Vault features and file handling", () => {
     const vaultPage = new VaultPage(page);
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
     const cardCount = await vaultPage.getGalleryImageCardCount();
     expect(cardCount).toBeGreaterThanOrEqual(4);
@@ -79,32 +70,29 @@ test.describe.serial("Vault features and file handling", () => {
     const vaultPage = new VaultPage(page);
 
     await vaultPage.goto();
-    await vaultPage.waitForGalleryResponse();
 
     await vaultPage.searchForItem("test1.jpg");
-    await vaultPage.waitForGalleryResponse();
-    expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
-      1,
-    );
-    const titles = await vaultPage.getGalleryImageCardTitles();
-    const titleExists = titles.some((t) => t.includes("test1.jpg"));
-    expect(titleExists, `Title containing test1.jpg not found`).toBe(true);
+    await expect(async () => {
+      const titles = await vaultPage.getGalleryImageCardTitles();
+      expect(titles.length).toBeGreaterThanOrEqual(1);
+      expect(titles.every((title) => title.includes("test1.jpg"))).toBe(true);
+    }).toPass();
 
     await vaultPage.resetFilters();
-    expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
-      4,
-    );
-
-    await vaultPage.waitForTimeout(5000);
+    await expect(async () => {
+      expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(4);
+    }).toPass();
 
     await vaultPage.selectStatusFilter("Ready");
-    expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
-      1,
-    );
+    await expect(async () => {
+      expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(1);
+      const statuses = await page.locator("#image-items .gallery-card-status-badge").allTextContents();
+      expect(statuses.every((status) => status.trim() === "Ready")).toBe(true);
+    }).toPass({ timeout: 120000 });
 
     await vaultPage.resetFilters();
-    expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(
-      4,
-    );
+    await expect(async () => {
+      expect(await vaultPage.getGalleryImageCardCount()).toBeGreaterThanOrEqual(4);
+    }).toPass();
   });
 });

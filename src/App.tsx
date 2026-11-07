@@ -32,6 +32,7 @@ const AppRouter = () => {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/stats" element={<StatsPage />} />
             <Route path="/map" element={<MapPage />} />
+            <Route path="/lab" element={<Navigate to="/vault" replace />} />
             <Route path="/lab/:id" element={<LabPage />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/vault" element={<VaultPage />} />

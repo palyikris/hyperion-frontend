@@ -9,7 +9,7 @@ import { getStoredMapViewport } from "../../utils/map/mapViewport";
 import { areMapFiltersEqual } from "../../utils/map/mapFilters";
 import { toastService } from "../../services/toastService";
 import type { MapFiltersFormData } from "../../schemas/map/filters";
-import type { MapItem } from "../../types/map";
+import { convertVideoDetectionToMapItem, type MapItem } from "../../types/map";
 import type { ViewportState } from "../../components/features/map/MapViewportEvents";
 
 type ViewMode = "markers" | "heatmap" | "grid";
@@ -102,24 +102,9 @@ export function useMapPageState() {
       ? Object.values(data.video_detections)
           .flat()
           .map((det) => ({
+            ...convertVideoDetectionToMapItem(det),
+            // Grid entries need the individual detection's unique ID.
             id: det.id,
-            lat:
-              typeof det.lat === "string"
-                ? parseFloat(det.lat as unknown as string)
-                : det.lat,
-            lng:
-              typeof det.lng === "string"
-                ? parseFloat(det.lng as unknown as string)
-                : det.lng,
-            has_trash: true,
-            status: "READY",
-            confidence: det.confidence ?? 1,
-            image_url: det.image_url,
-            address: det.address || undefined,
-            filename: det.media?.initial_metadata?.filename as
-              | string
-              | undefined,
-            detections: [det],
           }))
       : [];
     return [...items, ...detections];
