@@ -1,4 +1,19 @@
 {
+  "datePicker": {
+    "placeholder": "Select a date",
+    "calendarFor": "Calendar for {{label}}",
+    "chooseMonth": "Choose month",
+    "chooseYear": "Choose year",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "previousYears": "Previous years",
+    "nextYears": "Next years",
+    "today": "Today",
+    "clear": "Clear date",
+    "keyboardHelp": "Use arrow keys to move by day or week, Page Up and Page Down to change month, and Enter to select. Escape closes the calendar."
+  },
   "searchableSelect": {
     "select": "Select...",
     "search": "Search...",

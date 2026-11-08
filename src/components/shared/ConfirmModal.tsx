@@ -51,7 +51,7 @@ const ConfirmModal = ({
     const previousFocus = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const focusTarget = panel.current?.querySelector<HTMLElement>("input")
+    const focusTarget = panel.current?.querySelector<HTMLElement>("input:not([disabled]), button[aria-haspopup='dialog']:not([disabled])")
       ?? panel.current?.querySelector<HTMLElement>("button:not([disabled])");
     focusTarget?.focus();
     return () => {
@@ -93,7 +93,7 @@ const ConfirmModal = ({
               }
               if (event.key !== "Tab") return;
               const elements = panel.current?.querySelectorAll<HTMLElement>(
-                "input:not([disabled]), button:not([disabled]), [tabindex='0']",
+                "input:not([disabled]), button:not([disabled]):not([tabindex='-1']), [tabindex='0']",
               );
               if (!elements?.length) {
                 event.preventDefault();
@@ -110,7 +110,7 @@ const ConfirmModal = ({
                 first.focus();
               }
             }}
-            className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 p-8 overflow-hidden"
+            className="relative bg-white rounded-3xl shadow-2xl max-w-md max-h-[calc(100dvh-2rem)] w-full mx-4 p-6 sm:p-8 overflow-y-auto"
             style={{
               borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px",
             }}

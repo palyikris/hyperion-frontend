@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { PropsWithChildren } from "react";
@@ -10,6 +10,7 @@ import { useTemporalTrends } from "../hooks/stats/useTemporalTrends";
 import { useTrashComposition } from "../hooks/stats/useTrashComposition";
 import type { FunFact } from "../types/stats";
 import StatsPage from "./stats";
+import { selectDate } from "../testUtils/selectDate";
 
 const { service } = vi.hoisted(() => ({
   service: {
@@ -179,8 +180,8 @@ const reportRange = { startDate: "2026-01-01", endDate: "2026-11-07" };
 const exportActions = () => within(document.querySelector("header")!);
 async function submitExport(label: string) {
   await userEvent.click(exportActions().getByRole("button", { name: label }));
-  fireEvent.change(screen.getByLabelText("Start date"), { target: { value: reportRange.startDate } });
-  fireEvent.change(screen.getByLabelText("End date"), { target: { value: reportRange.endDate } });
+  await selectDate("Start date", reportRange.startDate);
+  await selectDate("End date", reportRange.endDate);
   await userEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: label }));
 }
 

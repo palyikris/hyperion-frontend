@@ -1,4 +1,19 @@
 {
+  "datePicker": {
+    "placeholder": "Válassz dátumot",
+    "calendarFor": "Naptár: {{label}}",
+    "chooseMonth": "Hónap kiválasztása",
+    "chooseYear": "Év kiválasztása",
+    "previousMonth": "Előző hónap",
+    "nextMonth": "Következő hónap",
+    "previousYear": "Előző év",
+    "nextYear": "Következő év",
+    "previousYears": "Korábbi évek",
+    "nextYears": "Későbbi évek",
+    "today": "Ma",
+    "clear": "Dátum törlése",
+    "keyboardHelp": "A nyílbillentyűkkel napot vagy hetet, a Page Up és Page Down billentyűkkel hónapot válthatsz. Az Enter kiválasztja a dátumot, az Escape bezárja a naptárat."
+  },
   "searchableSelect": {
     "select": "Válassz...",
     "search": "Keresés...",

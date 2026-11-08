@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ConfirmModal from "./ConfirmModal";
+import DatePicker from "./DatePicker";
 import type { ReportDateRange } from "../../services/statsService";
 
 interface ReportDateRangeModalProps {
@@ -16,6 +17,7 @@ export default function ReportDateRangeModal({
   const { t } = useTranslation();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [activePicker, setActivePicker] = useState<"start" | "end" | null>(null);
   const reversed = Boolean(startDate && endDate && startDate > endDate);
   const valid = Boolean(startDate && endDate && !reversed);
 
@@ -33,29 +35,24 @@ export default function ReportDateRangeModal({
       onClose={onClose}
       onConfirm={() => { if (valid) onConfirm({ startDate, endDate }); }}
     >
-      <div className="grid gap-4 text-hyperion-deep-sea">
-        <label className="grid gap-2 text-sm font-semibold">
-          {t("stats.exportRange.startDate", "Start date")}
-          <input
-            type="date" required value={startDate} disabled={isPending}
-            onChange={event => setStartDate(event.target.value)}
-            onInput={event => setStartDate(event.currentTarget.value)}
-            className="w-full rounded-xl border border-hyperion-fog-grey bg-white px-4 py-3 focus:outline-2 focus:outline-hyperion-deep-sea"
-          />
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">
-          {t("stats.exportRange.endDate", "End date")}
-          <input
-            type="date" required value={endDate} disabled={isPending}
-            onChange={event => setEndDate(event.target.value)}
-            onInput={event => setEndDate(event.currentTarget.value)}
-            aria-invalid={reversed}
-            aria-describedby={reversed ? "report-date-range-error" : undefined}
-            className="w-full rounded-xl border border-hyperion-fog-grey bg-white px-4 py-3 focus:outline-2 focus:outline-hyperion-deep-sea"
-          />
-        </label>
+      <div className="grid grid-cols-2 items-start gap-3 text-hyperion-deep-sea">
+        <DatePicker
+          label={t("stats.exportRange.startDate", "Start date")}
+          value={startDate} onChange={setStartDate} disabled={isPending}
+          open={activePicker === "start"} onOpenChange={open => setActivePicker(open ? "start" : null)}
+          defaultMonth={endDate} range={{ start: startDate, end: endDate }}
+          className="contents" calendarClassName="col-span-2 order-1 mt-0!"
+        />
+        <DatePicker
+          label={t("stats.exportRange.endDate", "End date")}
+          value={endDate} onChange={setEndDate} disabled={isPending}
+          open={activePicker === "end"} onOpenChange={open => setActivePicker(open ? "end" : null)}
+          defaultMonth={startDate} range={{ start: startDate, end: endDate }}
+          className="contents" calendarClassName="col-span-2 order-1 mt-0!"
+          invalid={reversed} describedBy={reversed ? "report-date-range-error" : undefined}
+        />
         {reversed ? (
-          <p id="report-date-range-error" role="alert" className="text-sm text-hyperion-burnt-orange">
+          <p id="report-date-range-error" role="alert" className="order-2 col-span-2 text-sm text-hyperion-burnt-orange">
             {t("stats.exportRange.invalidRange", "End date must be on or after start date.")}
           </p>
         ) : null}

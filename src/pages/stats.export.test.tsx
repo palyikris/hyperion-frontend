@@ -1,9 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import StatsPage from "./stats";
 import type { PropsWithChildren } from "react";
+import { selectDate } from "../testUtils/selectDate";
 
 const { service } = vi.hoisted(() => ({ service: {
   exportCleanupManifest: vi.fn(), exportCleanupManifestPdf: vi.fn(),
@@ -42,9 +43,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-function setDates(start: string, end: string) {
-  fireEvent.change(screen.getByLabelText("Start date"), { target: { value: start } });
-  fireEvent.change(screen.getByLabelText("End date"), { target: { value: end } });
+async function setDates(start: string, end: string) {
+  await selectDate("Start date", start);
+  await selectDate("End date", end);
 }
 
 describe.each([
@@ -58,12 +59,12 @@ describe.each([
     expect(screen.getByLabelText("Start date")).toHaveFocus();
     expect(confirm).toBeDisabled();
     expect(method).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByLabelText("Start date"), { target: { value: "2026-06-01" } });
+    await selectDate("Start date", "2026-06-01");
     expect(confirm).toBeDisabled();
-    setDates("2026-06-02", "2026-06-01");
+    await setDates("2026-06-02", "2026-06-01");
     expect(confirm).toBeDisabled();
     expect(screen.getByRole("alert")).toHaveTextContent("End date must be on or after start date.");
-    setDates("2026-06-01", "2026-06-01");
+    await setDates("2026-06-01", "2026-06-01");
     expect(confirm).toBeEnabled();
     await userEvent.click(confirm);
     await waitFor(() => expect(method).toHaveBeenCalledExactlyOnceWith(
@@ -76,13 +77,13 @@ describe.each([
   it("cancels without exporting and asks for dates again on the next click", async () => {
     const trigger = screen.getByRole("button", { name: label });
     await userEvent.click(trigger);
-    setDates("2026-01-01", "2026-12-31");
+    await setDates("2026-01-01", "2026-12-31");
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(method).not.toHaveBeenCalled();
     expect(trigger).toHaveFocus();
     await userEvent.click(trigger);
-    expect(screen.getByLabelText("Start date")).toHaveValue("");
-    expect(screen.getByLabelText("End date")).toHaveValue("");
+    expect(screen.getByLabelText("Start date")).toHaveTextContent("Select a date");
+    expect(screen.getByLabelText("End date")).toHaveTextContent("Select a date");
     await userEvent.keyboard("{Escape}");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
@@ -91,7 +92,7 @@ describe.each([
     let finish!: (value: { blob: Blob; filename: string }) => void;
     method.mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
     await userEvent.click(screen.getByRole("button", { name: label }));
-    setDates("2026-01-01", "2026-12-31");
+    await setDates("2026-01-01", "2026-12-31");
     await userEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: label }));
     await waitFor(() => expect(screen.getByLabelText("Start date")).toBeDisabled());
     const pending = within(screen.getByRole("dialog")).getByRole("button", { name: `${label}...` });
@@ -106,10 +107,10 @@ describe.each([
     vi.spyOn(console, "error").mockImplementation(() => {});
     method.mockRejectedValueOnce(new Error("Report unavailable"));
     await userEvent.click(screen.getByRole("button", { name: label }));
-    setDates("2026-01-01", "2026-12-31");
+    await setDates("2026-01-01", "2026-12-31");
     await userEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: label }));
     await waitFor(() => expect(within(screen.getByRole("dialog")).getByRole("button", { name: label })).toBeEnabled());
-    expect(screen.getByLabelText("Start date")).toHaveValue("2026-01-01");
-    expect(screen.getByLabelText("End date")).toHaveValue("2026-12-31");
+    expect(screen.getByLabelText("Start date")).toHaveTextContent("1 Jan 2026");
+    expect(screen.getByLabelText("End date")).toHaveTextContent("31 Dec 2026");
   });
 });
