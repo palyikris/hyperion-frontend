@@ -1,8 +1,9 @@
 import React from "react";
-import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+import { GeoSearchControl } from "leaflet-geosearch";
 import { useMap } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 import type { Control } from "leaflet";
+import PhotonProvider from "../../../utils/map/PhotonProvider";
 import "leaflet-geosearch/dist/geosearch.css";
 
 const MapSearch: React.FC = () => {
@@ -10,10 +11,16 @@ const MapSearch: React.FC = () => {
   const { t } = useTranslation();
 
   React.useEffect(() => {
-    const provider = new OpenStreetMapProvider();
+    const provider = new PhotonProvider(() => map.getCenter());
     const searchControl = GeoSearchControl({
       provider,
       style: "bar",
+      autoCompleteDelay: 350,
+      resultFormat: ({ result }: { result: { label: string } }) => {
+        const label = document.createElement("span");
+        label.textContent = result.label;
+        return label.innerHTML;
+      },
       classNames: {
         form: "hyperion-map-search-form",
         input: "hyperion-map-search-input",
