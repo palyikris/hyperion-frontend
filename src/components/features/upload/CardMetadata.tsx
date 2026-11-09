@@ -26,7 +26,7 @@ const CardMetadata = ({
   const { t } = useTranslation();
 
   return (
-    <div className="relative overflow-hidden px-4 py-10 pt-4 space-y-3">
+    <div className="relative min-w-0 overflow-hidden px-4 py-10 pt-4 space-y-3 [overflow-wrap:anywhere]">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-5 -right-5 h-20 w-20 rounded-[58%_42%_35%_65%/56%_44%_60%_40%] bg-hyperion-sage-mint/60"

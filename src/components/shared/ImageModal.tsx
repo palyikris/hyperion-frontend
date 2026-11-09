@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   motion,
   AnimatePresence,
   useMotionValue,
   useSpring,
   useTransform,
+  useReducedMotion,
 } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { getFullResUrl, getMediaAssetUrl } from "../../utils/imageUtils";
@@ -24,6 +25,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const reducedMotion = useReducedMotion();
+  const panelRef = useRef<HTMLDivElement>(null);
   const fullResImageUrl = getFullResUrl(imageUrl);
   const thumbnailSrc = getMediaAssetUrl(imageUrl);
   const fullResSrc = getMediaAssetUrl(fullResImageUrl);
@@ -69,7 +72,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!open) {
+    if (!open || reducedMotion || !window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) {
       return;
     }
 
@@ -79,7 +82,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY, open]);
+  }, [mouseX, mouseY, open, reducedMotion]);
 
   // Telemetry drift
   useEffect(() => {
@@ -149,9 +152,15 @@ const ImageModal: React.FC<ImageModalProps> = ({
   useEffect(() => {
     if (!open) return;
 
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    panelRef.current?.focus();
     document.body.setAttribute("data-image-modal-open", "true");
     return () => {
+      document.body.style.overflow = previousOverflow;
       document.body.removeAttribute("data-image-modal-open");
+      previousFocus?.focus();
     };
   }, [open]);
 
@@ -167,7 +176,30 @@ const ImageModal: React.FC<ImageModalProps> = ({
           onClick={onClose}
         >
           <motion.div
-            className="relative w-[95vw] h-[85vh] max-w-7xl overflow-hidden border border-white/10 shadow-2xl"
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={alt || t("upload.card.zoom", "Image preview")}
+            tabIndex={-1}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.stopPropagation();
+                onClose();
+              }
+              if (event.key !== "Tab") return;
+              const buttons = panelRef.current?.querySelectorAll<HTMLButtonElement>("button:not([disabled])");
+              if (!buttons?.length) return;
+              const first = buttons[0];
+              const last = buttons[buttons.length - 1];
+              if (event.shiftKey && (document.activeElement === first || document.activeElement === panelRef.current)) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+              }
+            }}
+            className="relative w-[calc(100%-1rem)] h-[calc(100dvh-1rem)] sm:w-[95vw] sm:h-[90dvh] max-w-7xl overflow-hidden border border-white/10 shadow-2xl"
             style={{
               borderRadius: "60px 20px 80px 30px / 30px 70px 40px 90px",
             }}
@@ -200,7 +232,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
             </motion.div>
 
             {/* LEFT TELEMETRY */}
-            <div className="absolute left-10 top-1/2 -translate-y-1/2 z-40 space-y-12">
+            <div className="hidden md:block absolute left-10 top-1/2 -translate-y-1/2 z-40 space-y-12">
               <div className="flex flex-col items-center gap-2">
                 <div className="h-24 w-1 bg-white/10 relative overflow-hidden">
                   <motion.div
@@ -228,12 +260,12 @@ const ImageModal: React.FC<ImageModalProps> = ({
             </div>
 
             {/* TOP BAR */}
-            <div className="absolute top-10 left-10 right-10 z-40 flex justify-between items-start">
-              <div className="flex gap-10">
+            <div className="absolute top-4 left-4 right-4 sm:top-8 sm:left-8 sm:right-8 z-40 flex flex-wrap justify-between items-start gap-3">
+              <div className="flex min-w-0 flex-wrap gap-3 sm:gap-8">
                 <div>
                   <DecryptText
                     text={t("upload.imageModal.osName", "HYPERION_OS_AERIAL")}
-                    className="text-hyperion-sage-mint text-xs font-bold tracking-[0.3em]"
+                    className="max-w-full [overflow-wrap:anywhere] text-hyperion-sage-mint text-xs font-bold tracking-[0.15em]"
                   />
                   <p className="text-[9px] text-white/30 mt-1 uppercase">
                     {t(
@@ -275,7 +307,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
             </div>
 
             {/* RIGHT TELEMETRY */}
-            <div className="absolute right-10 top-1/2 -translate-y-1/2 z-40">
+            <div className="hidden md:block absolute right-10 top-1/2 -translate-y-1/2 z-40">
               <div className="text-right space-y-1">
                 <p className="text-[10px] text-hyperion-cream font-bold">
                   {t("upload.imageModal.altitude", "ALTITUDE")}
@@ -329,7 +361,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
                 <img
                   src={thumbnailSrc}
                   alt={alt}
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${fullResLoaded ? "opacity-0" : "opacity-100"}`}
+                  className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${fullResLoaded ? "opacity-0" : "opacity-100"}`}
                   style={{
                     filter: fullResLoaded ? "none" : "blur(12px)",
                     transform: fullResLoaded ? "scale(1)" : "scale(1.03)",
@@ -339,13 +371,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
                   <img
                     src={fullResSrc}
                     alt={alt}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${fullResLoaded ? "opacity-100" : "opacity-0"}`}
+                    className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${fullResLoaded ? "opacity-100" : "opacity-0"}`}
                   />
                 ) : (
                   <img
                     src={thumbnailSrc}
                     alt={alt}
-                    className="absolute inset-0 w-full h-full object-cover opacity-100"
+                    className="absolute inset-0 w-full h-full object-contain opacity-100"
                   />
                 )}
                 <AnimatePresence>
@@ -368,7 +400,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
             {/* ABORT FEED BUTTON */}
             <button
               onClick={onClose}
-              className="absolute bottom-10 right-10 z-50 group flex items-center gap-4 bg-hyperion-burnt-orange text-white px-8 py-4 rounded-full font-bold text-[11px] tracking-widest pointer-events-auto shadow-2xl"
+              className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 group flex min-h-11 max-w-[calc(100%-2rem)] items-center gap-3 bg-hyperion-burnt-orange text-white px-5 py-3 rounded-full font-bold text-[11px] tracking-widest pointer-events-auto shadow-2xl"
               style={{ borderRadius: "40px 10px 40px 10px" }}
             >
               {t("upload.imageModal.terminateLink", "TERMINATE_LINK")}

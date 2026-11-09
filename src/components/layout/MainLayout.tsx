@@ -6,13 +6,13 @@ export const MainLayout = () => {
   const { liveFailureAnnouncement } = useUploadSocket();
 
   return (
-    <div className="flex h-screen">
-      <main className="flex-1 overflow-auto">
+    <div className="min-h-dvh">
+      <main className="min-w-0">
         <div className="sr-only" aria-live="polite" aria-atomic="true">
           {liveFailureAnnouncement}
         </div>
         <SideNav></SideNav>
-        <div className="layout-content pl-0 md:pl-20">
+        <div className="layout-content min-w-0 pt-20 md:pl-20 md:pt-0">
           <Outlet />
         </div>
       </main>

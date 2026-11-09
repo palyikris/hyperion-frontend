@@ -1,4 +1,5 @@
 import React from "react";
+import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
@@ -13,6 +14,8 @@ const SideNav = () => {
   const clipPathId = React.useId();
   const pathData = useLocation().pathname;
   const [isOpen, setIsOpen] = React.useState(false);
+  const navigationRef = React.useRef<HTMLElement>(null);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
 
   const [hoveredLink, setHoveredLink] = React.useState<string | null>(null);
 
@@ -24,6 +27,39 @@ const SideNav = () => {
     setIsOpen(false);
   };
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const toggle = toggleRef.current;
+    document.body.style.overflow = "hidden";
+    navigationRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+      if (event.key !== "Tab") return;
+      const controls = navigationRef.current?.querySelectorAll<HTMLElement>("a[href],button:not([disabled])");
+      if (!controls?.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const desktop = window.matchMedia("(min-width: 48rem)");
+    const closeOnDesktop = () => { if (desktop.matches) setIsOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+      desktop.removeEventListener("change", closeOnDesktop);
+      toggle?.focus();
+    };
+  }, [isOpen]);
+
   const wavyStyle = {
     clipPath: `url(#${clipPathId})`,
     WebkitClipPath: `url(#${clipPathId})`,
@@ -33,10 +69,13 @@ const SideNav = () => {
   return (
     <>
       <button
+        ref={toggleRef}
         type="button"
         onClick={handleToggle}
         aria-label={t("nav.openMenu")}
-        className="sidenav-mobile-toggle md:hidden fixed left-4 top-4 z-60 flex h-11 w-11 items-center justify-center rounded-full bg-hyperion-deep-sea text-hyperion-cream shadow-xl"
+        aria-expanded={isOpen}
+        aria-controls="main-navigation"
+        className="sidenav-mobile-toggle md:hidden fixed left-4 top-4 z-1500 flex h-11 w-11 items-center justify-center rounded-full bg-hyperion-deep-sea text-hyperion-cream shadow-xl"
       >
         <span className="sr-only">{t("nav.openMenu")}</span>
         <div className="flex flex-col gap-1">
@@ -51,14 +90,17 @@ const SideNav = () => {
           type="button"
           onClick={handleClose}
           aria-label={t("nav.closeMenu")}
-          className="md:hidden fixed inset-0 z-40 bg-black/40"
+          className="md:hidden fixed inset-0 z-1500 bg-black/40"
         />
       )}
 
       <aside
-        className={`group/sidebar fixed left-0 top-0 h-full bg-hyperion-deep-sea wavy-edge z-100000 flex flex-col items-start py-8 shadow-2xl transition-all duration-300 ease-in-out overflow-hidden
-          w-64 md:absolute md:w-20 md:hover:w-64
-          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        ref={navigationRef}
+        className={`group/sidebar fixed left-0 top-0 h-dvh bg-hyperion-deep-sea wavy-edge z-2000 flex flex-col items-start py-6 shadow-2xl transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-auto overscroll-contain
+          w-[min(18rem,calc(100%-2rem))] md:w-20 md:hover:w-72 md:focus-within:w-72
+          ${isOpen ? "visible translate-x-0" : "invisible -translate-x-full md:visible md:translate-x-0"}`}
+        id="main-navigation"
+        aria-label={t("nav.openMenu")}
         style={wavyStyle}
       >
         <svg className="absolute h-0 w-0" aria-hidden="true" focusable="false">
@@ -69,6 +111,10 @@ const SideNav = () => {
           </defs>
         </svg>
 
+        <button type="button" onClick={handleClose} aria-label={t("nav.closeMenu")}
+          className="absolute right-8 top-3 flex min-h-11 min-w-11 items-center justify-center rounded-full text-hyperion-cream hover:bg-white/10 md:hidden">
+          <X size={20} />
+        </button>
         {/* Logo Section */}
         <NavLogo isOpen={isOpen} />
 
@@ -82,7 +128,7 @@ const SideNav = () => {
         />
 
         {/* Bottom Actions */}
-        <div className="mt-auto flex flex-col gap-4 w-full px-4">
+        <div className="mt-auto flex shrink-0 flex-col gap-3 w-full pl-4 pr-12 pt-6 md:pr-4 md:group-hover/sidebar:pr-12 md:group-focus-within/sidebar:pr-12">
           <NavLogoutButton
             isOpen={isOpen}
             onLogout={() => logout()}

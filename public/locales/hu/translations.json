@@ -456,6 +456,14 @@
     }
   },
   "common": {
+    "close": "Bezárás",
+    "closeFilters": "Szűrők bezárása",
+    "openInLab": "Megnyitás a laborban",
+    "zoomImage": "Kép nagyítása",
+    "showPassword": "Jelszó megjelenítése",
+    "hidePassword": "Jelszó elrejtése",
+    "clearField": "Mező törlése",
+
     "remove": "Eltávolítás",
     "delete": "Törlés",
     "cancel": "Mégse"

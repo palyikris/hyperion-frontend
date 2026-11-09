@@ -21,7 +21,7 @@ const Gallery = ({
   return (
     <>
       <section
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        className="gallery-grid grid gap-6"
         id="image-items"
       >
         {items.map((item, i) => {
@@ -65,7 +65,7 @@ const Gallery = ({
       </section>
       <Divider label="Video detections" className="my-6"></Divider>
       <section
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        className="gallery-grid grid gap-6"
         id="video-items"
       >
         {video_items?.map((item, i) => {

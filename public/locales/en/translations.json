@@ -456,6 +456,14 @@
     }
   },
   "common": {
+    "close": "Close",
+    "closeFilters": "Close filters",
+    "openInLab": "Open in Lab",
+    "zoomImage": "Zoom image",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "clearField": "Clear field",
+
     "remove": "Remove",
     "delete": "Delete",
     "cancel": "Cancel"

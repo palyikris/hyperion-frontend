@@ -34,11 +34,12 @@ export const FilterPanelHeader: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-3 pb-2 border-b border-hyperion-fog-grey/50">
+    <div className="flex min-w-0 items-center gap-3 pb-2 pr-10 border-b border-hyperion-fog-grey/50">
       <span className="inline-flex items-center justify-center bg-hyperion-deep-sea/10 rounded-xl p-2">
         <Filter size={18} className="text-hyperion-deep-sea" />
       </span>
       <Title
+        as="h2"
         text={t("map.filters.spatial", "Spatial Filters")}
         colorFrom="hyperion-forest"
         colorVia="hyperion-deep-sea"
@@ -150,7 +151,7 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({
 
   return (
     <>
-      <div className="flex gap-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2">
         <Button
           text={t("map.filters.has_trash", "HAS TRASH")}
           onClick={() => onHasTrashChange(true)}
@@ -181,7 +182,7 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({
           disabled={isGridMode}
           aria-label={t("map.filters.clear_status", "Clear status filter")}
           title={t("map.filters.clear_status", "Clear status filter")}
-          className={`h-11 w-11 rounded-xl border flex items-center justify-center transition-all ${
+          className={`min-h-11 min-w-11 shrink-0 rounded-xl border flex items-center justify-center transition-all ${
             effectiveHasTrashValue === undefined
               ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"
               : "bg-hyperion-cream text-hyperion-deep-sea border-hyperion-fog-grey hover:bg-hyperion-fog-grey/50"
@@ -214,7 +215,7 @@ export const ViewModeSection: React.FC<ViewModeSectionProps> = ({
       <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
         {t("map.filters.view_mode", "View Mode")}
       </label>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <button
           type="button"
           onClick={() => onViewModeChange("markers")}

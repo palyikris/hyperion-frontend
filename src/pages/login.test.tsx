@@ -114,10 +114,10 @@ describe("LoginPage", () => {
     expect(screen.getByText("Login Form")).toBeInTheDocument();
   });
 
-  it("has responsive layout structure with min-h-screen and flex", () => {
+  it("has a dynamic viewport layout that grows with its content", () => {
     const { container } = render(<LoginPage />);
 
-    const mainContainer = container.querySelector(".min-h-screen");
+    const mainContainer = container.querySelector(".min-h-dvh");
     expect(mainContainer).toBeTruthy();
     expect(mainContainer?.className).toContain("flex");
   });

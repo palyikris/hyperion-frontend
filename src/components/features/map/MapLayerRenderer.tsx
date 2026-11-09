@@ -117,7 +117,11 @@ const MapLayerRenderer: React.FC<MapLayerRendererProps> = ({
               weight: 1,
             }}
           >
-            <Popup>
+            <Popup
+              keepInView
+              autoPanPaddingTopLeft={[16, 80]}
+              autoPanPaddingBottomRight={[16, 72]}
+            >
               <GridPopup cell={cell} />
             </Popup>
           </Rectangle>

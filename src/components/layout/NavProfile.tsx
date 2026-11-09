@@ -23,11 +23,11 @@ const NavProfile: React.FC<NavProfileProps> = ({ isOpen, onClose }) => {
         />
       </div>
       <div
-        className={`transition-opacity duration-300 overflow-hidden ${
-          isOpen ? "opacity-100" : "opacity-0 group-hover/sidebar:opacity-100"
+        className={`min-w-0 transition-opacity duration-300 overflow-hidden ${
+          isOpen ? "opacity-100" : "opacity-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:opacity-100"
         }`}
       >
-        <p className="text-xs font-bold text-hyperion-cream whitespace-nowrap leading-none">
+        <p className="text-xs font-bold text-hyperion-cream truncate leading-normal">
           {name}
         </p>
         <a

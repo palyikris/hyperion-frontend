@@ -29,19 +29,19 @@ const UploadPage = () => {
     <div className="relative min-h-screen bg-hyperion-cream">
       <PageAtmosphere variant="upload" />
 
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10 space-y-12">
+      <div className="page-shell relative mx-auto w-full max-w-7xl space-y-12">
         <header className="flex flex-col items-start gap-4">
           <Title text={t("upload.page.title")} size="4xl" />
-          <p className="text-sm uppercase tracking-[0.4em] text-hyperion-slate-grey/70">
+          <p className="page-subtitle text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-hyperion-slate-grey/70">
             {t("upload.page.subtitle")}
           </p>
         </header>
 
         <div className="flex flex-col xl:flex-row gap-8">
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <UploadDropZone />
           </div>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <UploadDropZone
               multiple={false}
               accept="video/mp4,video/webm,video/ogg"

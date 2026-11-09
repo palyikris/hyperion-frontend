@@ -21,18 +21,18 @@ const Divider = ({
     >
       <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-hyperion-deep-sea/60 to-transparent" />
       <div
-        className={`relative flex items-center gap-4 px-4 ${bgColorClassName}`}
+        className={`relative flex min-w-0 max-w-full items-center gap-2 px-2 text-center sm:gap-4 sm:px-4 ${bgColorClassName}`}
       >
         <span
-          className={`h-2 w-2 rounded-full shadow-[0_0_12px_rgba(214,120,66,0.45)] ${leftDotClassName}`}
+          className={`h-2 w-2 shrink-0 rounded-full shadow-[0_0_12px_rgba(214,120,66,0.45)] ${leftDotClassName}`}
         />
         <span
-          className={`text-xs font-semibold uppercase tracking-[0.35em] ${textClassName}`}
+          className={`min-w-0 [overflow-wrap:anywhere] text-xs font-semibold uppercase tracking-[0.15em] sm:tracking-[0.25em] ${textClassName}`}
         >
           {label}
         </span>
         <span
-          className={`h-2 w-2 rounded-full shadow-[0_0_12px_rgba(120,200,200,0.45)] ${rightDotClassName}`}
+          className={`h-2 w-2 shrink-0 rounded-full shadow-[0_0_12px_rgba(120,200,200,0.45)] ${rightDotClassName}`}
         />
       </div>
     </div>

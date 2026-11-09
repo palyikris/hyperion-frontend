@@ -33,20 +33,21 @@ const GalleryCardTechnicalOverlay: React.FC<
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-2">
+          <div className="flex shrink-0 justify-between items-center gap-3 mb-4 border-b border-white/20 pb-2">
             <h5 className="font-bold tracking-widest uppercase text-[10px]">
               {t("upload.card.technical.heading", "Technical Specs")}
             </h5>
             <button
               type="button"
               onClick={() => setShowInfo(false)}
-              className="hover:rotate-90 transition-transform"
+              aria-label={t("common.close", "Close")}
+              className="flex min-h-11 min-w-11 shrink-0 items-center justify-center hover:rotate-90 transition-transform"
             >
               <X size={20} />
             </button>
           </div>
 
-          <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="min-h-0 space-y-4 overflow-y-auto pr-2 [overflow-wrap:anywhere] custom-scrollbar">
             <GalleryCardInfoRow
               icon={<Camera size={16} />}
               label={t("upload.card.technical.device", "Device")}

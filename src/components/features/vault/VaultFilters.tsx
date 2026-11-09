@@ -78,7 +78,7 @@ const VaultFilters = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="relative flex flex-wrap items-end w-full gap-4 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-4 shadow-[rgba(26,95,84,0.2)_0px_22px_60px]"
+      className="vault-filter-grid relative grid items-end w-full gap-4 overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-4 shadow-[rgba(26,95,84,0.2)_0px_22px_60px]"
       style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
       aria-busy={isSubmitting}
     >
@@ -90,7 +90,7 @@ const VaultFilters = ({
         className="pointer-events-none absolute -bottom-20 left-166 h-32 w-32 bg-hyperion-sage-mint/60"
         style={{ borderRadius: "50% 50% 62% 38% / 46% 54% 46% 54%" }}
       />
-      <div className="w-64">
+      <div className="min-w-0">
         <InputField
           label={t("vault.filters.searchLabel", "Search")}
           icon={Search}
@@ -104,7 +104,7 @@ const VaultFilters = ({
         />
       </div>
 
-      <div className="w-56">
+      <div className="min-w-0">
         <SelectField
           label={t("vault.filters.statusLabel", "Status")}
           icon={Filter}
@@ -140,7 +140,7 @@ const VaultFilters = ({
         />
       </div>
 
-      <div className="w-56">
+      <div className="min-w-0">
         <SelectField
           label={t("vault.filters.sortByLabel", "Sort By")}
           icon={Filter}
@@ -166,7 +166,8 @@ const VaultFilters = ({
 
       <Button
         onClick={onToggleDirection}
-        className="h-14 px-4 transition-colors shadow-sm w-auto"
+        className="px-4 transition-colors shadow-sm"
+        ariaLabel={t("vault.filters.sortByLabel", "Sort By")}
         text={""}
         type="button"
         icon={
@@ -178,7 +179,7 @@ const VaultFilters = ({
         animateIcon={false}
       ></Button>
 
-      <div className="w-40">
+      <div className="min-w-0">
         <SelectField
           label={t("vault.filters.pageSizeLabel", "Items Per Page")}
           icon={Filter}
@@ -196,7 +197,7 @@ const VaultFilters = ({
         />
       </div>
 
-      <div className="w-full flex flex-col sm:flex-row gap-6 ml-auto">
+      <div className="vault-filter-actions action-grid w-full">
         <Button
           type="submit"
           text={t("vault.filters.apply", "Apply filters")}

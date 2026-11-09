@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -17,6 +17,7 @@ export const DecryptText = ({
   const [displayText, setDisplayText] = useState(text);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const reducedMotion = useReducedMotion();
 
   const MotionTag =
     as === "h1"
@@ -30,15 +31,15 @@ export const DecryptText = ({
             : motion.span;
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || reducedMotion) return;
 
     let iteration = 0;
     const interval = setInterval(() => {
-      setDisplayText((prev) =>
-        prev
+      setDisplayText(
+        text
           .split("")
-          .map((_, index) => {
-            if (index < iteration) return text[index];
+          .map((character, index) => {
+            if (index < iteration || character === " ") return character;
             return characters[Math.floor(Math.random() * characters.length)];
           })
           .join(""),
@@ -49,11 +50,11 @@ export const DecryptText = ({
     }, 30);
 
     return () => clearInterval(interval);
-  }, [isInView, text]);
+  }, [isInView, text, reducedMotion]);
 
   return (
     <MotionTag ref={ref} className={className} style={style}>
-      {displayText}
+      {reducedMotion ? text : displayText}
     </MotionTag>
   );
 };

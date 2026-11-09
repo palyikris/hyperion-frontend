@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import MiniListPreview from "./MiniListPreview";
@@ -41,6 +42,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
   viewMode,
   onViewModeChange,
 }) => {
+  const { t } = useTranslation();
   const isGridMode = viewMode === "grid";
 
   const { handleSubmit, getValues, setValue, reset, control } =
@@ -118,7 +120,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 24 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="absolute top-6 right-6 z-1000 w-85 h-[calc(100dvh-3rem)]"
+          className="map-filter-panel absolute top-20 bottom-3 right-3 z-1000 w-[min(22rem,calc(100%-1.5rem))] sm:inset-y-6 sm:right-6 sm:w-[min(22rem,calc(100%-3rem))]"
           id="map-filters-panel"
         >
           <ScrollReveal className="relative h-full overflow-hidden" delay={0.1}>
@@ -127,7 +129,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                 onFiltersChange(values as MapFiltersFormData);
               })}
               onWheel={(event) => event.stopPropagation()}
-              className="relative h-full overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden bg-white/95 backdrop-blur-xl border border-hyperion-muted-gold/40 shadow-[rgba(26,95,84,0.18)_0px_25px_70px] px-7 py-8 rounded-[2.5rem] space-y-7"
+              className="relative h-full overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden bg-white/95 backdrop-blur-xl border border-hyperion-muted-gold/40 shadow-[rgba(26,95,84,0.18)_0px_25px_70px] px-4 py-6 sm:px-6 sm:py-8 rounded-[2.5rem] space-y-7"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
@@ -138,7 +140,8 @@ const MapFilters: React.FC<MapFiltersProps> = ({
               <button
                 type="button"
                 onClick={() => setShowFilters(false)}
-                className="absolute top-5 right-6 text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors"
+                aria-label={t("common.closeFilters", "Close filters")}
+                className="absolute top-3 right-3 min-h-11 min-w-11 flex items-center justify-center text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors"
               >
                 <X size={22} />
               </button>

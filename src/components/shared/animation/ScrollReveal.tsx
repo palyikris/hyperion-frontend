@@ -1,4 +1,4 @@
-import { motion, type TargetAndTransition } from "framer-motion";
+import { motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import { type ReactNode } from "react";
 
 interface ScrollRevealProps {
@@ -34,11 +34,12 @@ export const ScrollReveal = ({
   onHoverStart,
   onHoverEnd,
 }: ScrollRevealProps) => {
-  const revealProps = revealOnScroll
+  const reducedMotion = useReducedMotion();
+  const revealProps = revealOnScroll && !reducedMotion
     ? {
         initial: { opacity: 0, y: 20 },
         whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, amount: 0.3 },
+        viewport: { once: true, amount: 0.05 },
       }
     : {
         initial: { opacity: 1, y: 0 },
@@ -48,7 +49,7 @@ export const ScrollReveal = ({
   return (
     <motion.div
       {...revealProps}
-      whileHover={whileHover}
+      whileHover={reducedMotion ? undefined : whileHover}
       transition={{
         duration: 0.6,
         delay: delay,

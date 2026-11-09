@@ -72,7 +72,7 @@ const ConfirmModal = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-1000"
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-4000"
           onClick={handleBackdropClick}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -182,7 +182,7 @@ const ConfirmModal = ({
               )}
 
               <motion.div
-                className="space-y-3"
+                className="space-y-3 [overflow-wrap:anywhere]"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.3 }}
@@ -199,7 +199,7 @@ const ConfirmModal = ({
 
               {/* Actions */}
               <motion.div
-                className="flex gap-3 pt-4"
+                className="flex flex-col gap-3 pt-4 sm:flex-row"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.3 }}
@@ -208,7 +208,7 @@ const ConfirmModal = ({
                   type="button"
                   onClick={close}
                   disabled={isPending}
-                  className="flex-1 px-4 py-3 rounded-xl border-2 border-hyperion-fog-grey text-hyperion-deep-sea font-semibold hover:bg-hyperion-fog-grey/30 transition-colors"
+                  className="min-w-0 min-h-11 flex-1 px-4 py-3 rounded-xl border-2 border-hyperion-fog-grey text-hyperion-deep-sea font-semibold hover:bg-hyperion-fog-grey/30 transition-colors"
                 >
                   {cancelText}
                 </button>
@@ -220,7 +220,7 @@ const ConfirmModal = ({
                     onConfirm();
                   }}
                   disabled={confirmDisabled || isPending}
-                  className={`flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`min-w-0 min-h-11 flex-1 px-4 py-3 rounded-xl font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isDangerous
                       ? "bg-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/90"
                       : "bg-hyperion-deep-sea hover:bg-hyperion-deep-sea/90"

@@ -49,7 +49,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
       </div>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr]">
         <ScrollReveal
-          className="relative flex flex-col justify-between overflow-hidden border border-hyperion-forest/40 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          className="min-w-0 relative flex flex-col justify-between overflow-hidden border border-hyperion-forest/40 bg-white/85 p-5 sm:p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
         >
           <Blob
@@ -76,7 +76,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
             </p>
           </div>
           <div className="mt-6 space-y-2">
-            <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               <DecryptText text={clusterStatus}></DecryptText>
             </div>
@@ -84,10 +84,10 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
         </ScrollReveal>
 
         <ScrollReveal
-          className="relative border border-hyperion-deep-sea/30 bg-white/85 p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+          className="min-w-0 relative border border-hyperion-deep-sea/30 bg-white/85 p-5 sm:p-7 shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
           style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
               {t("dashboard.aiWorkers.workerNodes")}
             </p>
@@ -102,9 +102,9 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                 className="flex flex-col rounded-2xl border border-hyperion-fog-grey/70 bg-white/80 px-4 py-3 shadow-[0_8px_20px_rgba(26,95,84,0.08)]"
                 delay={i * 0.01}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-bold text-hyperion-forest">
+                    <p className="[overflow-wrap:anywhere] text-sm font-bold text-hyperion-forest">
                       {worker.name}
                     </p>
                     <p className="text-[11px] uppercase tracking-[0.3em] text-hyperion-slate-grey/60">
@@ -117,8 +117,8 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                     {worker.status}
                   </span>
                 </div>
-                <div className="mt-3 flex items-center gap-4 border-t border-hyperion-fog-grey/50 pt-2">
-                  <div className="flex items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-hyperion-fog-grey/50 pt-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <span className="text-[10px] uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
                       {t("dashboard.aiWorkers.tasksToday")}:
                     </span>
@@ -127,7 +127,7 @@ const AIWorkerStatus = ({ data }: AIWorkerStatusProps) => {
                     </span>
                   </div>
                   {worker.current_task_id && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
                       <span className="text-[10px] uppercase tracking-[0.25em] text-hyperion-slate-grey/60">
                         {t("dashboard.aiWorkers.currentTask")}:
                       </span>

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import type { MapItem } from "../../../types/map";
 import { useDeleteVaultItem } from "../../../hooks/vault/useDeleteVaultItem";
 import ConfirmModal from "../../shared/ConfirmModal";
@@ -91,11 +91,15 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
         />
 
         {/* Content */}
-        <div className="relative flex-1 overflow-y-auto px-6 pb-8 pt-4 flex flex-col gap-8 z-10">
+        <div className="relative min-h-0 flex-1 overflow-y-auto px-6 pb-8 pt-4 flex flex-col gap-8 z-10">
           {/* Title and meta */}
           <div className="flex flex-col gap-1 border-b border-hyperion-sage-mint/20 pb-4">
+            <button type="button" onClick={onClose} aria-label={t("common.close", "Close")}
+              className="ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-full text-hyperion-deep-sea hover:bg-hyperion-soft-sky">
+              <X size={20} />
+            </button>
             <div className="flex items-start justify-between gap-3">
-              <h2 className="text-2xl font-extrabold text-hyperion-deep-sea leading-tight truncate">
+              <h2 className="min-w-0 flex-1 text-xl sm:text-2xl font-extrabold text-hyperion-deep-sea leading-tight truncate">
                 {item.filename ||
                   t("map.popup.unnamed_report", "Unnamed Report")}
               </h2>
@@ -109,7 +113,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
                 <Trash2 className="w-5 h-5 text-hyperion-cream" />
               </button>
             </div>
-            <div className="flex items-center gap-2 text-hyperion-slate-grey text-sm">
+            <div className="flex flex-wrap items-center gap-2 [overflow-wrap:anywhere] text-hyperion-slate-grey text-sm">
               <span className="inline-flex items-center gap-1 bg-hyperion-sage-mint/20 px-2 py-0.5 rounded-full font-semibold">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" fill="#8FCACA" />

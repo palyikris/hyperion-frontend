@@ -9,7 +9,7 @@ interface InfoRowProps {
 const GalleryCardInfoRow: React.FC<InfoRowProps> = ({ icon, label, value }) => (
   <div className="flex items-start gap-3">
     <div className="mt-1 text-hyperion-cool-aqua shrink-0">{icon}</div>
-    <div>
+    <div className="min-w-0 [overflow-wrap:anywhere]">
       <span className="block text-[9px] uppercase tracking-wider opacity-50 mb-0.5">
         {label}
       </span>

@@ -65,12 +65,12 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
   return (
     <div className="relative">
       {/* Zoom Controls */}
-      <div className="absolute right-3 top-3 z-10 flex flex-col gap-2">
+      <div className="relative z-10 flex flex-wrap justify-end gap-2 bg-white/90 p-2">
         <button
           type="button"
           onClick={controls.zoomIn}
           disabled={state.scale >= 5}
-          className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
           title={t("lab.zoom.in", "Zoom in")}
           aria-label={t("lab.zoom.in", "Zoom in")}
         >
@@ -80,7 +80,7 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
           type="button"
           onClick={controls.zoomOut}
           disabled={state.scale <= 1}
-          className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex min-h-11 min-w-11 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
           title={t("lab.zoom.out", "Zoom out")}
           aria-label={t("lab.zoom.out", "Zoom out")}
         >
@@ -90,7 +90,7 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
           <button
             type="button"
             onClick={controls.reset}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-md border border-hyperion-deep-sea/30 bg-white/90 text-hyperion-deep-sea shadow-md transition-all hover:bg-white"
             title={t("lab.zoom.reset", "Reset zoom")}
             aria-label={t("lab.zoom.reset", "Reset zoom")}
           >
@@ -101,7 +101,7 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
 
       {/* Zoom indicator */}
       {isZoomed && (
-        <div className="absolute left-3 top-3 z-10 rounded-md border border-hyperion-deep-sea/30 bg-white/90 px-3 py-1 text-xs font-semibold text-hyperion-deep-sea shadow-md">
+        <div className="absolute left-3 top-4 z-10 rounded-md border border-hyperion-deep-sea/30 bg-white/90 px-3 py-1 text-xs font-semibold text-hyperion-deep-sea shadow-md">
           {Math.round(state.scale * 100)}%
         </div>
       )}

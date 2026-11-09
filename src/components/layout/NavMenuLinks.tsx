@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -22,31 +22,6 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [visibleLinksCount, setVisibleLinksCount] = useState(() => {
-    if (typeof window === "undefined") return 4;
-    const width = window.innerWidth;
-    if (width >= 1850) return mainNavLinks.length;
-    if (width >= 1000) return 5;
-    return 4;
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-
-      if (width >= 1850) {
-        setVisibleLinksCount(mainNavLinks.length);
-      } else if (width >= 1300) {
-        setVisibleLinksCount(5);
-      } else {
-        setVisibleLinksCount(4);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const navLinksWithActive = mainNavLinks.map((link) => ({
     ...link,
     isActive: pathData.startsWith(link.href),
@@ -54,10 +29,10 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
 
   return (
     <nav
-      className="flex flex-col gap-4 w-full px-4"
+      className="flex shrink-0 flex-col gap-2 w-full px-4"
       onMouseLeave={() => onHover(null)}
     >
-      {navLinksWithActive.slice(0, visibleLinksCount).map((link) => (
+      {navLinksWithActive.map((link) => (
         <a
           key={link.labelKey}
           href={link.href}
@@ -102,7 +77,7 @@ const NavMenuLinks: React.FC<NavMenuLinksProps> = ({
             className={`transition-opacity duration-300 font-medium whitespace-nowrap ${
               isOpen
                 ? "opacity-100"
-                : "opacity-0 group-hover/sidebar:opacity-100"
+                : "opacity-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:opacity-100"
             }`}
           >
             {t(link.labelKey)}

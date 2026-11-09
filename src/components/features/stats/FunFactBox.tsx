@@ -36,7 +36,7 @@ const FunFactBox = ({ funFact, index = 0 }: FunFactBoxProps) => {
           </div>
         </div>
 
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-hyperion-slate-grey/80">
             {funFact?.title}
           </h3>

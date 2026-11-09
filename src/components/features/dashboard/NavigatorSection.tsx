@@ -79,7 +79,7 @@ const NavigatorSection = () => {
         </span>
         <span className="h-px flex-1 bg-hyperion-fog-grey/70" />
       </div>
-      <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-4 md:grid-cols-3">
         {tiles.map((link, index) => {
           const palette = tilePalette[index % tilePalette.length];
 

@@ -1,19 +1,23 @@
+import { useTranslation } from "react-i18next";
+
 type ZoomButtonProps = {
   onZoom?: () => void;
   onSearchIconClick?: (e: React.MouseEvent) => void;
 };
 
 const ZoomButton = ({ onZoom, onSearchIconClick }: ZoomButtonProps) => {
+  const { t } = useTranslation();
   return (
-    <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+    <div className="absolute bottom-3 right-3 gallery-hover-control opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity">
       <button
         type="button"
+        aria-label={onSearchIconClick ? t("common.openInLab", "Open in Lab") : t("common.zoomImage", "Zoom image")}
         onClick={(e) => {
           e.stopPropagation();
           if (onSearchIconClick) onSearchIconClick(e);
           else if (onZoom) onZoom();
         }}
-        className="bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors image-card-zoom-button"
+        className="bg-white/90 min-h-11 min-w-11 p-2 rounded-full shadow-lg hover:bg-white transition-colors image-card-zoom-button"
       >
         <svg
           className="w-5 h-5 text-hyperion-forest"

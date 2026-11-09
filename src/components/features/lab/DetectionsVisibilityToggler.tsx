@@ -27,11 +27,11 @@ const DetectionsVisibilityToggler = ({
 
   return (
     <div className="border-t border-hyperion-fog-grey bg-white/70 p-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-hyperion-deep-sea/80">
           {t("lab.detections.visibility.title", "Detections")}
         </h4>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={onShowAll}
@@ -64,11 +64,11 @@ const DetectionsVisibilityToggler = ({
           const isSelected = selectedId === key;
 
           return (
-            <div key={key} className="inline-flex items-center gap-1">
+            <div key={key} className="inline-flex min-w-0 max-w-full items-center gap-1">
               <button
                 type="button"
                 onClick={() => onToggleDetection(key)}
-                className={`detection-visibility-toggler inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                className={`detection-visibility-toggler min-w-0 min-h-11 [overflow-wrap:anywhere] inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   isSelected
                     ? "border-hyperion-burnt-orange bg-hyperion-burnt-orange/20 text-hyperion-deep-sea ring-2 ring-hyperion-burnt-orange/50"
                     : isVisible
@@ -99,7 +99,7 @@ const DetectionsVisibilityToggler = ({
               <button
                 type="button"
                 onClick={() => onIsolateDetection(key)}
-                className="inline-flex items-center justify-center rounded-full border border-hyperion-deep-sea/30 bg-white px-2 py-1 text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
+                className="inline-flex shrink-0 min-h-11 min-w-11 items-center justify-center rounded-full border border-hyperion-deep-sea/30 bg-white px-2 py-1 text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
                 title={t(
                   "lab.detections.visibility.showOnlyThis",
                   "Show only this detection",

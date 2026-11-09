@@ -36,8 +36,8 @@ export const SelectField = ({
   const errorId = error ? `${id}-error` : undefined;
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-2 ml-2">
+    <div className="min-w-0 w-full">
+      <div className="flex flex-wrap justify-between items-start gap-1 mb-2 ml-2">
         <label
           className="block text-xs font-bold text-hyperion-slate-grey/60 uppercase tracking-widest"
           htmlFor={id}
@@ -55,7 +55,7 @@ export const SelectField = ({
       </div>
       <div className="relative">
         <select
-          className={`peer w-full pl-12 ${isCancellable ? "pr-24" : rightIcon ? "pr-12" : "pr-12"} py-4 bg-white border-2 border-hyperion-fog-grey rounded-2xl text-hyperion-slate-grey focus:border-hyperion-deep-sea focus:bg-gradient-to-br focus:from-white focus:to-hyperion-cool-aqua/5 focus:ring-0 focus:shadow-[0_8px_24px_rgba(26,95,84,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] focus:scale-[1.01] transition-all duration-300 outline-none appearance-none`}
+          className={`peer min-w-0 max-w-full w-full pl-12 ${isCancellable ? "pr-24" : rightIcon ? "pr-12" : "pr-12"} py-4 bg-white border-2 border-hyperion-fog-grey rounded-2xl text-hyperion-slate-grey focus:border-hyperion-deep-sea focus:bg-gradient-to-br focus:from-white focus:to-hyperion-cool-aqua/5 focus:ring-0 focus:shadow-[0_8px_24px_rgba(26,95,84,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] focus:scale-[1.01] transition-all duration-300 outline-none appearance-none`}
           id={id}
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={errorId}
@@ -72,7 +72,7 @@ export const SelectField = ({
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 hover:text-hyperion-deep-sea transition-all duration-300 hover:scale-110 focus:outline-none"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex min-h-11 min-w-11 items-center justify-center text-hyperion-deep-sea/40 hover:text-hyperion-deep-sea transition-all duration-300 hover:scale-110 focus:outline-none"
           >
             <X className="w-5 h-5" />
           </button>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MagneticWrapper } from "../../shared/animation/MagneticWrapper";
@@ -49,7 +49,7 @@ const MeanTimeTooltip = ({ active, payload }: ChartTooltipProps) => {
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="relative min-w-52 overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
+      className="relative max-w-[min(18rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-slate-grey/80">
         {worker.workerName}
@@ -87,6 +87,9 @@ const getProcessingColor = (value: number, average: number) => {
 };
 
 const MeanTimeToProcessChart = () => {
+  const reducedMotion = useReducedMotion();
+  const [plotWidth, setPlotWidth] = useState(320);
+  const axisWidth = Math.min(110, plotWidth * 0.32);
   const { t } = useTranslation();
   const meanTimeQuery = useMeanTimeToProcess();
   const tooltipTrigger = useTouchTooltipTrigger();
@@ -101,7 +104,7 @@ const MeanTimeToProcessChart = () => {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.1 },
     );
 
     if (chartRef.current) {
@@ -145,12 +148,12 @@ const MeanTimeToProcessChart = () => {
       ? Math.ceil(Math.max(maxWorkerAvgSeconds, overallAvgSeconds) * 1.08)
       : 10;
 
-  const chartHeight = Math.max(320, chartData.length * 52 + 64);
+  const chartHeight = Math.max(224, chartData.length * 52 + 64);
 
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
+      className="stats-chart relative min-w-0 overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "40px 60px 36px 56px / 58px 38px 62px 42px" }}
     >
       <div
@@ -162,7 +165,7 @@ const MeanTimeToProcessChart = () => {
         style={{ borderRadius: "42% 58% 38% 62% / 62% 38% 54% 46%" }}
       />
 
-      <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="stats-metrics relative mt-6 grid gap-4">
         <MagneticWrapper>
           <MorphBox
             className="h-full border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/30 p-4"
@@ -226,9 +229,9 @@ const MeanTimeToProcessChart = () => {
         ref={chartRef}
         className="relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         style={{ height: chartHeight }}
-        initial={{ opacity: 0, y: 18 }}
+        initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
         {meanTimeQuery.isError ? (
@@ -244,12 +247,12 @@ const MeanTimeToProcessChart = () => {
             {t("stats.meanTime.states.empty")}
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" onResize={width => setPlotWidth(width)}>
             <BarChart
               key={isChartInView ? "visible" : "hidden"}
               data={chartData}
               layout="vertical"
-              margin={{ top: 36, right: 28, left: 12, bottom: 8 }}
+              margin={{ top: 36, right: 16, left: 4, bottom: 8 }}
             >
               <CartesianGrid
                 strokeDasharray="4 4"
@@ -269,7 +272,10 @@ const MeanTimeToProcessChart = () => {
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}
-                width={110}
+                width={axisWidth}
+                tickFormatter={(name: string) => name.length > Math.floor(axisWidth / 7)
+                  ? `${name.slice(0, Math.max(3, Math.floor(axisWidth / 7) - 1))}…`
+                  : name}
               />
               <Tooltip
                 content={<MeanTimeTooltip />}
@@ -293,7 +299,7 @@ const MeanTimeToProcessChart = () => {
               <Bar
                 dataKey="avgProcessingSeconds"
                 radius={[6, 14, 14, 6]}
-                isAnimationActive={isChartInView}
+                isAnimationActive={isChartInView && !reducedMotion}
                 animationBegin={300}
                 animationDuration={1500}
                 animationEasing="ease-in-out"

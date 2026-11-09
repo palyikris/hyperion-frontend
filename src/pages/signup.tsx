@@ -9,9 +9,9 @@ export const SignupPage = () => {
   const [isImgLoading, setIsImgLoading] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row relative bg-hyperion-cream overflow-hidden">
+    <div className="min-h-dvh flex flex-col lg:flex-row relative bg-hyperion-cream overflow-hidden">
       {/* Left Column: Stylized Scene */}
-      <div className="hidden lg:flex lg:w-4/7 xl:w-4/6 relative overflow-hidden bg-linear-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden bg-linear-to-b from-hyperion-deep-sea to-hyperion-deep-sea">
         {/* Loader overlay */}
         {isImgLoading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-hyperion-deep-sea/80 transition-opacity duration-700">
@@ -70,7 +70,7 @@ export const SignupPage = () => {
       </div>
 
       {/* Right Column: Login Card */}
-      <div className="flex-1 flex flex-col justify-center items-center relative px-4 py-8 sm:px-6 md:px-8">
+      <div className="min-w-0 flex-1 flex flex-col justify-center items-center relative px-4 py-8 sm:px-6 md:px-8">
         <div className="pointer-events-none absolute inset-0 lg:hidden">
           <img
             src="/forest.png"
@@ -94,7 +94,7 @@ export const SignupPage = () => {
             </div>
           </div>
           <ScrollReveal
-            className="w-full p-6 sm:p-8 md:p-10 lg:p-12 border border-hyperion-muted-gold/60 bg-white/50 backdrop-blur-sm relative"
+            className="auth-card w-full p-5 sm:p-8 lg:p-10 border border-hyperion-muted-gold/60 bg-white/50 backdrop-blur-sm relative"
             style={{
               borderRadius: "31% 69% 47% 53% / 61% 30% 70% 39% ",
               boxShadow: "rgba(26,95,84, 0.3) 0px 1px 4px",

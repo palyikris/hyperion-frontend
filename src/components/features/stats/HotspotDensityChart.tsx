@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { useHotspotDensity } from "../../../hooks/stats/useHotspotDensity";
@@ -41,7 +41,7 @@ const HotspotMetricTooltip = ({
       initial={{ opacity: 0, y: 8, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className="min-w-56 rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 text-hyperion-slate-grey shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
+      className="max-w-[min(18rem,calc(100vw-3rem))] rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 text-hyperion-slate-grey shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-hyperion-slate-grey/75">
         {row?.metric}
@@ -57,6 +57,7 @@ const HotspotMetricTooltip = ({
 };
 
 const HotspotDensityChart = () => {
+  const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const hotspotDensityQuery = useHotspotDensity();
 
@@ -91,7 +92,7 @@ const HotspotDensityChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
+      className="stats-chart relative min-w-0 overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "62px 36px 56px 40px / 42px 58px 46px 54px" }}
     >
       <div
@@ -103,26 +104,26 @@ const HotspotDensityChart = () => {
         style={{ borderRadius: "42% 58% 38% 62% / 62% 38% 54% 46%" }}
       />
 
-      <motion.div className="relative mt-8 rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-6">
+      <motion.div className="relative mt-8 rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-3 sm:p-4">
         {hotspotDensityQuery.isError ? (
-          <div className="flex h-72 items-center justify-center rounded-xl border border-hyperion-burnt-orange/25 bg-hyperion-burnt-orange/5 px-4 text-center text-sm text-hyperion-slate-grey">
+          <div className="flex min-h-[clamp(12rem,35cqi,20rem)] items-center justify-center rounded-xl border border-hyperion-burnt-orange/25 bg-hyperion-burnt-orange/5 px-4 text-center text-sm text-hyperion-slate-grey">
             {t("stats.hotspot.states.error")}
           </div>
         ) : isLoading ? (
-          <div className="flex h-72 items-center justify-center rounded-xl border border-hyperion-fog-grey/70 bg-white/40 px-4 text-center text-sm text-hyperion-slate-grey/80">
+          <div className="flex min-h-[clamp(12rem,35cqi,20rem)] items-center justify-center rounded-xl border border-hyperion-fog-grey/70 bg-white/40 px-4 text-center text-sm text-hyperion-slate-grey/80">
             {t("stats.hotspot.states.loading")}
           </div>
         ) : !hasData ? (
-          <div className="flex h-72 items-center justify-center rounded-xl border border-hyperion-fog-grey/70 bg-white/40 px-4 text-center text-sm text-hyperion-slate-grey/80">
+          <div className="flex min-h-[clamp(12rem,35cqi,20rem)] items-center justify-center rounded-xl border border-hyperion-fog-grey/70 bg-white/40 px-4 text-center text-sm text-hyperion-slate-grey/80">
             {t("stats.hotspot.states.empty")}
           </div>
         ) : (
-          <div className="grid gap-6 grid-cols-12">
+          <div className="hotspot-grid grid gap-4">
             <motion.div
-              className="space-y-4 col-span-4"
-              initial={{ opacity: 0, x: -20 }}
+              className="min-w-0 space-y-4"
+              initial={reducedMotion ? false : { opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.65, delay: 0.28 }}
             >
               <div className="rounded-xl border border-hyperion-deep-sea/35 bg-hyperion-deep-sea/5 p-5">
@@ -151,16 +152,16 @@ const HotspotDensityChart = () => {
             </motion.div>
 
             <motion.div
-              className="rounded-xl border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/20 p-5 col-span-8"
-              initial={{ opacity: 0, x: 20 }}
+              className="rounded-xl border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/20 min-w-0 p-3 sm:p-4"
+              initial={reducedMotion ? false : { opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.65, delay: 0.38 }}
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-hyperion-slate-grey/75">
                 {t("stats.hotspot.info.title")}
               </p>
-              <div className="mt-4 h-100 w-full rounded-xl border border-hyperion-fog-grey/70 bg-white/65 p-3">
+              <div className="chart-plot mt-4 w-full rounded-xl border border-hyperion-fog-grey/70 bg-white/65 p-3">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={chartData}
@@ -197,6 +198,7 @@ const HotspotDensityChart = () => {
                       cursor={false}
                     />
                     <Bar
+                      isAnimationActive={!reducedMotion}
                       dataKey="value"
                       radius={[10, 10, 0, 0]}
                       animationBegin={220}

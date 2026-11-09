@@ -47,7 +47,7 @@ const LoadingScreen = () => {
         .animate-shimmer { animation: shimmer 5s ease-in-out infinite; }
       `}</style>
 
-      <div className="bg-hyperion-deep-sea min-h-screen flex flex-col items-center justify-center overflow-hidden relative text-hyperion-cream">
+      <div className="bg-hyperion-deep-sea min-h-dvh py-8 flex flex-col items-center justify-center overflow-hidden relative text-hyperion-cream">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -left-32 w-md h-112 rounded-full bg-hyperion-soft-sky/10 blur-3xl animate-shimmer" />
           <div className="absolute -bottom-48 -right-24 w-lg h-128 rounded-full bg-hyperion-sage-mint/10 blur-3xl animate-shimmer" />
@@ -55,7 +55,7 @@ const LoadingScreen = () => {
         </div>
         <main className="relative flex flex-col items-center justify-center w-full max-w-2xl px-6 z-10">
           {/* Central Asset Container */}
-          <div className="relative w-72 h-72 sm:w-96 sm:h-96 flex items-center justify-center">
+          <div className="relative w-full max-w-96 aspect-square flex items-center justify-center">
             {/* The Organic Blob */}
             <div
               className="absolute inset-0 bg-hyperion-cream opacity-95 shadow-2xl animate-pulse-blob"
@@ -88,7 +88,7 @@ const LoadingScreen = () => {
               </span>
             </h1>
 
-            <p className="text-xs sm:text-sm mb-8 tracking-[0.25em] h-5 text-hyperion-soft-sky transition-opacity duration-500">
+            <p className="text-xs sm:text-sm mb-8 tracking-[0.15em] min-h-5 text-hyperion-soft-sky transition-opacity duration-500">
               {activeStatusMessage}...
             </p>
 

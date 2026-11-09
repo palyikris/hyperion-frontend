@@ -100,15 +100,15 @@ const VaultPage = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="vault" />
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
+      <div className="page-shell relative mx-auto w-full max-w-7xl">
         <header className="flex flex-col items-start gap-4">
-          <div className="w-full flex justify-between items-start">
+          <div className="w-full flex flex-col gap-5 sm:flex-row sm:justify-between sm:items-start">
             <VaultHeader />
             {data.total > 0 && (
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllMutation.isPending || isLoading}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-hyperion-burnt-orange/20 text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex shrink-0 min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-lg bg-hyperion-burnt-orange/20 text-hyperion-burnt-orange hover:bg-hyperion-burnt-orange/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 title={t("vault.button.deleteAllTooltip", "Delete all media")}
                 id="delete-all-button"
               >

@@ -33,7 +33,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
 
   return (
     <ScrollReveal
-      className="relative flex h-full flex-col justify-center overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px]"
+      className="min-w-0 relative flex h-full flex-col justify-center overflow-hidden border border-hyperion-deep-sea/35 bg-white/80 p-5 sm:p-8 shadow-[rgba(26,95,84,0.2)_0px_22px_60px]"
       style={{ borderRadius: "36px 64px 40px 72px / 52px 34px 60px 44px" }}
     >
       <Blob
@@ -49,7 +49,7 @@ const SystemHealthSnapshot = ({ data }: SystemHealthSnapshotProps) => {
         shape={blobShapes.organic27}
       />
 
-      <div className="relative w-full">
+      <div className="min-w-0 relative w-full">
         <p className="text-xs font-bold uppercase tracking-[0.35em] text-hyperion-slate-grey/70">
           {t("dashboard.systemHealth.serverLoad")}
         </p>

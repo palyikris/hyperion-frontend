@@ -54,7 +54,7 @@ export const SettingsForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex-1 space-y-8"
+      className="min-w-0 flex-1 space-y-8"
       aria-busy={isSubmitting}
     >
       <InputField

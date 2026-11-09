@@ -332,7 +332,7 @@ const DetectionsEditor = ({
   };
 
   return (
-    <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
+    <div className="min-w-0 rounded-lg bg-white/80 p-3 sm:p-6 shadow-lg">
       <div className="relative h-auto w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
         {isImageLoading && !hasError && (
           <div className="absolute w-full h-full flex flex-col items-center justify-center gap-4 bg-hyperion-fog-grey/90">
@@ -428,7 +428,7 @@ const DetectionsEditor = ({
         )}
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <div className="action-grid mt-4">
         <Button
           type="button"
           text={
@@ -482,7 +482,6 @@ const DetectionsEditor = ({
           disabled={!parentMediaId || isSaving || !hasMediaDetections}
         />
 
-        <div className="flex-grow"></div>
 
         <Button
           type="button"

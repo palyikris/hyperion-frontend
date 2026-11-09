@@ -7,6 +7,7 @@ type TitleProps = {
   colorTo?: ColorOption;
   size: SizeOption;
   className?: string;
+  as?: "h1" | "h2";
 };
 
 type SizeOption =
@@ -44,9 +45,9 @@ const sizeClasses: Record<string, string> = {
   xl: "text-xl",
   "2xl": "text-2xl",
   "3xl": "text-3xl",
-  "4xl": "text-4xl",
-  "5xl": "text-5xl",
-  "6xl": "text-6xl",
+  "4xl": "text-2xl sm:text-3xl lg:text-4xl",
+  "5xl": "text-2xl sm:text-4xl lg:text-5xl",
+  "6xl": "text-3xl sm:text-5xl lg:text-6xl",
   "7xl": "text-7xl",
   "8xl": "text-8xl",
   "9xl": "text-9xl",
@@ -98,6 +99,7 @@ export const Title = ({
   colorTo,
   size,
   className,
+  as = "h1",
 }: TitleProps) => {
   const sizeClass = sizeClasses[size] ?? "text-5xl";
   const fromClass =
@@ -109,7 +111,8 @@ export const Title = ({
 
   return (
     <DecryptText
-      className={`relative ${sizeClass} font-extrabold uppercase tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-br ${fromClass} ${viaClass} ${toClass} drop-shadow-[0_6px_14px_rgba(18,70,62,0.25)] ${className ?? ""}`}
+      as={as}
+      className={`min-w-0 max-w-full [overflow-wrap:anywhere] relative ${sizeClass} font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-br ${fromClass} ${viaClass} ${toClass} drop-shadow-[0_6px_14px_rgba(18,70,62,0.25)] ${className ?? ""}`}
       text={text}
     ></DecryptText>
   );

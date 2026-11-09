@@ -155,11 +155,12 @@ const GalleryCard = ({
         {status === "READY" && initialShowInfo && (
           <button
             type="button"
+            aria-label={t("upload.card.technical.heading", "Technical Specs")}
             onClick={(e) => {
               e.stopPropagation();
               setShowInfo(true);
             }}
-            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white text-hyperion-forest shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-hyperion-cool-aqua hover:text-white border border-hyperion-fog-grey"
+            className="absolute top-4 right-4 z-20 min-h-11 min-w-11 p-2 rounded-full bg-white text-hyperion-forest shadow-sm gallery-hover-control opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-all hover:bg-hyperion-cool-aqua hover:text-white border border-hyperion-fog-grey"
             style={{ boxShadow: "0 2px 8px rgba(8,36,33,0.10)" }}
           >
             <Info size={18} />

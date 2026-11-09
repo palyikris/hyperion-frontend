@@ -49,7 +49,7 @@ const LocationForm = ({
       className="space-y-4"
       aria-busy={isSubmitting || isUpdatePending}
     >
-      <fieldset disabled={isSubmitting || isUpdatePending} className="grid grid-cols-12 gap-4">
+      <fieldset disabled={isSubmitting || isUpdatePending} className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <InputField
           label={t("lab.form.latitudeLabel", "Latitude")}
           type="number"
@@ -61,7 +61,7 @@ const LocationForm = ({
             ...register("lat", { setValueAs: toOptionalNumber }),
           }}
           error={errors.lat?.message}
-          className="col-span-4"
+          className="min-w-0"
         />
         <InputField
           label={t("lab.form.longitudeLabel", "Longitude")}
@@ -74,7 +74,7 @@ const LocationForm = ({
             ...register("lng", { setValueAs: toOptionalNumber }),
           }}
           error={errors.lng?.message}
-          className="col-span-4"
+          className="min-w-0"
         />
         <InputField
           label={t("lab.form.altitudeLabel", "Altitude")}
@@ -87,11 +87,11 @@ const LocationForm = ({
             ...register("altitude", { setValueAs: toOptionalNumber }),
           }}
           error={errors.altitude?.message}
-          className="col-span-4"
+          className="min-w-0"
         />
       </fieldset>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="action-grid">
         <Button
           type="submit"
           text={

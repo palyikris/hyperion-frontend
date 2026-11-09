@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import type { MouseEvent, ReactNode } from "react";
 import { useRef } from "react";
 
@@ -12,6 +12,7 @@ export const MagneticWrapper = ({
   disabled = false,
 }: MagneticWrapperProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const reducedMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -19,7 +20,7 @@ export const MagneticWrapper = ({
   const springY = useSpring(y, { stiffness: 150, damping: 15 });
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) {
+    if (!ref.current || reducedMotion || !window.matchMedia?.("(hover: hover) and (pointer: fine)").matches) {
       return;
     }
     const { clientX, clientY } = e;
@@ -40,6 +41,7 @@ export const MagneticWrapper = ({
   return (
     <motion.div
       ref={ref}
+      className="magnetic-wrapper min-w-0 max-w-full"
       onMouseMove={disabled ? undefined : handleMouseMove}
       onMouseLeave={disabled ? undefined : reset}
       style={{ x: springX, y: springY }}

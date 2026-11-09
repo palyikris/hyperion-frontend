@@ -186,15 +186,15 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="lab" />
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
+      <div className="page-shell relative mx-auto w-full max-w-7xl">
         <header className="flex flex-col items-start gap-4">
           <Title text={t("lab.page.title")} size="4xl" />
-          <p className="text-sm uppercase tracking-[0.4em] text-hyperion-slate-grey/70">
+          <p className="page-subtitle text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-hyperion-slate-grey/70">
             {t("lab.page.subtitle")}
           </p>
         </header>
 
-        <div className="mt-12 space-y-10 grid-cols-12 gap-6 sm:grid">
+        <div className="mt-8 grid grid-cols-1 gap-6">
           <DetectionsDisplay
             key={id}
             mediaId={id}
@@ -204,7 +204,7 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
             detections={displayDetections}
             item_type={itemType}
           />
-          <div className="col-span-12 rounded-lg bg-white/80 p-6 shadow-lg">
+          <div className="min-w-0 rounded-lg bg-white/80 p-3 sm:p-6 shadow-lg">
             {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
               {t("lab.page.location", "Location")}
             </h2> */}

@@ -62,8 +62,8 @@ export const SearchableSelectField = ({
   }, [open]);
 
   return (
-    <div className="w-full" ref={containerRef}>
-      <div className="flex justify-between items-center mb-2 ml-2">
+    <div className="min-w-0 w-full" ref={containerRef}>
+      <div className="flex flex-wrap justify-between items-start gap-1 mb-2 ml-2">
         <label
           className="block text-xs font-bold text-hyperion-slate-grey/60 uppercase tracking-widest"
           htmlFor={id}
@@ -89,19 +89,19 @@ export const SearchableSelectField = ({
           className={`peer w-full pl-12 ${isCancellable ? "pr-24" : rightIcon ? "pr-12" : "pr-12"} py-4 bg-white border-2 border-hyperion-fog-grey rounded-2xl text-hyperion-slate-grey text-left focus:border-hyperion-deep-sea focus:bg-gradient-to-br focus:from-white focus:to-hyperion-cool-aqua/5 focus:ring-0 focus:shadow-[0_8px_24px_rgba(26,95,84,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] focus:scale-[1.01] transition-all duration-300 outline-none appearance-none flex items-center`}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className={selectedOption ? "" : "text-hyperion-slate-grey/40"}>
+          <span className={`min-w-0 [overflow-wrap:anywhere] ${selectedOption ? "" : "text-hyperion-slate-grey/40"}`}>
             {selectedOption
               ? selectedOption.label
               : t("searchableSelect.select", "Select...")}
           </span>
-          <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-hyperion-deep-sea/40 pointer-events-none" />
+          <ChevronDown className={`absolute ${isCancellable ? "right-14" : "right-4"} top-1/2 -translate-y-1/2 w-5 h-5 text-hyperion-deep-sea/40 pointer-events-none`} />
         </button>
         <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 w-5 h-5 transition-all duration-300 peer-focus:text-hyperion-deep-sea peer-focus:scale-110 peer-focus:rotate-3 peer-focus:drop-shadow-[0_0_12px_rgba(26,95,84,0.8)] pointer-events-none" />
         {isCancellable && (
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-hyperion-deep-sea/40 hover:text-hyperion-deep-sea transition-all duration-300 hover:scale-110 focus:outline-none"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex min-h-11 min-w-11 items-center justify-center text-hyperion-deep-sea/40 hover:text-hyperion-deep-sea transition-all duration-300 hover:scale-110 focus:outline-none"
             tabIndex={-1}
           >
             <X className="w-5 h-5" />
@@ -126,7 +126,7 @@ export const SearchableSelectField = ({
                   setFocusedIndex(0);
                 }}
                 placeholder={t("searchableSelect.search", "Search...")}
-                className="w-full px-2 py-1 rounded bg-hyperion-fog-grey/30 text-xs text-hyperion-slate-grey focus:outline-none focus:ring-2 focus:ring-hyperion-deep-sea/30"
+                className="min-w-0 w-full px-2 py-1 rounded bg-hyperion-fog-grey/30 text-base sm:text-sm text-hyperion-slate-grey focus:outline-none focus:ring-2 focus:ring-hyperion-deep-sea/30"
                 autoFocus
                 aria-label="Search options"
               />
@@ -139,7 +139,6 @@ export const SearchableSelectField = ({
             >
               {filteredOptions.length === 0 ? (
                 <li className="px-4 py-2 text-hyperion-slate-grey/40 select-none">
-                  No options found
                   {t("searchableSelect.noOptions", "No options found")}
                 </li>
               ) : (

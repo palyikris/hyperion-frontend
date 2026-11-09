@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { useTrashComposition } from "../../../hooks/stats/useTrashComposition";
@@ -31,7 +31,7 @@ const TrashCompositionTooltip = ({ active, payload }: ChartTooltipProps) => {
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="relative min-w-52 overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
+      className="relative max-w-[min(18rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-slate-grey/80">
         {point.label}
@@ -57,6 +57,7 @@ const pieColors = [
 const texturePatterns = ["dots", "diagonal", "grid", "waves", "cross"] as const;
 
 const TrashCompositionChart = () => {
+  const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const trashCompositionQuery = useTrashComposition();
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -98,7 +99,7 @@ const TrashCompositionChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
+      className="stats-chart relative min-w-0 overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "58px 42px 60px 40px / 46px 54px 44px 56px" }}
     >
       <div
@@ -120,10 +121,10 @@ const TrashCompositionChart = () => {
       </div>
 
       <motion.div
-        className="relative mt-8 h-116 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
-        initial={{ opacity: 0, y: 18 }}
+        className="relative mt-8 min-h-[clamp(14rem,40cqi,24rem)] w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
         {trashCompositionQuery.isError ? (
@@ -139,8 +140,8 @@ const TrashCompositionChart = () => {
             {t("stats.trash.states.empty")}
           </div>
         ) : (
-          <div className="flex h-full flex-col gap-4 md:flex-row">
-            <div className="md:w-56 md:shrink-0">
+          <div className="composition-layout grid gap-4">
+            <div className="min-w-0">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-hyperion-slate-grey/70">
                 {t("stats.trash.legend.filters")}
               </p>
@@ -152,15 +153,15 @@ const TrashCompositionChart = () => {
                       key={`${entry.label}-legend-${index}`}
                       type="button"
                       onClick={() => setActiveIndex(index)}
-                      className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left transition ${
+                      className={`flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition ${
                         isActive
                           ? "border-hyperion-deep-sea/60 bg-hyperion-soft-sky/35"
                           : "border-hyperion-fog-grey/80 bg-white/60"
                       }`}
                     >
-                      <span className="flex items-center gap-2 text-sm text-hyperion-forest">
+                      <span className="flex min-w-0 items-center gap-2 text-sm text-hyperion-forest">
                         <span
-                          className="inline-block h-2.5 w-2.5 rounded-full"
+                          className="inline-block shrink-0 h-2.5 w-2.5 rounded-full"
                           style={{
                             backgroundColor:
                               pieColors[index % pieColors.length],
@@ -177,7 +178,7 @@ const TrashCompositionChart = () => {
               </div>
             </div>
 
-            <div className="h-full flex-1">
+            <div className="chart-plot min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <defs>
@@ -292,13 +293,14 @@ const TrashCompositionChart = () => {
                     })}
                   </defs>
                   <Pie
+                    isAnimationActive={!reducedMotion}
                     data={compositionData}
                     dataKey="count"
                     nameKey="label"
                     cx="50%"
                     cy="50%"
-                    innerRadius={88}
-                    outerRadius={122}
+                    innerRadius="55%"
+                    outerRadius="78%"
                     onMouseEnter={
                       isTouchTooltip
                         ? undefined

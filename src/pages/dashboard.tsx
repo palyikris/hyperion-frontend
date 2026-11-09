@@ -46,10 +46,10 @@ const DashboardPage = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="dashboard" />
-      <div className="relative mx-auto w-full max-w-7xl px-6 pb-20 pt-12 sm:px-10">
+      <div className="page-shell relative mx-auto w-full max-w-7xl">
         <header className="flex flex-col items-start gap-4">
           <Title text={t("dashboard.page.title")} size="4xl" />
-          <p className="text-sm uppercase tracking-[0.4em] text-hyperion-slate-grey/70">
+          <p className="page-subtitle text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-hyperion-slate-grey/70">
             {t("dashboard.page.subtitle")}
           </p>
         </header>

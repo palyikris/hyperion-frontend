@@ -157,8 +157,8 @@ const MarkerDetails: React.FC<MarkerDetailsProps> = ({ item, onImageZoom }) => {
                   className="flex gap-3 items-start relative pl-4 border-l-2 border-hyperion-sage-mint/40"
                 >
                   <div className="absolute -left-2 top-2 w-3 h-2 rounded-full bg-hyperion-sage-mint shadow" />
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0 [overflow-wrap:anywhere]">
+                    <div className="flex flex-wrap items-center gap-2">
                       <p className="text-xs font-bold text-hyperion-forest-depth leading-none uppercase truncate">
                         {log.action}
                       </p>

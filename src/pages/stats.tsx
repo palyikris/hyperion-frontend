@@ -57,9 +57,9 @@ const StatsPage = () => {
           onClose={() => setExportFormat(null)}
         />
       ) : null}
-      <div className="relative z-10 mx-auto w-full max-w-400 px-6 pb-40 pt-10 sm:px-10">
+      <div className="page-shell relative z-10 mx-auto w-full max-w-400">
         {/* Header Section */}
-        <header className="mb-24 space-y-8">
+        <header className="mb-10 space-y-6">
           <div className="space-y-3">
             <Title text={t("stats.page.title")} size="5xl" />
             <p className="text-sm font-medium text-hyperion-slate-grey/70 max-w-3xl">
@@ -68,7 +68,7 @@ const StatsPage = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="action-grid">
             <Button
               text={
                 isRefreshing
@@ -107,7 +107,7 @@ const StatsPage = () => {
         </header>
 
         {/* Main Grid Layout */}
-        <section className="space-y-0">
+        <section className="space-y-10">
           {/* Environmental Footprint: disabled until area calculation is implemented.
           <StatsBentoCard
             id="chart-environmental"
@@ -141,12 +141,12 @@ const StatsPage = () => {
 
           {/* Fun Facts */}
           {funFacts.length > 0 && (
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {funFacts.slice(0, 2).map((funFact, index) => (
                 <StatsBentoCard
                   key={`${funFact.title}-${index}`}
                   id={`chart-funfact-${index + 1}`}
-                  className="col-span-12 lg:col-span-6"
+                  className="min-w-0"
                 >
                   <FunFactBox funFact={funFact} />
                 </StatsBentoCard>
@@ -155,7 +155,7 @@ const StatsPage = () => {
           )}
 
           {/* Hotspot & Mean Time to Process */}
-          <div className="grid grid-cols-12 gap-6 mb-50 xl:mb-80 mt-16">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
             <StatsBentoCard
               id="chart-hotspot"
               title={t("stats.hotspot.title", "Hotspot Density")}
@@ -163,7 +163,7 @@ const StatsPage = () => {
                 "stats.info.hotspot",
                 "Measures concentration of high-confidence detections and spatial intensity of activity zones.",
               )}
-              className="col-span-12 mb-70 xl:mb-0 xl:col-span-6 h-[450px]"
+              className="min-w-0"
             >
               <HotspotDensityChart />
             </StatsBentoCard>
@@ -175,7 +175,7 @@ const StatsPage = () => {
                 "stats.info.mttp",
                 "Shows mean operational latency from input to completed processing for worker optimization.",
               )}
-              className="col-span-12 xl:col-span-6 h-[450px]"
+              className="min-w-0"
             >
               <MeanTimeToProcessChart />
             </StatsBentoCard>
@@ -189,19 +189,19 @@ const StatsPage = () => {
               "stats.info.temporal",
               "Tracks detection volume over time to reveal acceleration, seasonality, and intervention effect.",
             )}
-            className="h-[480px] mb-66"
+            className="w-full"
           >
             <TemporalTrendsChart />
           </StatsBentoCard>
 
           {/* Fun Facts */}
           {funFacts.length > 2 && (
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {funFacts.slice(2, 4).map((funFact, index) => (
                 <StatsBentoCard
                   key={`${funFact.title}-${index + 2}`}
                   id={`chart-funfact-${index + 3}`}
-                  className="col-span-12 lg:col-span-6"
+                  className="min-w-0"
                 >
                   <FunFactBox funFact={funFact} />
                 </StatsBentoCard>
@@ -210,7 +210,7 @@ const StatsPage = () => {
           )}
 
           {/* Trash Composition & Fleet Efficiency */}
-          <div className="grid grid-cols-12 gap-6 mb-50 mt-16">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
             <StatsBentoCard
               id="chart-trash"
               title={t("stats.trash.title", "Trash Composition")}
@@ -218,7 +218,7 @@ const StatsPage = () => {
                 "stats.info.trash",
                 "Distribution of classified waste categories to reveal dominant pollutant patterns.",
               )}
-              className="col-span-12 mb-55 xl:mb-0 xl:col-span-6 h-[450px]"
+              className="min-w-0"
             >
               <TrashCompositionChart />
             </StatsBentoCard>
@@ -230,7 +230,7 @@ const StatsPage = () => {
                 "stats.info.fleet",
                 "Aggregates worker reliability, throughput, and success-failure balance across autonomous agents.",
               )}
-              className="col-span-12 xl:col-span-6 h-[450px]"
+              className="min-w-0"
             >
               <AIFleetEfficiencyChart />
             </StatsBentoCard>

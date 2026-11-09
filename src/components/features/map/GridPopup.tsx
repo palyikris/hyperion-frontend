@@ -14,11 +14,11 @@ const GridPopup: React.FC<GridPopupProps> = ({ cell }) => {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative min-w-56 rounded-3xl bg-hyperion-cream/90 backdrop-blur-md border border-white/60 shadow-[0_20px_50px_rgba(26,95,84,0.2)] p-4 overflow-hidden"
+      className="relative min-w-0 max-w-full [overflow-wrap:anywhere] rounded-3xl bg-hyperion-cream/90 backdrop-blur-md border border-white/60 shadow-[0_20px_50px_rgba(26,95,84,0.2)] p-4 overflow-hidden"
     >
       <div className="pointer-events-none absolute -top-6 -right-6 h-16 w-16 rounded-full bg-hyperion-sage-mint/20 blur-2xl" />
 
-      <div className="relative flex items-center justify-between mb-3">
+      <div className="relative flex flex-wrap items-center justify-between gap-2 mb-3 pr-4">
         <div className="text-[11px] font-black tracking-[0.16em] uppercase text-hyperion-deep-sea">
           {t("map.grid.analysis", "Grid Analysis")}
         </div>
@@ -30,11 +30,11 @@ const GridPopup: React.FC<GridPopupProps> = ({ cell }) => {
       <div className="relative space-y-2 text-xs text-hyperion-slate-grey">
         <div className="flex items-center justify-between gap-4 rounded-xl bg-white/65 border border-hyperion-sage-mint/20 px-3 py-2.5">
           <span>{t("map.grid.total_hits", "Találatok száma")}</span>
-          <span className="font-semibold text-hyperion-deep-sea">{cell.count}</span>
+          <span className="shrink-0 whitespace-nowrap font-semibold text-hyperion-deep-sea">{cell.count}</span>
         </div>
         <div className="flex items-center justify-between gap-4 rounded-xl bg-white/65 border border-hyperion-sage-mint/20 px-3 py-2.5">
           <span>{t("map.grid.trash_density", "Relative trash density")}</span>
-          <span className="font-semibold text-hyperion-deep-sea">
+          <span className="shrink-0 whitespace-nowrap font-semibold text-hyperion-deep-sea">
             {(cell.density * 100).toFixed(1)}%
           </span>
         </div>
@@ -46,7 +46,7 @@ const GridPopup: React.FC<GridPopupProps> = ({ cell }) => {
         </p>
         <div className="flex items-center justify-between gap-4 rounded-xl bg-white/65 border border-hyperion-sage-mint/20 px-3 py-2.5">
           <span>{t("map.grid.avg_confidence", "Átlagos AI bizalom")}</span>
-          <span className="font-semibold text-hyperion-deep-sea">
+          <span className="shrink-0 whitespace-nowrap font-semibold text-hyperion-deep-sea">
             {(cell.confidence).toFixed(1)}%
           </span>
         </div>

@@ -25,7 +25,7 @@ const NavLogoutButton: React.FC<NavLogoutButtonProps> = ({
       <LogOut className="min-w-[24px] w-6 h-6 shrink-0" />
       <span
         className={`transition-opacity duration-300 font-medium whitespace-nowrap ${
-          isOpen ? "opacity-100" : "opacity-0 group-hover/sidebar:opacity-100"
+          isOpen ? "opacity-100" : "opacity-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:opacity-100"
         }`}
       >
         {t("nav.logout")}

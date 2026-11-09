@@ -10,12 +10,12 @@ const SettingsPage = () => {
   const { data: user } = useMeAuth();
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-hyperion-cream flex items-center justify-center p-6">
+    <div className="page-shell min-h-dvh relative overflow-hidden bg-hyperion-cream flex items-center justify-center">
       <PageAtmosphere variant="settings" />
 
       <ScrollReveal className="relative w-full max-w-7xl bg-white/90 backdrop-blur-sm rounded-[40px] shadow-[rgba(26,95,84,0.16)_0px_24px_90px] overflow-hidden border border-hyperion-muted-gold/60">
-        <div className="p-12 flex flex-col md:flex-row gap-16">
-          <div className="flex flex-col items-center text-center space-y-6 md:w-1/3">
+        <div className="p-5 sm:p-8 lg:p-12 flex min-w-0 flex-col lg:flex-row gap-8 lg:gap-12">
+          <div className="flex flex-col items-center text-center space-y-6 min-w-0 lg:w-1/3">
             <div className="relative">
               <div className="w-40 h-40 rounded-full bg-hyperion-soft-sky flex items-center justify-center border-4 border-white shadow-inner">
                 <div className="w-16 h-24 bg-hyperion-muted-gold/20 rounded-xl"></div>
@@ -29,7 +29,7 @@ const SettingsPage = () => {
               <h2 className="text-2xl font-bold text-hyperion-deep-sea">
                 {t("settings.page.currentOperator")}
               </h2>
-              <p className="text-hyperion-slate-grey font-mono text-sm">
+              <p className="text-hyperion-slate-grey font-mono text-sm [overflow-wrap:anywhere]">
                 {user?.email?.toString() || ""}
               </p>
             </div>

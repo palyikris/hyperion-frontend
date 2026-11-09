@@ -6,6 +6,7 @@ import {
   useSpring,
   motion,
   useTransform,
+  useReducedMotion,
 } from "framer-motion";
 
 type RollingNumberProps = {
@@ -24,7 +25,8 @@ export const RollingNumber = ({
   postfix,
 }: RollingNumberProps) => {
   const ref = useRef<HTMLSpanElement | null>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true });
+  const reducedMotion = useReducedMotion();
 
   const motionValue = useMotionValue(0);
   const springValue = useSpring(motionValue, { stiffness: 50, damping: 30 });
@@ -41,7 +43,7 @@ export const RollingNumber = ({
   return (
     <motion.span ref={ref} style={style} className={className}>
       {prefix}
-      <motion.span style={{ display: "inline" }}>{displayValue}</motion.span>
+      <motion.span style={{ display: "inline" }}>{reducedMotion ? value.toLocaleString() : displayValue}</motion.span>
       {postfix}
     </motion.span>
   );

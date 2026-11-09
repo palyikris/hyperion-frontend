@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MagneticWrapper } from "../../shared/animation/MagneticWrapper";
@@ -71,7 +71,7 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="relative min-w-48 overflow-hidden rounded-2xl border border-hyperion-forest/25 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
+      className="relative max-w-[min(18rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-hyperion-forest/25 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
     >
       <p className="relative text-[10px] font-bold uppercase tracking-[0.28em] text-hyperion-slate-grey/80">
         {label}
@@ -90,6 +90,7 @@ const TrendsTooltip = ({ active, payload, label }: ChartTooltipProps) => {
 };
 
 const TemporalTrendsChart = () => {
+  const reducedMotion = useReducedMotion();
   const { t } = useTranslation();
   const [selectedRange, setSelectedRange] = useState<RangeOption>("month");
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
@@ -107,7 +108,7 @@ const TemporalTrendsChart = () => {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.1 },
     );
 
     if (chartRef.current) {
@@ -164,7 +165,7 @@ const TemporalTrendsChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
+      className="stats-chart relative min-w-0 overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "60px 40px 56px 36px / 44px 62px 40px 58px" }}
     >
       <div
@@ -195,7 +196,7 @@ const TemporalTrendsChart = () => {
         </div>
       </div>
 
-      <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="stats-metrics relative mt-6 grid gap-4">
         <MagneticWrapper>
           <MorphBox
             className="h-full border border-hyperion-sage-mint/70 bg-hyperion-sage-mint/30 p-4"
@@ -256,10 +257,10 @@ const TemporalTrendsChart = () => {
 
       <motion.div
         ref={chartRef}
-        className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
-        initial={{ opacity: 0, y: 18 }}
+        className="chart-plot relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
         {temporalTrendsQuery.isError ? (
@@ -399,7 +400,7 @@ const TemporalTrendsChart = () => {
                   fill: "var(--color-hyperion-burnt-orange)",
                   strokeWidth: 0,
                 }}
-                isAnimationActive={isChartInView}
+                isAnimationActive={isChartInView && !reducedMotion}
                 animationBegin={400}
                 animationDuration={2000}
                 animationEasing="ease-in-out"

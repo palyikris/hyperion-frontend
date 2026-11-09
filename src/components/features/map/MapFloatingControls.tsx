@@ -20,7 +20,7 @@ const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
   goToMyLocationLabel,
 }) => {
   return (
-    <div className="absolute z-1000 right-6 bottom-6 flex flex-col gap-4">
+    <div className="absolute z-1000 right-3 bottom-3 sm:right-6 sm:bottom-6 flex flex-col gap-4">
       <AnimatePresence>
         {!showFilters && (
           <motion.button
@@ -29,8 +29,9 @@ const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.7, y: 10 }}
             onClick={onShowFilters}
-            className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
+            className="bg-hyperion-deep-sea shadow-lg min-h-11 min-w-11 rounded-full p-3 hover:bg-hyperion-forest transition-all"
             title={showFiltersLabel}
+            aria-label={showFiltersLabel}
             id="show-filters-btn"
           >
             <FilterIcon className="text-hyperion-cream w-5 h-5" />
@@ -40,8 +41,9 @@ const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
 
       <button
         onClick={onGoToMyLocation}
-        className="bg-hyperion-deep-sea shadow-lg rounded-full p-2.5 hover:bg-hyperion-forest transition-all"
+        className="bg-hyperion-deep-sea shadow-lg min-h-11 min-w-11 rounded-full p-3 hover:bg-hyperion-forest transition-all"
         title={goToMyLocationLabel}
+        aria-label={goToMyLocationLabel}
         disabled={locating}
       >
         <MapPinned

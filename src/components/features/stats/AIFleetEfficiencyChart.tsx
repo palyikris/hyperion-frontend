@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import { MagneticWrapper } from "../../shared/animation/MagneticWrapper";
@@ -58,7 +58,7 @@ const AIFleetTooltip = ({ active, payload }: ChartTooltipProps) => {
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="relative min-w-52 overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
+      className="relative max-w-[min(18rem,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-hyperion-deep-sea/30 bg-white/95 px-4 py-3 shadow-[0_12px_35px_rgba(26,95,84,0.2)] backdrop-blur-md"
     >
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-hyperion-slate-grey/80">
         {worker.name}
@@ -84,6 +84,8 @@ const AIFleetTooltip = ({ active, payload }: ChartTooltipProps) => {
 };
 
 const AIFleetEfficiencyChart = () => {
+  const reducedMotion = useReducedMotion();
+  const [plotWidth, setPlotWidth] = useState(320);
   const { t } = useTranslation();
   const aiFleetEfficiencyQuery = useAIFleetEfficiency();
   const [sortMode, setSortMode] = useState<SortMode>("mostActive");
@@ -99,7 +101,7 @@ const AIFleetEfficiencyChart = () => {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.1 },
     );
 
     if (chartRef.current) {
@@ -170,7 +172,7 @@ const AIFleetEfficiencyChart = () => {
   return (
     <ScrollReveal
       revealOnScroll={false}
-      className="relative h-full overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
+      className="stats-chart relative min-w-0 overflow-hidden rounded-[36px] border border-white/40 bg-white/45 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),rgba(26,95,84,0.12)_0px_20px_50px] backdrop-blur-xl sm:p-8"
       style={{ borderRadius: "54px 40px 62px 36px / 40px 60px 44px 56px" }}
     >
       <div
@@ -183,7 +185,7 @@ const AIFleetEfficiencyChart = () => {
       />
 
       <div className="relative space-y-2">
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex flex-wrap items-center gap-2 pt-1">
           <button
             type="button"
             onClick={() => setSortMode("mostActive")}
@@ -209,7 +211,7 @@ const AIFleetEfficiencyChart = () => {
         </div>
       </div>
 
-      <div className="relative mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="stats-metrics relative mt-6 grid gap-4">
         <MagneticWrapper>
           <MorphBox
             className="h-full border border-hyperion-soft-sky/60 bg-white/30 p-4 backdrop-blur-xl"
@@ -271,10 +273,10 @@ const AIFleetEfficiencyChart = () => {
 
       <motion.div
         ref={chartRef}
-        className="relative mt-8 h-80 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
-        initial={{ opacity: 0, y: 18 }}
+        className="chart-plot relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.65, delay: 0.28 }}
       >
         {aiFleetEfficiencyQuery.isError ? (
@@ -290,7 +292,7 @@ const AIFleetEfficiencyChart = () => {
             {t("stats.aiFleet.states.empty")}
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" onResize={width => setPlotWidth(width)}>
             <BarChart
               key={isChartInView ? "visible" : "hidden"}
               data={sortedData}
@@ -304,6 +306,7 @@ const AIFleetEfficiencyChart = () => {
                 dataKey="name"
                 tick={(props: AxisTickProps) => {
                   const workerName = String(props.payload?.value ?? "");
+                  const maxLabelLength = Math.max(5, Math.floor((plotWidth - 84) / Math.max(sortedData.length, 1) / 7));
                   const status = statusByWorker.get(workerName) ?? "critical";
                   const statusColor =
                     status === "healthy"
@@ -323,7 +326,10 @@ const AIFleetEfficiencyChart = () => {
                         fontSize={12}
                         fontWeight={600}
                       >
-                        {workerName}
+                        {workerName.length > maxLabelLength
+                          ? `${workerName.slice(0, maxLabelLength - 1)}…`
+                          : workerName}
+                        <title>{workerName}</title>
                       </text>
                     </g>
                   );
@@ -348,7 +354,7 @@ const AIFleetEfficiencyChart = () => {
                 dataKey="reliabilityScore"
                 radius={[14, 14, 6, 6]}
                 fill="var(--color-hyperion-sage-mint)"
-                isAnimationActive={isChartInView}
+                isAnimationActive={isChartInView && !reducedMotion}
                 animationBegin={350}
                 animationDuration={800}
                 animationEasing="ease-in-out"

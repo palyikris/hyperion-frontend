@@ -25,7 +25,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
   return (
     <div className="grid gap-6 lg:h-full lg:grid-rows-2">
       <ScrollReveal
-        className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-forest/35 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+        className="min-w-0 relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-forest/35 bg-white/85 p-5 sm:p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
         style={{ borderRadius: "36px 62px 40px 70px / 50px 34px 64px 42px" }}
       >
         <Blob
@@ -43,7 +43,7 @@ const UserExperiencePulse = ({ data }: UserExperiencePulseProps) => {
       </ScrollReveal>
 
       <ScrollReveal
-        className="relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-burnt-orange/40 bg-white/85 p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
+        className="min-w-0 relative flex h-full flex-col items-center justify-center overflow-hidden border border-hyperion-burnt-orange/40 bg-white/85 p-5 sm:p-8 text-center shadow-[rgba(26,95,84,0.18)_0px_18px_50px]"
         style={{ borderRadius: "38px 70px 34px 62px / 46px 66px 34px 58px" }}
       >
         <Blob

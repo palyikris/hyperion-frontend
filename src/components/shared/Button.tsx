@@ -11,6 +11,7 @@ type ButtonProps = {
   animateIcon?: boolean;
   theme?: "primary" | "info" | "danger";
   id?: string;
+  ariaLabel?: string;
 };
 
 export const Button = ({
@@ -23,6 +24,7 @@ export const Button = ({
   animateIcon = true,
   theme = "primary",
   id,
+  ariaLabel,
 }: ButtonProps) => {
   const themeClasses = {
     primary: "bg-hyperion-deep-sea text-white hover:bg-hyperion-deep-sea/90",
@@ -37,7 +39,7 @@ export const Button = ({
     : "hover:shadow-xl hover:shadow-hyperion-deep-sea/30 hover:-translate-y-1";
 
   const baseClassName =
-    "w-full font-bold py-4 shadow-lg shadow-hyperion-deep-sea/20 transition-all duration-500 transform active:scale-[0.97] flex items-center justify-center space-x-3 group disabled:opacity-60 disabled:transform-none";
+    "min-h-11 min-w-0 max-w-full w-full font-bold px-4 py-3 shadow-lg shadow-hyperion-deep-sea/20 transition-all duration-500 transform active:scale-[0.97] flex items-center justify-center gap-3 group disabled:opacity-60 disabled:transform-none";
   const combinedClassName = `${baseClassName} ${hoverClassName} ${themeClass} ${className}`;
 
   return (
@@ -68,14 +70,15 @@ export const Button = ({
         disabled={disabled}
         onClick={onClick}
         id={id}
+        aria-label={ariaLabel}
       >
-        {text !== "" && <span>{text}</span>}
+        {text !== "" && <span className="min-w-0 [overflow-wrap:anywhere]">{text}</span>}
         {icon && (
           <span
             className={
-              animateIcon
+              "shrink-0 " + (animateIcon
                 ? "transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110 group-hover:rotate-12"
-                : ""
+                : "")
             }
           >
             {icon}

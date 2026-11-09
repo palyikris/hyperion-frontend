@@ -216,7 +216,7 @@ const UploadDropZone = ({
   return (
     <section className="relative">
       <ScrollReveal
-        className="flex flex-col items-center justify-center py-16 px-8 bg-white border border-hyperion-fog-grey shadow-sm relative overflow-hidden"
+        className="flex flex-col items-center justify-center py-8 px-4 sm:py-12 sm:px-6 bg-white border border-hyperion-fog-grey shadow-sm relative overflow-hidden"
         style={{
           borderRadius: "68px 44px 30px 48px / 40px 28px 46px 32px",
         }}
@@ -236,7 +236,7 @@ const UploadDropZone = ({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`amorphous-border px-20 flex flex-col items-center justify-center cursor-pointer group transition-all duration-500 p-6 rounded-xl ${
+          className={`amorphous-border min-w-0 w-full px-4 sm:px-6 flex flex-col items-center justify-center cursor-pointer group transition-all duration-500 p-6 rounded-xl ${
             isDragging
               ? "border-hyperion-forest bg-hyperion-cool-aqua/10"
               : "hover:border-hyperion-forest hover:bg-hyperion-cool-aqua/5"
@@ -260,7 +260,7 @@ const UploadDropZone = ({
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-hyperion-forest">
+            <h3 className="text-center text-lg sm:text-xl font-semibold mb-2 text-hyperion-forest">
               {label || t("upload.dropzone.heading")}
             </h3>
             <p className="text-hyperion-slate-grey/70 text-center max-w-xs px-4">
@@ -269,7 +269,7 @@ const UploadDropZone = ({
                 {browseText || t("upload.dropzone.browseFiles")}
               </span>
             </p>
-            <p className="text-xs text-hyperion-slate-grey/50 mt-4 uppercase tracking-widest">
+            <p className="text-center text-xs text-hyperion-slate-grey/50 mt-4 uppercase tracking-widest">
               {fileSupportText || t("upload.dropzone.fileSupport")}
             </p>
 
@@ -296,7 +296,7 @@ const UploadDropZone = ({
             }}
             id={multiple ? "selected-images-section" : "selected-video-section"}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between mb-4">
               <h3 className="text-lg font-semibold text-hyperion-forest">
                 {t("upload.selectedFiles.heading", {
                   count: selectedFiles.length,
@@ -319,7 +319,7 @@ const UploadDropZone = ({
                 ></Button>
               )}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="upload-file-grid grid gap-4">
               {selectedFiles.map((file, index) => {
                 const uploadState = uploadStates[index];
                 const isCompleted = uploadState?.status === "completed";
