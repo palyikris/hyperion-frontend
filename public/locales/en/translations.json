@@ -632,7 +632,13 @@
       "not_found": "The media was not found or is not accessible.",
       "retry": "Try again"
     },
+    "clean": {
+      "success": "Marked clean.",
+      "error": "Could not mark clean. Please try again."
+    },
     "form": {
+      "mark_clean": "Mark clean",
+      "mark_all_clean": "Mark all clean",
       "latitudeLabel": "Latitude",
       "latitudePlaceholder": "Enter latitude...",
       "longitudeLabel": "Longitude",

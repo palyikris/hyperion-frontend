@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Save, RotateCcw, PlusSquare, Trash2 } from "lucide-react";
+import { Save, RotateCcw, PlusSquare, Trash2, CheckCheck, Check } from "lucide-react";
 import { getFullResUrl, getMediaAssetUrl } from "../../../utils/imageUtils";
 import type { Detection, MediaPatchRequest } from "../../../types/lab";
 import DetectionsStage from "./DetectionsStage";
@@ -12,9 +12,12 @@ import { Button } from "../../shared/Button";
 import { useUpdateMedia } from "../../../hooks/lab/useUpdateMedia";
 import { useNavigate } from "react-router-dom";
 import { useIsMutating } from "@tanstack/react-query";
+import { useMarkClean } from "../../../hooks/lab/useMarkClean";
 
 type DetectionsDisplayProps = {
   mediaId?: string;
+  parentMediaId?: string;
+  hasMediaDetections?: boolean;
   hfPath?: string;
   detections: Detection[];
   item_type: "image" | "video" | undefined;
@@ -35,13 +38,16 @@ type KeyedDetection = {
 
 const DetectionsEditor = ({
   mediaId,
+  parentMediaId = mediaId,
   hfPath,
   detections,
+  hasMediaDetections = detections.length > 0,
   item_type,
 }: DetectionsDisplayProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const updateMediaMutation = useUpdateMedia(mediaId);
+  const markCleanMutation = useMarkClean(mediaId);
   const isSaving = useIsMutating({ mutationKey: ["lab", "update", mediaId] }) > 0;
   const savingRef = useRef(false);
   const [draftBase, setDraftBase] = useState<Detection[] | null>(null);
@@ -60,6 +66,7 @@ const DetectionsEditor = ({
   // States for Drawing & Deleting Mode
   const [newDetections, setNewDetections] = useState<Detection[]>([]);
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [cleanedIds, setCleanedIds] = useState<Set<string>>(new Set());
   const [isDrawingMode, setIsDrawingMode] = useState(false);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -97,9 +104,9 @@ const DetectionsEditor = ({
     return keyedDetections.filter(
       ({ detection }) =>
         detection.confidence >= confidenceThreshold / 100 &&
-        !deletedIds.has(detection.id),
+        !deletedIds.has(detection.id) && !cleanedIds.has(detection.id),
     );
-  }, [keyedDetections, confidenceThreshold, deletedIds]);
+  }, [keyedDetections, confidenceThreshold, deletedIds, cleanedIds]);
 
   const selectedDetection = useMemo(() => {
     if (!selectedId) return null;
@@ -187,7 +194,7 @@ const DetectionsEditor = ({
           area_sqm: bboxOverride ? undefined : det.area_sqm,
         };
       })
-      .filter((det) => !deletedIds.has(det.id))
+      .filter((det) => !deletedIds.has(det.id) && !cleanedIds.has(det.id))
       .map((det) => ({
         id: det.id.startsWith("new-") ? undefined : det.id,
         label: det.label,
@@ -213,6 +220,7 @@ const DetectionsEditor = ({
       setLabelOverrides({});
       setNewDetections([]);
       setDeletedIds(new Set());
+      setCleanedIds(new Set());
       setIsDrawingMode(false);
       setSelectedId(null);
       setDraftBase(null);
@@ -229,9 +237,55 @@ const DetectionsEditor = ({
     setLabelOverrides({});
     setNewDetections([]);
     setDeletedIds(new Set());
+    setCleanedIds(new Set());
     setSelectedId(null);
     setIsDrawingMode(false);
     setDraftBase(null);
+  };
+
+  const handleMarkClean = async (all = false) => {
+    if (!parentMediaId || isSaving || savingRef.current) return;
+    const selected = selectedDetection?.detection;
+    if (!all && !selected) return;
+
+    // A newly drawn box has no persisted detection to mark clean yet.
+    if (!all && selected?.id.startsWith("new-")) {
+      handleDeleteSelected();
+      return;
+    }
+
+    // Freeze the draft so a refetch cannot shift keys for other unsaved edits.
+    startEditing();
+    savingRef.current = true;
+    try {
+      await markCleanMutation.mutateAsync({
+        mediaId: parentMediaId,
+        detectionId: all ? undefined : selected!.id,
+      });
+      if (item_type === "video") {
+        navigate("/vault");
+        return;
+      }
+      if (all) {
+        setDraftBase([]);
+        setBboxOverrides({});
+        setLabelOverrides({});
+        setNewDetections([]);
+        setDeletedIds(new Set());
+        setCleanedIds(new Set());
+      } else {
+        setCleanedIds((current) => new Set(current).add(selected!.id));
+        const key = `${selected!.id}-${selectedDetection!.index}`;
+        setBboxOverrides(({ [key]: removed, ...rest }) => { void removed; return rest; });
+        setLabelOverrides(({ [key]: removed, ...rest }) => { void removed; return rest; });
+      }
+      setSelectedId(null);
+      setIsDrawingMode(false);
+    } catch {
+      // Keep the selection and draft available for retry.
+    } finally {
+      savingRef.current = false;
+    }
   };
 
   const handleAddDetection = (bbox: NormalizedBBox) => {
@@ -344,7 +398,7 @@ const DetectionsEditor = ({
         <ConfidenceFilter
           confidenceThreshold={confidenceThreshold}
           filteredCount={filteredDetections.length}
-          totalCount={allDetections.filter((d) => !deletedIds.has(d.id)).length}
+          totalCount={allDetections.filter((d) => !deletedIds.has(d.id) && !cleanedIds.has(d.id)).length}
           onChange={setConfidenceThreshold}
         />
 
@@ -374,7 +428,7 @@ const DetectionsEditor = ({
         )}
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <Button
           type="button"
           text={
@@ -396,6 +450,18 @@ const DetectionsEditor = ({
         {selectedId && !isDrawingMode && (
           <Button
             type="button"
+            text={t("lab.form.mark_clean", "Mark clean")}
+            icon={<Check className="h-4 w-4 text-white" />}
+            onClick={() => { void handleMarkClean(); }}
+            className="px-6"
+            id="mark-clean-detection-btn"
+            disabled={!parentMediaId || isSaving}
+          />
+        )}
+
+        {selectedId && !isDrawingMode && (
+          <Button
+            type="button"
             text={t("lab.form.delete_selected", "Delete")}
             icon={<Trash2 className="h-4 w-4 text-white" />}
             onClick={handleDeleteSelected}
@@ -405,6 +471,16 @@ const DetectionsEditor = ({
             disabled={isSaving}
           />
         )}
+
+        <Button
+          type="button"
+          text={t("lab.form.mark_all_clean", "Mark all clean")}
+          icon={<CheckCheck className="h-4 w-4 text-white" />}
+          onClick={() => { void handleMarkClean(true); }}
+          className="px-6"
+          id="mark-all-clean-btn"
+          disabled={!parentMediaId || isSaving || !hasMediaDetections}
+        />
 
         <div className="flex-grow"></div>
 

@@ -6,6 +6,11 @@ import type {
 } from "../types/lab";
 
 export const mediaService = {
+  markClean: async (mediaId: string, detectionId?: string): Promise<void> => {
+    const path = `/lab/${mediaId}/detections`;
+    await api.delete(detectionId ? `${path}/${detectionId}` : path);
+  },
+
   getMedia: async (mediaId: string): Promise<MediaResponse> => {
     const { data } = await api.get(`/lab/image/${mediaId}`);
     return data;

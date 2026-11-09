@@ -6,8 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Detection, MediaResponse } from "../../../types/lab";
 import DetectionsDisplay from "./DetectionsDisplay";
 
-const { patch } = vi.hoisted(() => ({ patch: vi.fn() }));
-vi.mock("../../../services/mediaService", () => ({ mediaService: { patchMedia: patch } }));
+const { patch, markClean } = vi.hoisted(() => ({ patch: vi.fn(), markClean: vi.fn() }));
+vi.mock("../../../services/mediaService", () => ({ mediaService: { patchMedia: patch, markClean } }));
 vi.mock("../../../services/toastService", () => ({ toastService: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("./ZoomableContainer", () => ({ default: ({ children }: PropsWithChildren) => <div>{children}</div> }));
 vi.mock("../../shared/Button", () => ({
@@ -29,6 +29,7 @@ vi.mock("./DetectionsStage", () => ({
   }) => <div>
     <output data-testid="detections">{JSON.stringify(detections)}</output>
     <button disabled={disabled} onClick={() => onSelectDetection(detectionKeys[0])}>select first</button>
+    <button disabled={disabled} onClick={() => onSelectDetection(detectionKeys.at(-1)!)}>select last</button>
     <button disabled={disabled} onClick={() => onUpdateDetectionBBox(detectionKeys[0], { x: 0.2, y: 0.2, w: 0.4, h: 0.4 })}>resize first</button>
     <button disabled={disabled} onClick={() => onAddDetection({ x: 0.1, y: 0.1, w: 0.1, h: 0.1 })}>draw new</button>
   </div>,
@@ -37,18 +38,86 @@ vi.mock("./DetectionsStage", () => ({
 const detection: Detection = { id: "0b7e3031-15e7-455b-a136-d1a77c4c1c44", label: "Trash", confidence: 0.8, bbox: { x: 0, y: 0, w: 0.5, h: 0.5 }, area_sqm: 8 };
 const props = { mediaId: "media-1", hfPath: "image.jpg", detections: [detection], item_type: "image" as const };
 const clients: QueryClient[] = [];
-function setup() {
+function setup(overrides: Partial<React.ComponentProps<typeof DetectionsDisplay>> = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   clients.push(client);
   const wrapper = ({ children }: PropsWithChildren) =>
     <MemoryRouter><QueryClientProvider client={client}>{children}</QueryClientProvider></MemoryRouter>;
-  return { client, ...render(<DetectionsDisplay {...props} />, { wrapper }) };
+  return { client, ...render(<DetectionsDisplay {...props} {...overrides} />, { wrapper }) };
 }
 function shown(): Detection[] { return JSON.parse(screen.getByTestId("detections").textContent!); }
 function save() { fireEvent.click(document.querySelector("#save-detections-btn")!); }
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
+});
+
+describe("marking detections clean", () => {
+  it("offers Mark clean only for a selection and persists it immediately", async () => {
+    setup();
+    expect(screen.queryByText("Mark clean")).not.toBeInTheDocument();
+    expect(screen.getByText("Mark all clean")).toBeEnabled();
+    fireEvent.click(screen.getByText("select first"));
+    fireEvent.click(screen.getByText("Mark clean"));
+    await waitFor(() => expect(shown()).toEqual([]));
+    expect(markClean).toHaveBeenCalledWith("media-1", detection.id);
+    expect(patch).not.toHaveBeenCalled();
+    expect(document.querySelector("#save-detections-btn")).toBeDisabled();
+  });
+
+  it("keeps other unsaved edits when a selected detection is marked clean", async () => {
+    const other = { ...detection, id: "other-detection" };
+    setup({ detections: [detection, other] });
+    fireEvent.click(screen.getByText("select last"));
+    fireEvent.change(screen.getByLabelText("Label"), { target: { value: "Metal" } });
+    fireEvent.click(screen.getByText("select first"));
+    fireEvent.click(screen.getByText("Mark clean"));
+    await waitFor(() => expect(shown()).toHaveLength(1));
+    expect(shown()[0]).toMatchObject({ id: other.id, label: "Metal" });
+    expect(document.querySelector("#save-detections-btn")).toBeEnabled();
+    patch.mockResolvedValueOnce({ id: "media-1", detections: [] });
+    save();
+    await waitFor(() => expect(patch).toHaveBeenCalled());
+    expect(patch.mock.calls[0][1].detections).toHaveLength(1);
+    expect(patch.mock.calls[0][1].detections[0]).toMatchObject({ id: other.id, label: "Metal" });
+  });
+
+  it("marks the entire media clean and clears the draft without requiring a selection", async () => {
+    setup();
+    fireEvent.click(screen.getByText("draw new"));
+    fireEvent.click(screen.getByText("Mark all clean"));
+    await waitFor(() => expect(shown()).toEqual([]));
+    expect(markClean).toHaveBeenCalledWith("media-1", undefined);
+    expect(patch).not.toHaveBeenCalled();
+    expect(document.querySelector("#save-detections-btn")).toBeDisabled();
+  });
+
+  it("uses the parent video ID for Mark all clean", async () => {
+    const { client } = setup({ mediaId: detection.id, parentMediaId: "parent-video", item_type: "video" });
+    fireEvent.click(screen.getByText("Mark all clean"));
+    await waitFor(() => expect(markClean).toHaveBeenCalledWith("parent-video", undefined));
+    await waitFor(() => expect(client.isMutating()).toBe(0));
+  });
+
+  it("locks editing during a clean request and keeps the selection after failure", async () => {
+    let reject!: (error: Error) => void;
+    markClean.mockReturnValueOnce(new Promise((_, fail) => { reject = fail; }));
+    setup();
+    fireEvent.click(screen.getByText("select first"));
+    fireEvent.click(screen.getByText("Mark clean"));
+    await waitFor(() => expect(screen.getByText("Mark all clean")).toBeDisabled());
+    expect(screen.getByText("draw new")).toBeDisabled();
+    await act(async () => reject(new Error("Connection lost")));
+    await waitFor(() => expect(screen.getByText("Mark clean")).toBeEnabled());
+    expect(shown()).toHaveLength(1);
+    fireEvent.click(screen.getByText("Mark clean"));
+    await waitFor(() => expect(shown()).toEqual([]));
+  });
+
+  it("disables Mark all clean for media without detections", () => {
+    setup({ detections: [], hasMediaDetections: false });
+    expect(screen.getByText("Mark all clean")).toBeDisabled();
+  });
 });
 afterEach(() => { clients.splice(0).forEach(client => client.clear()); vi.unstubAllGlobals(); });
 

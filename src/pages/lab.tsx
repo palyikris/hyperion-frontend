@@ -198,6 +198,8 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
           <DetectionsDisplay
             key={id}
             mediaId={id}
+            parentMediaId={"media_id" in data ? data.media_id : id}
+            hasMediaDetections={"detections" in data ? data.has_trash || data.detections.length > 0 : true}
             hfPath={displayHfPath}
             detections={displayDetections}
             item_type={itemType}

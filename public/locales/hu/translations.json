@@ -632,7 +632,13 @@
       "not_found": "A médiaelem nem található vagy nem érhető el.",
       "retry": "Újrapróbálás"
     },
+    "clean": {
+      "success": "Tisztának jelölve.",
+      "error": "Nem sikerült tisztának jelölni. Próbáld újra."
+    },
     "form": {
+      "mark_clean": "Tisztának jelölés",
+      "mark_all_clean": "Összes tisztának jelölése",
       "latitudeLabel": "Szélesség",
       "latitudePlaceholder": "Adj meg szélességet...",
       "longitudeLabel": "Hosszúság",
