@@ -81,7 +81,6 @@ export interface StatsResponse {
   trends: DetectionTrend[];
   systemMetrics: {
     meanTimeToProcessSec: number;
-    duplicateBlockedCount: number;
   };
 }
 

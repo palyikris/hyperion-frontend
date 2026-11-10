@@ -39,7 +39,6 @@ export interface MediaResponse {
   has_trash?: boolean;
   confidence?: number;
   failed_reason?: string;
-  original_media_id?: string;
   detections: Detection[];
 }
 
