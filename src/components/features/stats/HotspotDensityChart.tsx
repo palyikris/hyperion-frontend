@@ -104,7 +104,7 @@ const HotspotDensityChart = () => {
         style={{ borderRadius: "42% 58% 38% 62% / 62% 38% 54% 46%" }}
       />
 
-      <motion.div className="relative mt-8 rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-3 sm:p-4">
+      <motion.div className="stats-chart-body relative mt-8 rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-3 sm:p-4">
         {hotspotDensityQuery.isError ? (
           <div className="flex min-h-[clamp(12rem,35cqi,20rem)] items-center justify-center rounded-xl border border-hyperion-burnt-orange/25 bg-hyperion-burnt-orange/5 px-4 text-center text-sm text-hyperion-slate-grey">
             {t("stats.hotspot.states.error")}
@@ -120,7 +120,7 @@ const HotspotDensityChart = () => {
         ) : (
           <div className="hotspot-grid grid gap-4">
             <motion.div
-              className="min-w-0 space-y-4"
+              className="hotspot-metrics min-w-0 space-y-4"
               initial={reducedMotion ? false : { opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.1 }}
@@ -152,7 +152,7 @@ const HotspotDensityChart = () => {
             </motion.div>
 
             <motion.div
-              className="rounded-xl border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/20 min-w-0 p-3 sm:p-4"
+              className="hotspot-comparison rounded-xl border border-hyperion-soft-sky/70 bg-hyperion-soft-sky/20 min-w-0 p-3 sm:p-4"
               initial={reducedMotion ? false : { opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.1 }}
@@ -165,7 +165,7 @@ const HotspotDensityChart = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={chartData}
-                    margin={{ top: 12, right: 12, left: 12, bottom: 8 }}
+                    margin={{ top: 20, right: 8, left: 0, bottom: 8 }}
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
@@ -183,6 +183,8 @@ const HotspotDensityChart = () => {
                       }}
                     />
                     <YAxis
+                      width={40}
+                      tickFormatter={(value: number) => value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 1 })}
                       type="number"
                       domain={[0, chartDomainMax]}
                       allowDecimals={false}

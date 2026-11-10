@@ -52,7 +52,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-2000">
+    <div className="fixed inset-0 z-2000 bg-hyperion-forest/15">
       <ConfirmModal
         isOpen={isDeleteModalOpen}
         title={t("upload.deleteSingleTitle", "Delete Item")}
@@ -74,7 +74,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute top-0 right-0 h-full w-full max-w-105 border-l border-hyperion-sage-mint/30 flex flex-col shadow-2xl bg-hyperion-cream z-50 overflow-hidden"
+        className="absolute bottom-0 right-0 h-[min(78dvh,48rem)] w-full rounded-t-3xl md:top-0 md:h-full md:max-w-105 md:rounded-none border border-hyperion-sage-mint/30 flex flex-col shadow-2xl bg-hyperion-cream z-50 overflow-hidden"
         style={{
           boxShadow: "0 0 40px 0 rgba(26,95,84,0.18)",
         }}
@@ -91,9 +91,9 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
         />
 
         {/* Content */}
-        <div className="relative min-h-0 flex-1 overflow-y-auto px-6 pb-8 pt-4 flex flex-col gap-8 z-10">
+        <div className="relative min-h-0 flex-1 flex flex-col z-10">
           {/* Title and meta */}
-          <div className="flex flex-col gap-1 border-b border-hyperion-sage-mint/20 pb-4">
+          <div className="flex shrink-0 flex-col gap-1 border-b border-hyperion-sage-mint/20 px-4 pb-4 pt-2 sm:px-6">
             <button type="button" onClick={onClose} aria-label={t("common.close", "Close")}
               className="ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-full text-hyperion-deep-sea hover:bg-hyperion-soft-sky">
               <X size={20} />
@@ -128,7 +128,7 @@ const MarkerSidebar: React.FC<MarkerSidebarProps> = ({
           </div>
 
           {/* MarkerDetails (logs, actions, etc.) */}
-          <div className="flex-1">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6">
             <MarkerDetails item={item} onImageZoom={onImageZoom} />
           </div>
         </div>

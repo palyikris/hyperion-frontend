@@ -20,7 +20,6 @@ import type {
   MediaResponse,
   VideoDetectionResponse,
 } from "../types/lab";
-import Divider from "../components/shared/Divider";
 import DetectionsDisplay from "../components/features/lab/DetectionsDisplay";
 import { PageAtmosphere } from "../components/shared/decoration";
 import { Button } from "../components/shared/Button";
@@ -184,17 +183,17 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
     : [];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-hyperion-cream">
+    <div className="lab-page relative min-h-screen overflow-hidden bg-hyperion-cream">
       <PageAtmosphere variant="lab" />
       <div className="page-shell relative mx-auto w-full max-w-7xl">
-        <header className="flex flex-col items-start gap-4">
+        <header className="flex flex-col items-start gap-2 sm:gap-4">
           <Title text={t("lab.page.title")} size="4xl" />
-          <p className="page-subtitle text-sm uppercase tracking-[0.18em] sm:tracking-[0.3em] text-hyperion-slate-grey/70">
+          <p className="page-subtitle text-sm leading-relaxed sm:uppercase sm:tracking-[0.3em] text-hyperion-slate-grey/70">
             {t("lab.page.subtitle")}
           </p>
         </header>
 
-        <div className="mt-8 grid grid-cols-1 gap-6">
+        <div className="mt-5 grid min-w-0 grid-cols-1 gap-5 sm:mt-8 sm:gap-6">
           <DetectionsDisplay
             key={id}
             mediaId={id}
@@ -204,12 +203,11 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
             detections={displayDetections}
             item_type={itemType}
           />
-          <div className="min-w-0 rounded-lg bg-white/80 p-3 sm:p-6 shadow-lg">
-            {/* <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-hyperion-slate-grey/75">
+          <section className="lab-panel lab-location min-w-0 rounded-2xl border border-hyperion-deep-sea/10 bg-white p-3 sm:p-6 shadow-sm" aria-labelledby="lab-location-title">
+            <h2 id="lab-location-title" className="mb-4 text-base font-bold text-hyperion-deep-sea">
               {t("lab.page.location", "Location")}
-            </h2> */}
-
-            <div className="">
+            </h2>
+            <div>
               {hasCoordinates ? (
                 <MiniMap
                   key={data?.id ?? "unknown"}
@@ -259,11 +257,9 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
               )}
             </div>
 
-            <Divider
-              label={t("lab.page.edit_location_manually")}
-              bgColorClassName="bg-white"
-              className="my-6"
-            ></Divider>
+            <p className="my-4 text-sm text-hyperion-slate-grey">
+              {t("lab.page.edit_location_manually")}
+            </p>
 
             <LocationForm
               id={id}
@@ -288,7 +284,7 @@ const LabEditor = ({ id, data }: { id: string; data: CombinedMediaData }) => {
                 });
               }}
             />
-          </div>
+          </section>
         </div>
       </div>
     </div>

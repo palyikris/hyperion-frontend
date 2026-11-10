@@ -65,7 +65,10 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
   return (
     <div className="relative">
       {/* Zoom Controls */}
-      <div className="relative z-10 flex flex-wrap justify-end gap-2 bg-white/90 p-2">
+      <div className="lab-zoom-toolbar relative z-10 flex items-center justify-end gap-2 bg-hyperion-cream/70 p-2">
+        <span className="mr-auto pl-1 text-xs tabular-nums text-hyperion-deep-sea" aria-live="polite">
+          {Math.round(state.scale * 100)}%
+        </span>
         <button
           type="button"
           onClick={controls.zoomIn}
@@ -98,13 +101,6 @@ const ZoomableContainer = ({ children, panEnabled = true }: ZoomableContainerPro
           </button>
         )}
       </div>
-
-      {/* Zoom indicator */}
-      {isZoomed && (
-        <div className="absolute left-3 top-4 z-10 rounded-md border border-hyperion-deep-sea/30 bg-white/90 px-3 py-1 text-xs font-semibold text-hyperion-deep-sea shadow-md">
-          {Math.round(state.scale * 100)}%
-        </div>
-      )}
 
       {/* Container */}
       <div

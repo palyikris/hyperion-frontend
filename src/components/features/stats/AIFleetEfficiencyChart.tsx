@@ -304,6 +304,7 @@ const AIFleetEfficiencyChart = () => {
               />
               <XAxis
                 dataKey="name"
+                interval={0}
                 tick={(props: AxisTickProps) => {
                   const workerName = String(props.payload?.value ?? "");
                   const maxLabelLength = Math.max(5, Math.floor((plotWidth - 84) / Math.max(sortedData.length, 1) / 7));
@@ -338,6 +339,7 @@ const AIFleetEfficiencyChart = () => {
                 tickLine={false}
               />
               <YAxis
+                width={44}
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}

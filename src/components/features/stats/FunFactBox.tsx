@@ -27,20 +27,20 @@ const FunFactBox = ({ funFact, index = 0 }: FunFactBoxProps) => {
         delay: index * 0.1,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="group relative overflow-hidden rounded-3xl border border-white/60 bg-linear-to-br from-white/95 to-white/85 p-6 shadow-[0_8px_30px_rgba(26,95,84,0.12)] backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(26,95,84,0.2)]"
+      className="stats-fact group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-hyperion-deep-sea/10 bg-white p-4 sm:p-6 shadow-sm transition-all duration-300"
     >
-      <div className="relative z-10 flex items-start gap-4">
+      <div className="relative z-10 flex items-start gap-3 sm:gap-4">
         <div className="shrink-0">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-hyperion-deep-sea to-hyperion-cool-aqua shadow-lg transition-transform duration-300 group-hover:scale-110">
-            <Icon className="h-6 w-6 text-white" />
+          <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-hyperion-deep-sea/10">
+            <Icon className="h-5 w-5 text-hyperion-deep-sea" />
           </div>
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="text-[11px] font-bold uppercase tracking-[0.25em] text-hyperion-slate-grey/80">
+          <h3 className="text-xs font-bold text-hyperion-slate-grey/80 sm:uppercase sm:tracking-[0.2em]">
             {funFact?.title}
           </h3>
-          <p className="mt-2 text-base leading-relaxed text-hyperion-deep-sea">
+          <p className="mt-2 text-sm sm:text-base leading-relaxed text-hyperion-deep-sea">
             {funFact?.fact}
           </p>
         </div>

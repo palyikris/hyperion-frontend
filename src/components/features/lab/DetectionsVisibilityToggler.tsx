@@ -26,7 +26,7 @@ const DetectionsVisibilityToggler = ({
   const { t } = useTranslation();
 
   return (
-    <div className="border-t border-hyperion-fog-grey bg-white/70 p-4">
+    <div className="lab-visibility border-t border-hyperion-fog-grey bg-white/70 p-3 sm:p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-hyperion-deep-sea/80">
           {t("lab.detections.visibility.title", "Detections")}
@@ -51,7 +51,7 @@ const DetectionsVisibilityToggler = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="lab-detection-list grid max-h-64 gap-2 overflow-y-auto overscroll-contain sm:grid-cols-2 lg:grid-cols-3">
         {detections.length === 0 && (
           <p className="text-sm text-hyperion-deep-sea/70">
             {t("lab.detections.visibility.empty", "No detections found.")}
@@ -64,11 +64,12 @@ const DetectionsVisibilityToggler = ({
           const isSelected = selectedId === key;
 
           return (
-            <div key={key} className="inline-flex min-w-0 max-w-full items-center gap-1">
+            <div key={key} className="flex min-w-0 max-w-full items-center gap-2">
               <button
                 type="button"
                 onClick={() => onToggleDetection(key)}
-                className={`detection-visibility-toggler min-w-0 min-h-11 [overflow-wrap:anywhere] inline-flex flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                aria-pressed={isVisible}
+                className={`detection-visibility-toggler min-w-0 min-h-11 flex-1 [overflow-wrap:anywhere] inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition-colors ${
                   isSelected
                     ? "border-hyperion-burnt-orange bg-hyperion-burnt-orange/20 text-hyperion-deep-sea ring-2 ring-hyperion-burnt-orange/50"
                     : isVisible
@@ -99,7 +100,7 @@ const DetectionsVisibilityToggler = ({
               <button
                 type="button"
                 onClick={() => onIsolateDetection(key)}
-                className="inline-flex shrink-0 min-h-11 min-w-11 items-center justify-center rounded-full border border-hyperion-deep-sea/30 bg-white px-2 py-1 text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
+                className="inline-flex shrink-0 min-h-11 min-w-11 items-center justify-center rounded-xl border border-hyperion-deep-sea/20 bg-white px-2 py-1 text-hyperion-deep-sea transition-colors hover:bg-hyperion-deep-sea/10"
                 title={t(
                   "lab.detections.visibility.showOnlyThis",
                   "Show only this detection",

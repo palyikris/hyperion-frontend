@@ -21,19 +21,20 @@ const StatsBentoCard = ({
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   return (
-    <article id={id} className={`stats-card relative min-w-0 [overflow-wrap:anywhere] ${className}`}>
+    <article id={id} className={`stats-card ${title ? "stats-data-card" : ""} relative min-w-0 [overflow-wrap:anywhere] ${className}`}>
       {title && (
         <div className="relative mb-3 flex items-start justify-between gap-3">
-          <p className="text-xs uppercase tracking-[0.32em] text-hyperion-slate-grey/70">
+          <h2 className="stats-card-title self-center text-base font-bold text-hyperion-deep-sea sm:text-xs sm:uppercase sm:tracking-[0.22em] sm:text-hyperion-slate-grey/70">
             {title}
-          </p>
-          <div className="relative">
+          </h2>
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => setIsInfoOpen((prev) => !prev)}
               aria-expanded={isInfoOpen}
+              aria-controls={`${id}-info`}
               aria-label={`${title} ${t("stats.shared.info")}`}
-              className="min-h-11 min-w-11 shrink-0 rounded-full border border-hyperion-deep-sea/60 bg-white/60 text-xs font-bold text-hyperion-deep-sea transition-colors duration-300 hover:bg-hyperion-cool-aqua/35"
+              className="min-h-11 min-w-11 shrink-0 rounded-xl bg-hyperion-deep-sea/5 text-sm font-bold text-hyperion-deep-sea transition-colors duration-300 hover:bg-hyperion-cool-aqua/35"
             >
               i
             </button>
@@ -45,7 +46,8 @@ const StatsBentoCard = ({
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 top-9 z-20 w-[min(15rem,calc(100vw-3rem))] rounded-2xl border border-hyperion-deep-sea/60 bg-white/95 p-3 text-xs leading-relaxed text-hyperion-slate-grey shadow-lg backdrop-blur-md"
+                    id={`${id}-info`}
+                    className="absolute right-0 top-12 z-20 w-[min(18rem,calc(100vw-4rem))] rounded-2xl border border-hyperion-deep-sea/20 bg-white p-4 text-xs leading-relaxed text-hyperion-slate-grey shadow-lg"
                   >
                     {description}
                   </motion.div>

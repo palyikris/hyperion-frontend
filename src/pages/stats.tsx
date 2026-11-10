@@ -19,6 +19,7 @@ import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import ReportDateRangeModal from "../components/shared/ReportDateRangeModal";
 import type { ReportDateRange } from "../services/statsService";
+import { FileDown, FileSpreadsheet, RefreshCw } from "lucide-react";
 
 const StatsPage = () => {
   const { t, i18n } = useTranslation();
@@ -48,7 +49,7 @@ const StatsPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#FDFCF8] via-[#FDFCF8] to-[#F5F3ED] selection:bg-hyperion-soft-sky/30">
+    <div lang={i18n.resolvedLanguage ?? i18n.language} className="stats-page relative min-h-screen bg-gradient-to-br from-[#FDFCF8] via-[#FDFCF8] to-[#F5F3ED] selection:bg-hyperion-soft-sky/30">
       {exportFormat ? (
         <ReportDateRangeModal
           format={exportFormat}
@@ -59,16 +60,9 @@ const StatsPage = () => {
       ) : null}
       <div className="page-shell relative z-10 mx-auto w-full max-w-400">
         {/* Header Section */}
-        <header className="mb-10 space-y-6">
-          <div className="space-y-3">
+        <header className="mb-6 space-y-4 sm:mb-10 sm:space-y-6">
+          <div className="flex items-center justify-between gap-3">
             <Title text={t("stats.page.title")} size="5xl" />
-            <p className="text-sm font-medium text-hyperion-slate-grey/70 max-w-3xl">
-              {t("stats.page.subtitle")}
-            </p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="action-grid">
             <Button
               text={
                 isRefreshing
@@ -78,9 +72,17 @@ const StatsPage = () => {
               onClick={onRefreshData}
               disabled={isRefreshing}
               theme="info"
-              className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
+              icon={<RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />}
+              animateIcon={false}
+              ariaLabel={isRefreshing ? `${t("stats.command.refresh", "Refresh Data")}...` : t("stats.command.refresh", "Refresh Data")}
+              className="stats-refresh px-4! py-2.5! text-xs! shadow-none!"
             />
+          </div>
+          <p className="text-sm leading-relaxed font-medium text-hyperion-slate-grey/70 max-w-3xl">
+            {t("stats.page.subtitle")}
+          </p>
 
+          <div className="stats-actions action-grid sm:max-w-xl">
             <Button
               text={
                 exportCleanupManifestMutation.isPending
@@ -90,7 +92,9 @@ const StatsPage = () => {
               onClick={() => setExportFormat("excel")}
               disabled={exportCleanupManifestMutation.isPending}
               theme="info"
-              className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
+              icon={<FileSpreadsheet className="h-4 w-4" />}
+              animateIcon={false}
+              className="px-3! py-3! text-xs! font-semibold! shadow-none! rounded-xl!"
             />
             <Button
               text={
@@ -101,13 +105,15 @@ const StatsPage = () => {
               onClick={() => setExportFormat("pdf")}
               disabled={exportPdfMutation.isPending}
               theme="primary"
-              className="px-4! py-2.5! text-[12px]! uppercase! tracking-wider! font-semibold! shadow-none!"
+              icon={<FileDown className="h-4 w-4" />}
+              animateIcon={false}
+              className="px-3! py-3! text-xs! font-semibold! shadow-none! rounded-xl!"
             />
           </div>
         </header>
 
         {/* Main Grid Layout */}
-        <section className="space-y-10">
+        <section className="space-y-5 sm:space-y-8">
           {/* Environmental Footprint: disabled until area calculation is implemented.
           <StatsBentoCard
             id="chart-environmental"
@@ -139,23 +145,8 @@ const StatsPage = () => {
           </StatsBentoCard>
           */}
 
-          {/* Fun Facts */}
-          {funFacts.length > 0 && (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {funFacts.slice(0, 2).map((funFact, index) => (
-                <StatsBentoCard
-                  key={`${funFact.title}-${index}`}
-                  id={`chart-funfact-${index + 1}`}
-                  className="min-w-0"
-                >
-                  <FunFactBox funFact={funFact} />
-                </StatsBentoCard>
-              ))}
-            </div>
-          )}
-
           {/* Hotspot & Mean Time to Process */}
-          <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:gap-8 xl:grid-cols-2">
             <StatsBentoCard
               id="chart-hotspot"
               title={t("stats.hotspot.title", "Hotspot Density")}
@@ -194,23 +185,8 @@ const StatsPage = () => {
             <TemporalTrendsChart />
           </StatsBentoCard>
 
-          {/* Fun Facts */}
-          {funFacts.length > 2 && (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {funFacts.slice(2, 4).map((funFact, index) => (
-                <StatsBentoCard
-                  key={`${funFact.title}-${index + 2}`}
-                  id={`chart-funfact-${index + 3}`}
-                  className="min-w-0"
-                >
-                  <FunFactBox funFact={funFact} />
-                </StatsBentoCard>
-              ))}
-            </div>
-          )}
-
           {/* Trash Composition & Fleet Efficiency */}
-          <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 sm:gap-8 xl:grid-cols-2">
             <StatsBentoCard
               id="chart-trash"
               title={t("stats.trash.title", "Trash Composition")}
@@ -235,6 +211,20 @@ const StatsPage = () => {
               <AIFleetEfficiencyChart />
             </StatsBentoCard>
           </div>
+
+          {funFacts.length > 0 && (
+            <div className="grid grid-cols-1 gap-3 sm:gap-6 lg:grid-cols-2">
+              {funFacts.slice(0, 4).map((funFact, index) => (
+                <StatsBentoCard
+                  key={`${funFact.title}-${index}`}
+                  id={`chart-funfact-${index + 1}`}
+                  className="min-w-0"
+                >
+                  <FunFactBox funFact={funFact} />
+                </StatsBentoCard>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </div>

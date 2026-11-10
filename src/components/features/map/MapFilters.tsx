@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import MiniListPreview from "./MiniListPreview";
-import { ScrollReveal } from "../../shared/animation/ScrollReveal";
 import type { MapItem } from "../../../types/map";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,44 +110,54 @@ const MapFilters: React.FC<MapFiltersProps> = ({
 
   const isRegionActive = minLatValue !== undefined;
 
+  React.useEffect(() => {
+    if (!showFilters) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowFilters(false);
+        requestAnimationFrame(() => document.getElementById("show-filters-btn")?.focus());
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showFilters, setShowFilters]);
+
   return (
     <AnimatePresence>
       {showFilters && (
         <motion.div
           key="filters-content"
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 24 }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 24 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="map-filter-panel absolute top-20 bottom-3 right-3 z-1000 w-[min(22rem,calc(100%-1.5rem))] sm:inset-y-6 sm:right-6 sm:w-[min(22rem,calc(100%-3rem))]"
+          className="map-filter-panel absolute inset-x-0 bottom-0 z-1000 h-[min(64dvh,36rem)] md:inset-x-auto md:inset-y-6 md:right-6 md:h-auto md:w-88"
           id="map-filters-panel"
+          role="region"
+          aria-label={t("map.filters.spatial", "Spatial Filters")}
         >
-          <ScrollReveal className="relative h-full overflow-hidden" delay={0.1}>
+          <div className="map-filter-surface relative flex h-full flex-col overflow-hidden rounded-t-3xl border border-hyperion-deep-sea/10 bg-white shadow-[0_-8px_40px_rgba(26,95,84,0.15)] md:rounded-3xl">
+            <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-hyperion-deep-sea/15 md:hidden" aria-hidden="true" />
+            <div className="relative shrink-0 border-b border-hyperion-fog-grey px-4 py-3">
+              <FilterPanelHeader />
+              <button
+                type="button"
+                onClick={() => setShowFilters(false)}
+                aria-label={t("common.closeFilters", "Close filters")}
+                className="absolute top-2 right-3 flex min-h-11 min-w-11 items-center justify-center rounded-xl bg-hyperion-cream text-hyperion-deep-sea hover:bg-hyperion-soft-sky"
+              >
+                <X size={20} />
+              </button>
+            </div>
             <form
               onSubmit={handleSubmit((values) => {
                 onFiltersChange(values as MapFiltersFormData);
               })}
               onWheel={(event) => event.stopPropagation()}
-              className="relative h-full overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden bg-white/95 backdrop-blur-xl border border-hyperion-muted-gold/40 shadow-[rgba(26,95,84,0.18)_0px_25px_70px] px-4 py-6 sm:px-6 sm:py-8 rounded-[2.5rem] space-y-7"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              }}
+              className="map-filter-body relative min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))] space-y-5"
               autoComplete="off"
             >
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setShowFilters(false)}
-                aria-label={t("common.closeFilters", "Close filters")}
-                className="absolute top-3 right-3 min-h-11 min-w-11 flex items-center justify-center text-hyperion-slate-grey/50 hover:text-hyperion-deep-sea transition-colors"
-              >
-                <X size={22} />
-              </button>
-
-              <FilterPanelHeader />
-
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <RegionSelectionSection
                   isRegionActive={isRegionActive}
                   onCaptureBounds={onCaptureBounds}
@@ -183,7 +192,7 @@ const MapFilters: React.FC<MapFiltersProps> = ({
                 </div>
               )}
             </form>
-          </ScrollReveal>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -94,7 +94,7 @@ const MiniMap = ({
     <div
       className={
         className ??
-        "h-[clamp(14rem,50dvh,30rem)] w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey"
+        "lab-minimap h-52 sm:h-[clamp(14rem,40dvh,24rem)] w-full overflow-hidden rounded-xl border border-hyperion-fog-grey"
       }
     >
       <MapContainer

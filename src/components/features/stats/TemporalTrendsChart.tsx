@@ -364,6 +364,7 @@ const TemporalTrendsChart = () => {
                 minTickGap={22}
               />
               <YAxis
+                width={40}
                 tick={{ fontSize: 12 }}
                 axisLine={{ stroke: "var(--color-hyperion-fog-grey)" }}
                 tickLine={false}

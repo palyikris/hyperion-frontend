@@ -34,7 +34,7 @@ export const FilterPanelHeader: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex min-w-0 items-center gap-3 pb-2 pr-10 border-b border-hyperion-fog-grey/50">
+    <div className="flex min-h-9 min-w-0 items-center gap-3 pr-12">
       <span className="inline-flex items-center justify-center bg-hyperion-deep-sea/10 rounded-xl p-2">
         <Filter size={18} className="text-hyperion-deep-sea" />
       </span>
@@ -119,12 +119,12 @@ export const DetectionQualitySection: React.FC<DetectionQualitySectionProps> = (
 
   return (
     <div className="space-y-3">
-      <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
+      <label htmlFor="confidence-filter-input" className="text-xs font-bold text-hyperion-slate-grey">
         {t("map.filters.detection_quality", "Detection Quality")}
       </label>
       <input
         type="range"
-        className="w-full h-1.5 bg-hyperion-fog-grey rounded-lg appearance-none cursor-pointer accent-hyperion-sage-mint transition-all"
+        className="w-full h-6 cursor-pointer accent-hyperion-deep-sea"
         min="0"
         max="100"
         value={minConfidenceValue}
@@ -215,10 +215,11 @@ export const ViewModeSection: React.FC<ViewModeSectionProps> = ({
       <label className="text-[10px] font-black text-hyperion-slate-grey uppercase tracking-[0.2em]">
         {t("map.filters.view_mode", "View Mode")}
       </label>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2">
         <button
           type="button"
           onClick={() => onViewModeChange("markers")}
+          aria-pressed={viewMode === "markers"}
           className={`rounded-xl px-3 py-2 text-[10px] font-bold tracking-wider border transition-all ${
             viewMode === "markers"
               ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"
@@ -230,6 +231,7 @@ export const ViewModeSection: React.FC<ViewModeSectionProps> = ({
         <button
           type="button"
           onClick={() => onViewModeChange("heatmap")}
+          aria-pressed={viewMode === "heatmap"}
           className={`rounded-xl px-3 py-2 text-[10px] font-bold tracking-wider border transition-all ${
             viewMode === "heatmap"
               ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"
@@ -241,6 +243,7 @@ export const ViewModeSection: React.FC<ViewModeSectionProps> = ({
         <button
           type="button"
           onClick={() => onViewModeChange("grid")}
+          aria-pressed={viewMode === "grid"}
           className={`rounded-xl px-3 py-2 text-[10px] font-bold tracking-wider border transition-all ${
             viewMode === "grid"
               ? "bg-hyperion-deep-sea text-hyperion-cream border-hyperion-deep-sea"

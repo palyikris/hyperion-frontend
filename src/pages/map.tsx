@@ -61,7 +61,7 @@ export const MapPage: React.FC = () => {
   if (isLoading && !data) return <LoadingScreen />;
 
   return (
-    <div className="fixed inset-0 md:left-20 overflow-hidden">
+    <div className="map-page fixed inset-0 md:left-20 overflow-hidden">
       <MapFloatingControls
         showFilters={showFilters}
         onShowFilters={() => setShowFilters(true)}

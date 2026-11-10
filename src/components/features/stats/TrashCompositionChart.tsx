@@ -121,7 +121,7 @@ const TrashCompositionChart = () => {
       </div>
 
       <motion.div
-        className="relative mt-8 min-h-[clamp(14rem,40cqi,24rem)] w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        className="stats-chart-body relative mt-8 min-h-[clamp(14rem,40cqi,24rem)] w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.1 }}
@@ -145,7 +145,7 @@ const TrashCompositionChart = () => {
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-hyperion-slate-grey/70">
                 {t("stats.trash.legend.filters")}
               </p>
-              <div className="space-y-2">
+              <div className="composition-legend space-y-2">
                 {compositionData.map((entry, index) => {
                   const isActive = index === activeIndex;
                   return (
@@ -329,7 +329,7 @@ const TrashCompositionChart = () => {
                     y="46%"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="fill-hyperion-slate-grey text-[11px] font-semibold uppercase tracking-[0.22em]"
+                    className="composition-total-label fill-hyperion-slate-grey text-[11px] font-semibold uppercase tracking-[0.22em]"
                   >
                     {t("stats.trash.center.totalDetections")}
                   </text>

@@ -332,8 +332,8 @@ const DetectionsEditor = ({
   };
 
   return (
-    <div className="min-w-0 rounded-lg bg-white/80 p-3 sm:p-6 shadow-lg">
-      <div className="relative h-auto w-full overflow-hidden rounded-2xl border border-hyperion-fog-grey">
+    <div className="lab-panel min-w-0 rounded-2xl border border-hyperion-deep-sea/10 bg-white p-3 sm:p-6 shadow-sm">
+      <div className="lab-media relative h-auto w-full overflow-hidden rounded-xl border border-hyperion-fog-grey">
         {isImageLoading && !hasError && (
           <div className="absolute w-full h-full flex flex-col items-center justify-center gap-4 bg-hyperion-fog-grey/90">
             <img
@@ -428,7 +428,7 @@ const DetectionsEditor = ({
         )}
       </div>
 
-      <div className="action-grid mt-4">
+      <div className="lab-actions action-grid mt-4">
         <Button
           type="button"
           text={
@@ -436,8 +436,9 @@ const DetectionsEditor = ({
               ? t("lab.form.cancel_draw", "Cancel Drawing")
               : t("lab.form.add_detection", "Add Detection")
           }
-          icon={!isDrawingMode && <PlusSquare className="h-4 w-4 text-white" />}
+          icon={!isDrawingMode && <PlusSquare className="h-4 w-4" />}
           className="px-6"
+          theme="info"
           onClick={() => {
             if (isSaving || savingRef.current) return;
             setIsDrawingMode(!isDrawingMode);
@@ -475,10 +476,11 @@ const DetectionsEditor = ({
         <Button
           type="button"
           text={t("lab.form.mark_all_clean", "Mark all clean")}
-          icon={<CheckCheck className="h-4 w-4 text-white" />}
+          icon={<CheckCheck className="h-4 w-4" />}
           onClick={() => { void handleMarkClean(true); }}
           className="px-6"
           id="mark-all-clean-btn"
+          theme="info"
           disabled={!parentMediaId || isSaving || !hasMediaDetections}
         />
 
@@ -486,7 +488,7 @@ const DetectionsEditor = ({
         <Button
           type="button"
           text={
-            t("lab.form.save", "Save metadata") +
+            t("lab.form.save_detections", "Save detections") +
             (updateMediaMutation.isPending ? "..." : "")
           }
           icon={<Save className="h-4 w-4 text-white" />}
@@ -499,9 +501,9 @@ const DetectionsEditor = ({
         />
         <Button
           type="button"
-          theme="danger"
+          theme="info"
           text={t("lab.form.reset", "Reset")}
-          icon={<RotateCcw className="h-4 w-4 text-white" />}
+          icon={<RotateCcw className="h-4 w-4" />}
           onClick={handleResetDetections}
           className="px-6"
           disabled={isSaving || updateMediaMutation.isPending}

@@ -227,7 +227,7 @@ const MeanTimeToProcessChart = () => {
 
       <motion.div
         ref={chartRef}
-        className="relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
+        className="stats-plot relative mt-8 w-full rounded-2xl border border-hyperion-fog-grey/70 bg-white/70 p-2"
         style={{ height: chartHeight }}
         initial={reducedMotion ? false : { opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}

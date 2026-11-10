@@ -16,7 +16,7 @@ const ConfidenceFilter = ({
   const { t } = useTranslation();
 
   return (
-    <div className="border-t border-hyperion-fog-grey bg-white/70 px-4 py-3">
+    <div className="lab-confidence border-t border-hyperion-fog-grey bg-white/70 px-3 py-3 sm:px-4">
       <div className="flex items-center justify-between gap-4">
         <label
           htmlFor="confidence-slider"
@@ -36,7 +36,7 @@ const ConfidenceFilter = ({
         step="5"
         value={confidenceThreshold}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 w-full accent-hyperion-deep-sea"
+        className="mt-2 h-6 w-full accent-hyperion-deep-sea"
       />
       <div className="mt-1 flex justify-between text-xs text-hyperion-slate-grey/60">
         <span>0%</span>

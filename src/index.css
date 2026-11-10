@@ -39,6 +39,11 @@
   background-color: #F8F9F4 !important; /* Cream White */
 }
 
+/* Leaflet pans its layers with transforms; browser scrolling shifts hit targets. */
+.map-page .leaflet-container {
+  overflow: clip;
+}
+
 /* Desaturate tiles to make brand markers pop */
 .leaflet-tile-pane {
   filter: grayscale(0.4) brightness(0.95) sepia(0.05);
@@ -387,6 +392,277 @@ body, html {
   .composition-layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
     align-items: start;
+  }
+}
+
+/* Phone layouts prioritize the image, map, and chart over decorative frames. */
+@media (width < 48rem) {
+  .lab-page > .pointer-events-none {
+    opacity: 0.2;
+  }
+
+  .lab-page .page-shell,
+  .stats-page .page-shell {
+    padding-top: 0.5rem;
+  }
+
+  .lab-panel {
+    box-shadow: 0 2px 10px rgb(26 95 84 / 4%);
+  }
+
+  .lab-actions,
+  .stats-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .lab-actions button {
+    gap: 0.5rem;
+    border-radius: 0.75rem !important;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    box-shadow: none;
+  }
+
+  .lab-actions button:hover {
+    transform: none;
+  }
+
+  .lab-zoom-toolbar button {
+    border-color: var(--color-hyperion-fog-grey);
+    border-radius: 0.6rem;
+    box-shadow: none;
+  }
+
+  .lab-confidence label,
+  .lab-visibility h4,
+  .lab-details h4 {
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+    text-transform: none;
+  }
+
+  .lab-visibility > div:first-child {
+    gap: 0.5rem;
+  }
+
+  .lab-visibility > div:first-child button {
+    min-height: 2.75rem;
+    padding-inline: 0.65rem;
+    border-color: var(--color-hyperion-fog-grey);
+    border-radius: 0.6rem;
+  }
+
+  .lab-location-form fieldset {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .lab-location-form fieldset > :last-child,
+  .lab-detail-fields > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .lab-location-form label,
+  .lab-details label {
+    margin-left: 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--color-hyperion-slate-grey);
+  }
+
+  .lab-location-form input,
+  .lab-details input {
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.65rem 0.5rem 0.65rem 2.25rem;
+    border-width: 1px;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .lab-location-form input + svg,
+  .lab-details input + svg {
+    left: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .stats-refresh {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem !important;
+    padding: 0 !important;
+  }
+
+  .stats-refresh > span:first-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .stats-data-card {
+    padding: 0.75rem 1rem 1rem;
+    border: 1px solid rgb(26 95 84 / 10%);
+    border-radius: 1.25rem;
+    background: white;
+    box-shadow: 0 2px 10px rgb(26 95 84 / 4%);
+  }
+
+  .stats-data-card > div:first-child {
+    margin-bottom: 0.75rem;
+  }
+
+  .stats-chart {
+    padding: 0;
+    border: 0;
+    border-radius: 0 !important;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .stats-chart > .pointer-events-none {
+    display: none;
+  }
+
+  .stats-chart-body,
+  .hotspot-comparison {
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .stats-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    background: #f1f7f5;
+  }
+
+  .stats-metrics > .magnetic-wrapper > div {
+    padding: 0.75rem 0.5rem;
+    border: 0;
+    border-radius: 0 !important;
+    background: transparent;
+  }
+
+  .stats-metrics > .magnetic-wrapper + .magnetic-wrapper {
+    border-left: 1px solid rgb(26 95 84 / 10%);
+  }
+
+  .stats-metrics p:first-child {
+    min-height: 2rem;
+    font-size: 0.65rem;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-transform: none;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .stats-metrics p:last-child {
+    display: none;
+  }
+
+  .stats-metrics .block {
+    margin-top: 0.25rem;
+    font-size: clamp(1rem, 5cqi, 1.5rem);
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats-chart .chart-plot,
+  .stats-chart .stats-plot {
+    margin-top: 1rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .stats-chart .chart-plot {
+    height: 15rem;
+  }
+
+  .hotspot-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .hotspot-metrics > div {
+    margin: 0;
+    padding: 0.75rem;
+    border-color: rgb(26 95 84 / 10%);
+    background: #f1f7f5;
+  }
+
+  .hotspot-metrics p:first-child,
+  .hotspot-comparison > p:first-child {
+    font-size: 0.7rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .hotspot-metrics p:nth-child(2) {
+    margin-top: 0.5rem;
+    font-size: 1.75rem;
+  }
+
+  .hotspot-metrics p:last-child {
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+
+  .composition-layout > .chart-plot {
+    order: -1;
+    margin-top: 0;
+  }
+
+  .composition-legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .composition-legend button {
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0.5rem;
+  }
+
+  .composition-legend button span {
+    font-size: 0.7rem;
+  }
+
+  .composition-total-label {
+    font-size: 0.6rem;
+    letter-spacing: 0;
+  }
+
+  .map-filter-body button {
+    min-height: 2.75rem;
+    border-radius: 0.75rem !important;
+    box-shadow: none;
+    letter-spacing: 0;
+  }
+
+  #filters-view-mode-section button {
+    padding-inline: 0.35rem;
+    font-size: 0.7rem;
+  }
+
+  .map-filter-body .magnetic-wrapper button {
+    font-size: 0.75rem;
   }
 }
 

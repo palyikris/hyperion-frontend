@@ -2,7 +2,6 @@ import { X, Tag, Percent, Move, Maximize } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Detection } from "../../../types/lab";
 import { InputField } from "../../shared/InputField";
-import Divider from "../../shared/Divider";
 import { trashLabelOptions } from "../../../utils/trashLabels";
 import SearchableSelectField from "../../shared/SearchableSelectField";
 
@@ -37,15 +36,15 @@ const DetectionDetailsPanel = ({
   };
 
   return (
-    <div className="border-t border-hyperion-fog-grey bg-linear-to-br from-white/90 to-hyperion-cream/50 p-4">
-      <div className="mb-3 flex items-start justify-between">
+    <div className="lab-details border-t border-hyperion-fog-grey bg-hyperion-cream/50 p-3 sm:p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
         <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-hyperion-deep-sea/80">
           {t("lab.detections.panel.title", "Detection details")}
         </h4>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md p-1 text-hyperion-deep-sea/60 transition-colors hover:bg-hyperion-deep-sea/10 hover:text-hyperion-deep-sea"
+          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl text-hyperion-deep-sea/60 transition-colors hover:bg-hyperion-deep-sea/10 hover:text-hyperion-deep-sea"
           aria-label={t("lab.detections.panel.close", "Close details")}
         >
           <X className="h-4 w-4" />
@@ -53,7 +52,7 @@ const DetectionDetailsPanel = ({
       </div>
 
       <fieldset disabled={disabled} className="space-y-3">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="lab-detail-fields grid grid-cols-2 gap-3 md:grid-cols-3">
           <SearchableSelectField
             label={t("lab.detections.panel.label", "Label")}
             icon={Tag}
@@ -92,18 +91,11 @@ const DetectionDetailsPanel = ({
           )}
         </div>
 
-        <Divider
-          label={t(
-            "lab.detections.panel.boundingBoxTitle",
-            "Bounding box (relative to image dimensions)",
-          )}
-          bgColorClassName="bg-white"
-          className="mb-0 py-4"
-        ></Divider>
-
-        {/* Bounding Box */}
-        <div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <details className="border-t border-hyperion-fog-grey pt-3">
+          <summary className="min-h-11 cursor-pointer text-xs leading-relaxed text-hyperion-deep-sea">
+            {t("lab.detections.panel.boundingBoxTitle", "Bounding box (relative to image dimensions)")}
+          </summary>
+          <div className="grid grid-cols-2 gap-3 pt-3 xl:grid-cols-4">
             <InputField
               label={t("lab.detections.panel.x", "X")}
               icon={Move}
@@ -149,7 +141,7 @@ const DetectionDetailsPanel = ({
               }}
             />
           </div>
-        </div>
+        </details>
 
         {/* No Save Button here, saving is handled by parent */}
       </fieldset>

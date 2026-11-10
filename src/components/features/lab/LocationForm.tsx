@@ -46,7 +46,7 @@ const LocationForm = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
+      className="lab-location-form space-y-4"
       aria-busy={isSubmitting || isUpdatePending}
     >
       <fieldset disabled={isSubmitting || isUpdatePending} className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -91,7 +91,7 @@ const LocationForm = ({
         />
       </fieldset>
 
-      <div className="action-grid">
+      <div className="lab-actions action-grid">
         <Button
           type="submit"
           text={
@@ -104,9 +104,9 @@ const LocationForm = ({
         />
         <Button
           type="button"
-          theme="danger"
+          theme="info"
           text={t("lab.form.reset", "Reset")}
-          icon={<RotateCcw className="h-4 w-4 text-white" />}
+          icon={<RotateCcw className="h-4 w-4" />}
           onClick={onReset}
           className="px-6"
           disabled={isSubmitting || isUpdatePending}
